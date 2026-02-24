@@ -2,7 +2,10 @@
   <div class="space-y-4">
     <div class="flex items-center justify-between">
       <div class="flex items-center gap-4">
-        <RouterLink to="/" class="p-3 border-2 border-border hover:bg-surface-2 transition-all duration-150">
+        <RouterLink
+          to="/"
+          class="p-3 border-2 border-border hover:bg-surface-2 transition-all duration-150"
+        >
           <ArrowLeft class="w-5 h-5" />
         </RouterLink>
         <div>
@@ -12,22 +15,31 @@
       </div>
 
       <div class="flex items-center gap-2">
-        <button v-if="dashboardsStore.editing"
+        <button
+          v-if="dashboardsStore.editing"
           class="flex items-center gap-2 px-4 py-2 border border-border text-sm hover:bg-surface-2 transition-all duration-150"
-          @click="showAddWidget = true">
+          @click="showAddWidget = true"
+        >
           <Plus class="w-4 h-4" />
           <span>ВИДЖЕТ</span>
         </button>
-        <button v-if="dashboardsStore.editing"
+        <button
+          v-if="dashboardsStore.editing"
           class="flex items-center gap-2 px-4 py-2 border border-border text-sm hover:bg-surface-2 transition-all duration-150"
-          @click="handleReset">
+          @click="handleReset"
+        >
           <RotateCcw class="w-4 h-4" />
           <span>СБРОС</span>
         </button>
-        <button class="flex items-center gap-2 px-4 py-2 border-2 text-sm transition-all duration-150" :class="dashboardsStore.editing
-            ? 'border-primary bg-surface-2'
-            : 'border-border hover:bg-surface-2'
-          " @click="toggleEdit">
+        <button
+          class="flex items-center gap-2 px-4 py-2 border-2 text-sm transition-all duration-150"
+          :class="
+            dashboardsStore.editing
+              ? 'border-primary bg-surface-2'
+              : 'border-border hover:bg-surface-2'
+          "
+          @click="toggleEdit"
+        >
           <component :is="dashboardsStore.editing ? Save : Pencil" class="w-4 h-4" />
           <span>{{ dashboardsStore.editing ? 'СОХРАНИТЬ' : 'НАСТРОИТЬ' }}</span>
         </button>
@@ -36,25 +48,51 @@
 
     <LoadingSpinner v-if="dashboardsStore.loading" />
 
-    <GridLayout v-else-if="layout.length" :layout="layout" :col-num="12" :row-height="60" :margin="[12, 12]"
-      :is-draggable="dashboardsStore.editing" :is-resizable="dashboardsStore.editing"
-      @layout-updated="handleLayoutUpdate">
-      <GridItem v-for="item in layout" :key="item.i" :x="item.x" :y="item.y" :w="item.w" :h="item.h" :i="item.i"
-        class="relative">
-        <WidgetWrapper :widget="getWidget(item.i)" :equipment-id="equipmentId" :editing="dashboardsStore.editing"
-          @remove="handleRemoveWidget(item.i)" />
+    <GridLayout
+      v-else-if="layout.length"
+      :layout="layout"
+      :col-num="12"
+      :row-height="60"
+      :margin="[12, 12]"
+      :is-draggable="dashboardsStore.editing"
+      :is-resizable="dashboardsStore.editing"
+      @layout-updated="handleLayoutUpdate"
+    >
+      <GridItem
+        v-for="item in layout"
+        :key="item.i"
+        :x="item.x"
+        :y="item.y"
+        :w="item.w"
+        :h="item.h"
+        :i="item.i"
+        class="relative"
+      >
+        <WidgetWrapper
+          :widget="getWidget(item.i)"
+          :equipment-id="equipmentId"
+          :editing="dashboardsStore.editing"
+          @remove="handleRemoveWidget(item.i)"
+        />
       </GridItem>
     </GridLayout>
 
     <div v-else class="text-center py-12 border-2 border-border border-dashed opacity-50">
       <div class="text-sm mb-2">НЕТ ВИДЖЕТОВ</div>
-      <button class="px-4 py-2 border border-border text-xs hover:bg-surface-2 transition-all duration-150"
-        @click="handleStartAdding">
+      <button
+        class="px-4 py-2 border border-border text-xs hover:bg-surface-2 transition-all duration-150"
+        @click="handleStartAdding"
+      >
         ДОБАВИТЬ ВИДЖЕТ
       </button>
     </div>
 
-    <AddWidgetModal :show="showAddWidget" :sensors="sensorDefs" @close="showAddWidget = false" @add="handleAddWidget" />
+    <AddWidgetModal
+      :show="showAddWidget"
+      :sensors="sensorDefs"
+      @close="showAddWidget = false"
+      @add="handleAddWidget"
+    />
   </div>
 </template>
 
