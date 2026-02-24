@@ -1,20 +1,27 @@
 <template>
   <div class="space-y-6">
-    <!-- Заголовок -->
     <div class="flex items-center justify-between">
       <div>
         <h2 class="text-2xl">НАСТРОЙКИ СИСТЕМЫ</h2>
         <div class="text-sm opacity-50 mt-1">Конфигурация системы мониторинга</div>
       </div>
       <div class="flex items-center gap-4">
+        <span
+          v-if="saveMessage"
+          class="text-sm px-3 py-1 border border-primary bg-surface-2 transition-all duration-300"
+        >
+          {{ saveMessage }}
+        </span>
         <button
           class="flex items-center gap-2 px-4 py-2 border border-border hover:bg-surface-2 transition-all duration-150"
+          @click="resetSettings"
         >
           <RefreshCw class="w-4 h-4" />
           <span class="text-sm">СБРОСИТЬ</span>
         </button>
         <button
           class="flex items-center gap-2 px-4 py-2 border-2 border-primary hover:bg-surface-2 transition-all duration-150"
+          @click="saveSettings"
         >
           <Save class="w-4 h-4" />
           <span class="text-sm">СОХРАНИТЬ</span>
@@ -22,7 +29,6 @@
       </div>
     </div>
 
-    <!-- Отображение -->
     <div class="bg-surface-1 border-2 border-border p-6">
       <div class="flex items-center gap-3 mb-6">
         <Eye class="w-5 h-5" />
@@ -100,7 +106,6 @@
       </div>
     </div>
 
-    <!-- Уведомления -->
     <div class="bg-surface-1 border-2 border-border p-6">
       <div class="flex items-center gap-3 mb-6">
         <Bell class="w-5 h-5" />
@@ -138,7 +143,6 @@
       </div>
     </div>
 
-    <!-- Пороговые значения -->
     <div class="bg-surface-1 border-2 border-border p-6">
       <div class="flex items-center gap-3 mb-6">
         <Database class="w-5 h-5" />
@@ -157,7 +161,6 @@
       </div>
     </div>
 
-    <!-- Безопасность -->
     <div class="bg-surface-1 border-2 border-border p-6">
       <div class="flex items-center gap-3 mb-6">
         <Shield class="w-5 h-5" />
@@ -167,7 +170,8 @@
         <div>
           <label class="text-xs mb-2 block opacity-70">ТЕКУЩИЙ ПОЛЬЗОВАТЕЛЬ</label>
           <div class="px-4 py-3 bg-surface-2 border border-border text-sm metric-value">
-            ADMIN &bull; Администратор системы
+            {{ authStore.userName }} &bull;
+            {{ authStore.userRole === 'admin' ? 'Администратор системы' : 'Пользователь' }}
           </div>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -191,7 +195,6 @@
       </div>
     </div>
 
-    <!-- Информация о системе -->
     <div class="bg-surface-1 border-2 border-border p-6">
       <label class="text-xs mb-4 block">ИНФОРМАЦИЯ О СИСТЕМЕ</label>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
@@ -212,10 +215,29 @@
 import { ref } from 'vue'
 import { Save, RefreshCw, Bell, Eye, Database, Shield, Sun, Moon } from 'lucide-vue-next'
 import { useTheme } from '@/composables/useTheme'
+import { useAuthStore } from '@/stores/auth'
 import SettingsToggle from '@/components/SettingsToggle.vue'
 
 const { theme, applyTheme } = useTheme()
+const authStore = useAuthStore()
 const refreshRate = ref(5)
+const saveMessage = ref('')
+
+function saveSettings() {
+  saveMessage.value = 'НАСТРОЙКИ СОХРАНЕНЫ'
+  setTimeout(() => {
+    saveMessage.value = ''
+  }, 2000)
+}
+
+function resetSettings() {
+  refreshRate.value = 5
+  applyTheme('dark')
+  saveMessage.value = 'НАСТРОЙКИ СБРОШЕНЫ'
+  setTimeout(() => {
+    saveMessage.value = ''
+  }, 2000)
+}
 
 const thresholds = [
   { label: 'МАКСИМАЛЬНАЯ ТЕМПЕРАТУРА (°C)', value: 95 },
@@ -235,5 +257,3 @@ const systemInfo = [
   { label: 'Время работы системы', value: '47д 12ч 34м' },
 ]
 </script>
-
-<style scoped></style>

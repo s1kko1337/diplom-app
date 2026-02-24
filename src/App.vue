@@ -3,7 +3,8 @@
 </template>
 
 <script setup>
-import { RouterView } from 'vue-router'
-</script>
+import { useAuthStore } from '@/stores/auth'
 
-<style scoped></style>
+const authStore = useAuthStore()
+authStore.fetchUser()
+</script>

@@ -41,5 +41,3 @@ const barClass = computed(() => {
   return map[props.status] || map.normal
 })
 </script>
-
-<style scoped></style>

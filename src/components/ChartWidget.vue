@@ -81,5 +81,3 @@ const chartOption = computed(() => {
   }
 })
 </script>
-
-<style scoped></style>

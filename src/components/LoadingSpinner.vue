@@ -17,7 +17,3 @@
     <div class="ml-4 text-sm opacity-70 animate-pulse">ЗАГРУЗКА ДАННЫХ...</div>
   </div>
 </template>
-
-<script setup></script>
-
-<style scoped></style>

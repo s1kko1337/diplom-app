@@ -1,10 +1,8 @@
 <template>
   <Teleport to="body">
     <div v-if="show" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <!-- Overlay -->
       <div class="absolute inset-0 bg-background/80 backdrop-blur-sm" @click="$emit('close')" />
 
-      <!-- Modal -->
       <div
         class="relative z-10 w-full max-w-2xl bg-status-critical-bg text-status-critical-text border-4 border-primary animate-pulse"
         :style="{ clipPath: 'polygon(0 0, calc(100% - 40px) 0, 100% 40px, 100% 100%, 0 100%)' }"
@@ -62,17 +60,33 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { ref, watch, onMounted, onUnmounted } from 'vue'
 import { X } from 'lucide-vue-next'
 
-defineProps({
+const props = defineProps({
   show: { type: Boolean, default: false },
   alert: { type: Object, required: true },
 })
 
-defineEmits(['close'])
+const emit = defineEmits(['close'])
 
-const timestamp = computed(() => new Date().toLocaleString('ru-RU'))
+const timestamp = ref('')
+
+function handleKeydown(e) {
+  if (e.key === 'Escape' && props.show) {
+    emit('close')
+  }
+}
+
+onMounted(() => document.addEventListener('keydown', handleKeydown))
+onUnmounted(() => document.removeEventListener('keydown', handleKeydown))
+
+watch(
+  () => props.show,
+  (visible) => {
+    if (visible) {
+      timestamp.value = new Date().toLocaleString('ru-RU')
+    }
+  },
+)
 </script>
-
-<style scoped></style>

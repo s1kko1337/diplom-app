@@ -44,7 +44,7 @@ __screenshots__/
 #Claude
 CLAUDE.md
 .claude
-
+/.claude
 #Temp files
 /temp
 /temp/*

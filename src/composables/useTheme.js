@@ -1,6 +1,8 @@
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 
-const theme = ref('dark')
+const saved = localStorage.getItem('theme') || 'dark'
+const theme = ref(saved)
+document.documentElement.classList.toggle('dark', saved === 'dark')
 
 export function useTheme() {
   function applyTheme(value) {
@@ -12,11 +14,6 @@ export function useTheme() {
   function toggleTheme() {
     applyTheme(theme.value === 'dark' ? 'light' : 'dark')
   }
-
-  onMounted(() => {
-    const saved = localStorage.getItem('theme') || 'dark'
-    applyTheme(saved)
-  })
 
   return { theme, toggleTheme, applyTheme }
 }

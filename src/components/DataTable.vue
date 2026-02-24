@@ -68,5 +68,3 @@ defineProps({
   data: { type: Array, required: true },
 })
 </script>
-
-<style scoped></style>

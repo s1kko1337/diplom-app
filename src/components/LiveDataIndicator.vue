@@ -19,5 +19,3 @@ const props = defineProps({
 
 const { timeSinceUpdate } = useLiveData(props.updateInterval)
 </script>
-
-<style scoped></style>

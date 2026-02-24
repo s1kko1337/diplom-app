@@ -31,7 +31,7 @@
             :class="{
               'fill-current': item.status === 'active',
               'fill-current opacity-60': item.status === 'warning',
-              '': item.status === 'error',
+              'opacity-30': item.status === 'error',
             }"
           />
         </div>
@@ -50,5 +50,3 @@ defineProps({
   isActive: { type: Boolean, default: false },
 })
 </script>
-
-<style scoped></style>
