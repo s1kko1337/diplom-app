@@ -81,7 +81,7 @@
       <div class="text-sm mb-2">НЕТ ВИДЖЕТОВ</div>
       <button
         class="px-4 py-2 border border-border text-xs hover:bg-surface-2 transition-all duration-150"
-        @click="dashboardsStore.toggleEditing();showAddWidget = true"
+        @click="handleStartAdding"
       >
         ДОБАВИТЬ ВИДЖЕТ
       </button>
@@ -150,6 +150,11 @@ async function toggleEdit() {
 
 async function handleReset() {
   await dashboardsStore.resetConfig(equipmentId.value)
+}
+
+function handleStartAdding() {
+  dashboardsStore.toggleEditing()
+  showAddWidget.value = true
 }
 
 function handleRemoveWidget(widgetId) {
