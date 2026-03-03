@@ -5,7 +5,7 @@
     <template v-else>
       <div class="flex items-center justify-between">
         <div>
-          <h2 class="text-2xl">АЛЕРТЫ И УВЕДОМЛЕНИЯ</h2>
+          <h2 class="text-2xl">УВЕДОМЛЕНИЯ</h2>
           <div class="text-sm opacity-50 mt-1">Системные уведомления о состоянии оборудования</div>
         </div>
         <div class="flex items-center gap-4">
@@ -98,7 +98,7 @@
           class="text-center py-12 opacity-50 border-2 border-border bg-surface-1"
         >
           <Bell class="w-8 h-8 mx-auto mb-3 opacity-30" />
-          <div class="text-sm">НЕТ АЛЕРТОВ В ДАННОЙ КАТЕГОРИИ</div>
+          <div class="text-sm">НЕТ УВЕДОМЛЕНИЙ В ДАННОЙ КАТЕГОРИИ</div>
         </div>
       </div>
 

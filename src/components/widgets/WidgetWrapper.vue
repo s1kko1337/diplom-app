@@ -9,6 +9,8 @@
       :title="widget.props?.title || ''"
       :value="currentValue"
       :sensor="sensorDef"
+      :equipment="equipment"
+      :equipment-id="equipmentId"
     />
     <div v-else class="h-full flex items-center justify-center text-xs opacity-30">
       НЕИЗВЕСТНЫЙ ВИДЖЕТ
@@ -27,6 +29,7 @@
 <script setup>
 import { computed } from 'vue'
 import { useSensorsStore } from '@/stores/sensors'
+import { useEquipmentStore } from '@/stores/equipment'
 import { getWidgetComponent } from './widgetRegistry'
 
 const props = defineProps({
@@ -38,8 +41,11 @@ const props = defineProps({
 defineEmits(['remove'])
 
 const sensorsStore = useSensorsStore()
+const equipmentStore = useEquipmentStore()
 
 const widgetComponent = computed(() => getWidgetComponent(props.widget.type))
+
+const equipment = computed(() => equipmentStore.getDetail(props.equipmentId))
 
 const currentValue = computed(() => {
   if (!props.widget.sensorId) return null

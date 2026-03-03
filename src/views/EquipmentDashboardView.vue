@@ -50,7 +50,7 @@
 
     <GridLayout
       v-else-if="layout.length"
-      :layout="layout"
+      v-model:layout="layout"
       :col-num="12"
       :row-height="60"
       :margin="[12, 12]"
@@ -103,6 +103,7 @@ import { ArrowLeft, Pencil, Save, Plus, RotateCcw } from 'lucide-vue-next'
 import { GridLayout, GridItem } from 'grid-layout-plus'
 import { useDashboardsStore } from '@/stores/dashboards'
 import { useSensorsStore } from '@/stores/sensors'
+import { useEquipmentStore } from '@/stores/equipment'
 import WidgetWrapper from '@/components/widgets/WidgetWrapper.vue'
 import AddWidgetModal from '@/components/widgets/AddWidgetModal.vue'
 import LoadingSpinner from '@/components/LoadingSpinner.vue'
@@ -110,18 +111,25 @@ import LoadingSpinner from '@/components/LoadingSpinner.vue'
 const route = useRoute()
 const dashboardsStore = useDashboardsStore()
 const sensorsStore = useSensorsStore()
+const equipmentStore = useEquipmentStore()
 
 const equipmentId = computed(() => route.params.id)
 const showAddWidget = ref(false)
 
-const layout = computed(() => dashboardsStore.getLayout(equipmentId.value))
+const layout = ref([])
 const sensorDefs = computed(() => sensorsStore.getSensorDefs(equipmentId.value))
+
+function syncLayoutFromStore() {
+  layout.value = dashboardsStore.getLayout(equipmentId.value).map((item) => ({ ...item }))
+}
 
 onMounted(async () => {
   await Promise.all([
     dashboardsStore.loadConfig(equipmentId.value),
     sensorsStore.loadSensorDefs(equipmentId.value),
+    equipmentStore.fetchById(equipmentId.value),
   ])
+  syncLayoutFromStore()
   sensorsStore.startPolling(equipmentId.value, 5000)
 })
 
@@ -150,6 +158,7 @@ async function toggleEdit() {
 
 async function handleReset() {
   await dashboardsStore.resetConfig(equipmentId.value)
+  syncLayoutFromStore()
 }
 
 function handleStartAdding() {
@@ -159,20 +168,26 @@ function handleStartAdding() {
 
 function handleRemoveWidget(widgetId) {
   dashboardsStore.removeWidget(equipmentId.value, widgetId)
+  syncLayoutFromStore()
 }
 
 let widgetCounter = 100
 
 function handleAddWidget({ type, sensorId, defaultSize }) {
   const id = `w-${Date.now()}-${widgetCounter++}`
-  const sensor = sensorDefs.value.find((s) => s.id === sensorId)
+  let title = type
+  if (sensorId) {
+    const sensor = sensorDefs.value.find((s) => s.id === sensorId)
+    title = sensor?.label || sensorId
+  }
   dashboardsStore.addWidget(equipmentId.value, {
     id,
     type,
     sensorId,
-    props: { title: sensor?.label || sensorId },
+    props: { title },
     layout: { x: 0, y: 0, w: defaultSize.w, h: defaultSize.h, i: id },
   })
+  syncLayoutFromStore()
   showAddWidget.value = false
 }
 </script>

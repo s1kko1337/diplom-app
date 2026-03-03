@@ -44,7 +44,7 @@ export const useAlertsStore = defineStore('alerts', () => {
     try {
       await alertsApi.acknowledge(id)
     } catch {
-      // live-алерты могут не найтись в mock db
+      // live-уведомления могут не найтись в mock db
     }
     const idx = alerts.value.findIndex((a) => a.id === id)
     if (idx !== -1) {

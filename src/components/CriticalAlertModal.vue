@@ -15,7 +15,7 @@
         <div class="p-8">
           <div class="flex items-start justify-between mb-6">
             <div>
-              <h2 class="text-3xl mb-2">&#9888; КРИТИЧЕСКИЙ АЛЕРТ</h2>
+              <h2 class="text-3xl mb-2">&#9888; КРИТИЧЕСКОЕ УВЕДОМЛЕНИЕ</h2>
               <div class="metric-value text-sm opacity-70">{{ timestamp }}</div>
             </div>
             <button

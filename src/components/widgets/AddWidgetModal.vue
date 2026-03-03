@@ -29,7 +29,7 @@
                     ? 'border-primary bg-surface-2'
                     : 'border-border hover:bg-surface-2'
                 "
-                @click="selectedType = wt.type"
+                @click="handleSelectType(wt.type)"
               >
                 <div class="text-sm">{{ wt.label }}</div>
                 <div class="text-xs opacity-50 mt-1">{{ wt.description }}</div>
@@ -37,7 +37,7 @@
             </div>
           </div>
 
-          <div>
+          <div v-if="needsSensor">
             <label class="text-xs opacity-70 mb-2 block">ДАТЧИК</label>
             <div class="grid grid-cols-2 gap-2">
               <button
@@ -66,7 +66,7 @@
             ОТМЕНА
           </button>
           <button
-            :disabled="!selectedType || !selectedSensor"
+            :disabled="!canAdd"
             class="px-4 py-2 border-2 border-primary text-sm hover:bg-surface-2 transition-all duration-150 disabled:opacity-30"
             @click="handleAdd"
           >
@@ -79,7 +79,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { X } from 'lucide-vue-next'
 import { getWidgetTypesList, widgetTypes } from './widgetRegistry'
 
@@ -103,8 +103,27 @@ const widgetTypesList = getWidgetTypesList()
 const selectedType = ref(null)
 const selectedSensor = ref(null)
 
+const needsSensor = computed(() => {
+  if (!selectedType.value) return false
+  const wt = widgetTypesList.find((w) => w.type === selectedType.value)
+  return wt?.requiresSensor !== false
+})
+
+const canAdd = computed(() => {
+  if (!selectedType.value) return false
+  if (needsSensor.value && !selectedSensor.value) return false
+  return true
+})
+
+function handleSelectType(type) {
+  selectedType.value = type
+  if (!needsSensor.value) {
+    selectedSensor.value = null
+  }
+}
+
 function handleAdd() {
-  if (!selectedType.value || !selectedSensor.value) return
+  if (!canAdd.value) return
   const wType = widgetTypes[selectedType.value]
   emit('add', {
     type: selectedType.value,

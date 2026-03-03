@@ -113,7 +113,7 @@
       </div>
       <div class="space-y-4">
         <SettingsToggle
-          label="Критические алерты"
+          label="Критические уведомления"
           description="Звуковые и визуальные уведомления"
           :model-value="true"
         />
@@ -129,7 +129,7 @@
         />
         <SettingsToggle
           label="Email-уведомления"
-          description="Отправлять алерты на email"
+          description="Отправлять уведомления на email"
           :model-value="true"
         />
         <div>

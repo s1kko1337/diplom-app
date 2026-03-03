@@ -25,7 +25,7 @@ const menuItems = [
   { to: '/', icon: Home, label: 'ГЛАВНАЯ', exact: true },
   { to: '/dashboard', icon: LayoutDashboard, label: 'МОНИТОРИНГ' },
   { to: '/equipment', icon: HardDrive, label: 'ОБОРУДОВАНИЕ' },
-  { to: '/alerts', icon: Bell, label: 'АЛЕРТЫ' },
+  { to: '/alerts', icon: Bell, label: 'УВЕДОМЛЕНИЯ' },
   { to: '/analytics', icon: BarChart3, label: 'АНАЛИТИКА' },
   { to: '/settings', icon: Settings, label: 'НАСТРОЙКИ' },
 ]
