@@ -5,11 +5,7 @@
       ЗАГРУЗКА...
     </div>
     <div v-else-if="parts.length" class="space-y-2 flex-1">
-      <div
-        v-for="part in parts"
-        :key="part.id"
-        class="pb-2 border-b border-border last:border-0"
-      >
+      <div v-for="part in parts" :key="part.id" class="pb-2 border-b border-border last:border-0">
         <div class="flex items-start justify-between">
           <div class="min-w-0 flex-1">
             <div class="text-sm truncate">{{ part.partName }}</div>
@@ -30,9 +26,7 @@
         </div>
       </div>
     </div>
-    <div v-else class="flex-1 flex items-center justify-center text-sm opacity-30">
-      НЕТ ЗАМЕН
-    </div>
+    <div v-else class="flex-1 flex items-center justify-center text-sm opacity-30">НЕТ ЗАМЕН</div>
   </div>
 </template>
 
