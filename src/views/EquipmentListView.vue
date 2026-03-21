@@ -39,19 +39,54 @@
       </Tabs>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
-        <RouterLink
+        <Card
           v-for="item in filteredEquipment"
           :key="item.id"
-          :to="{ name: 'equipment-detail', params: { id: item.id } }"
-          class="cursor-pointer"
+          class="group transition-colors hover:border-primary"
         >
-          <EquipmentCard
-            :name="item.id"
-            :equipment-id="item.model"
-            :is-active="item.status === 'working'"
-            :status="item.cardStatus"
-          />
-        </RouterLink>
+          <RouterLink :to="{ name: 'equipment-detail', params: { id: item.id } }" class="block">
+            <CardHeader class="pb-3">
+              <div class="flex items-center justify-between">
+                <CardTitle class="text-lg">{{ item.id }}</CardTitle>
+                <Badge :variant="item.status === 'malfunction' ? 'destructive' : 'outline'">
+                  <span
+                    class="inline-block h-2 w-2 rounded-full"
+                    :class="STATUS_DOT_COLORS[item.status]"
+                  />
+                  {{ STATUS_LABELS[item.status] }}
+                </Badge>
+              </div>
+              <CardDescription>{{ item.fullModel || item.model }}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div class="grid grid-cols-3 gap-2 text-sm mb-3">
+                <div>
+                  <div class="text-muted-foreground text-xs">Темп.</div>
+                  <div class="metric-value">{{ getSensor(item.id, 'temp-engine') }} °C</div>
+                </div>
+                <div>
+                  <div class="text-muted-foreground text-xs">Обороты</div>
+                  <div class="metric-value">{{ getSensor(item.id, 'speed') }} RPM</div>
+                </div>
+                <div>
+                  <div class="text-muted-foreground text-xs">Глубина</div>
+                  <div class="metric-value">{{ getSensor(item.id, 'depth') }} м</div>
+                </div>
+              </div>
+
+              <div
+                v-if="getNextMaintenance(item.id)"
+                class="flex items-center gap-2 text-xs text-muted-foreground border-t pt-3"
+              >
+                <WrenchIcon class="h-3.5 w-3.5 shrink-0" />
+                <span>
+                  Следующее ТО: {{ getNextMaintenance(item.id).type }} (через
+                  {{ getNextMaintenance(item.id).hoursRemaining }} ч)
+                </span>
+              </div>
+            </CardContent>
+          </RouterLink>
+        </Card>
       </div>
 
       <Card class="hidden sm:block">
@@ -110,10 +145,12 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { Search } from 'lucide-vue-next'
+import { Search, WrenchIcon } from 'lucide-vue-next'
 import { useEquipmentStore } from '@/stores/equipment'
+import { useSensorsStore } from '@/stores/sensors'
+import { useMaintenanceStore } from '@/stores/maintenance'
 import { STATUS_LABELS, STATUS_COLORS, STATUS_DOT_COLORS } from '@/utils/constants'
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -126,10 +163,11 @@ import {
   TableHead,
   TableCell,
 } from '@/components/ui/table'
-import EquipmentCard from '@/components/EquipmentCard.vue'
 import LoadingSpinner from '@/components/LoadingSpinner.vue'
 
 const equipmentStore = useEquipmentStore()
+const sensorsStore = useSensorsStore()
+const maintenanceStore = useMaintenanceStore()
 
 onMounted(() => {
   if (!equipmentStore.list.length) {
@@ -140,26 +178,6 @@ onMounted(() => {
 const searchQuery = ref('')
 const activeTab = ref('all')
 
-const STATUS_CARD_MAP = {
-  working: 'active',
-  malfunction: 'error',
-  idle: 'warning',
-  offline: 'warning',
-}
-
-const equipmentWithCards = computed(() =>
-  equipmentStore.list.map((eq) => {
-    const statusKey = STATUS_CARD_MAP[eq.status] || 'warning'
-    return {
-      ...eq,
-      cardStatus: [
-        { label: 'Модель', value: eq.model, status: statusKey },
-        { label: 'Статус', value: STATUS_LABELS[eq.status] || eq.status, status: statusKey },
-      ],
-    }
-  }),
-)
-
 const statusTabs = computed(() => [
   { key: 'all', label: 'Все', count: equipmentStore.list.length },
   { key: 'working', label: STATUS_LABELS.working, count: equipmentStore.workingCount },
@@ -169,7 +187,7 @@ const statusTabs = computed(() => [
 ])
 
 const filteredEquipment = computed(() => {
-  let result = equipmentWithCards.value
+  let result = equipmentStore.list
   if (activeTab.value !== 'all') {
     result = result.filter((e) => e.status === activeTab.value)
   }
@@ -181,4 +199,19 @@ const filteredEquipment = computed(() => {
   }
   return result
 })
+
+function getSensor(equipmentId, sensorId) {
+  const live = sensorsStore.getSensorValue(equipmentId, sensorId)
+  if (live !== null) return live
+  const detail = equipmentStore.getDetail(equipmentId)
+  if (detail?.sensors) {
+    const sensor = detail.sensors.find((s) => s.id === sensorId)
+    return sensor?.currentValue ?? '—'
+  }
+  return '—'
+}
+
+function getNextMaintenance(equipmentId) {
+  return maintenanceStore.getNextMaintenance(equipmentId)
+}
 </script>
