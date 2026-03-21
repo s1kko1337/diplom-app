@@ -71,9 +71,45 @@ export const alertsDb = [
     timestamp: '2026-02-16 08:45:22',
     acknowledged: true,
   },
+  {
+    id: 'A-007',
+    type: 'maintenance',
+    title: 'Приближается ТО-1',
+    description: 'До планового ТО-1 осталось 42 часа наработки',
+    equipmentId: 'БУР-12',
+    sensorId: null,
+    value: null,
+    threshold: null,
+    timestamp: '2026-03-17T08:00:00',
+    acknowledged: false,
+  },
+  {
+    id: 'A-008',
+    type: 'maintenance',
+    title: 'Просрочено ТО-1',
+    description: 'Плановое ТО-1 просрочено на 150 часов наработки',
+    equipmentId: 'БУР-03',
+    sensorId: null,
+    value: null,
+    threshold: null,
+    timestamp: '2026-03-16T10:30:00',
+    acknowledged: false,
+  },
+  {
+    id: 'A-009',
+    type: 'maintenance',
+    title: 'Приближается ТО-2',
+    description: 'До планового ТО-2 осталось 100 часов наработки',
+    equipmentId: 'БУР-08',
+    sensorId: null,
+    value: null,
+    threshold: null,
+    timestamp: '2026-03-15T14:00:00',
+    acknowledged: true,
+  },
 ]
 
-let alertIdCounter = 7
+let alertIdCounter = 10
 
 export function getAlerts(equipmentId) {
   if (equipmentId) {
