@@ -45,6 +45,9 @@
       <span v-if="order.completedAt">
         Завершён: <span class="text-foreground">{{ formatDate(order.completedAt) }}</span>
       </span>
+      <span v-if="order.reviewedAt">
+        Проверен: <span class="text-foreground">{{ formatDate(order.reviewedAt) }}</span>
+      </span>
     </div>
 
     <!-- Operating hours -->
