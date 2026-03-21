@@ -6,8 +6,8 @@
         class="flex items-center justify-between px-4 py-3 rounded-md border border-input bg-background text-sm"
       >
         <span class="metric-value">{{ authStore.userName }}</span>
-        <Badge :variant="authStore.userRole === 'admin' ? 'default' : 'secondary'">
-          {{ authStore.userRole === 'admin' ? 'Администратор' : 'Пользователь' }}
+        <Badge variant="default">
+          {{ ROLE_LABELS[authStore.userRole] || authStore.userRole }}
         </Badge>
       </div>
     </div>
@@ -30,6 +30,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useAuthStore } from '@/stores/auth'
+import { ROLE_LABELS } from '@/utils/constants'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Switch } from '@/components/ui/switch'

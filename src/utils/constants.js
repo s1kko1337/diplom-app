@@ -36,3 +36,47 @@ export const SUBSYSTEMS = [
   { id: 'mechanical', label: 'Трансмиссия' },
   { id: 'compressor', label: 'Компрессор' },
 ]
+
+export const ORDER_STATUSES = {
+  planned: 'planned',
+  in_progress: 'in_progress',
+  review: 'review',
+  completed: 'completed',
+  cancelled: 'cancelled',
+}
+
+export const ORDER_STATUS_LABELS = {
+  planned: 'Запланировано',
+  in_progress: 'В работе',
+  review: 'На приёмке',
+  completed: 'Завершено',
+  cancelled: 'Отменено',
+}
+
+export const ORDER_STATUS_COLORS = {
+  planned: 'bg-blue-500',
+  in_progress: 'bg-yellow-500',
+  review: 'bg-purple-500',
+  completed: 'bg-green-500',
+  cancelled: 'bg-zinc-500',
+}
+
+export const STEP_STATUSES = {
+  pending: 'pending',
+  passed: 'passed',
+  failed: 'failed',
+  skipped: 'skipped',
+}
+
+export const STEP_STATUS_LABELS = {
+  pending: 'Ожидает',
+  passed: 'Выполнено',
+  failed: 'Не выполнено',
+  skipped: 'Пропущено',
+}
+
+export const ROLE_LABELS = {
+  engineer: 'Инженер',
+  mechanic: 'Механик',
+  foreman: 'Мастер',
+}
