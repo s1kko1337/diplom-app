@@ -203,6 +203,329 @@ const CHECKLISTS = {
       completed: false,
     },
   ],
+  'ТР-1': [
+    {
+      id: 'tr1-01',
+      description: 'Ревизия тормозной системы',
+      requirement: 'Разборка, дефектация, замена накладок',
+      tools: 'Набор ключей, динамометрический ключ',
+      completed: false,
+    },
+    {
+      id: 'tr1-02',
+      description: 'Замена подшипников вращателя',
+      requirement: 'Замена по регламенту или при обнаружении люфта',
+      tools: 'Съёмник, пресс, подшипники',
+      completed: false,
+    },
+    {
+      id: 'tr1-03',
+      description: 'Проверка гидроцилиндров подачи',
+      requirement: 'Проверка хода, герметичности, давления',
+      tools: 'Манометр, ключи',
+      completed: false,
+    },
+    {
+      id: 'tr1-04',
+      description: 'Ревизия пневмосистемы',
+      requirement: 'Проверка клапанов, трубопроводов, ресивера',
+      tools: 'Компрессор контрольный, ключи',
+      completed: false,
+    },
+    {
+      id: 'tr1-05',
+      description: 'Проверка сварных швов мачты',
+      requirement: 'Визуальный и инструментальный контроль',
+      tools: 'Лупа, дефектоскоп, мел',
+      completed: false,
+    },
+    {
+      id: 'tr1-06',
+      description: 'Замена манжет гидроцилиндров',
+      requirement: 'Замена всех уплотнений',
+      tools: 'Монтажный инструмент, ремкомплект',
+      completed: false,
+    },
+    {
+      id: 'tr1-07',
+      description: 'Ревизия электрошкафов',
+      requirement: 'Протяжка, замена повреждённых элементов',
+      tools: 'Отвёртка, тестер, контакт-клеммы',
+      completed: false,
+    },
+    {
+      id: 'tr1-08',
+      description: 'Дефектация канатов',
+      requirement: 'Полная дефектация с замером износа',
+      tools: 'Штангенциркуль, лупа, рулетка',
+      completed: false,
+    },
+  ],
+  'ТР-2': [
+    {
+      id: 'tr2-01',
+      description: 'Капремонт редукторов хода',
+      requirement: 'Разборка, замена шестерён и подшипников',
+      tools: 'Съёмник, пресс, запчасти',
+      completed: false,
+    },
+    {
+      id: 'tr2-02',
+      description: 'Замена канатов',
+      requirement: 'Замена всех несущих канатов',
+      tools: 'Лебёдка вспомогательная, канаты',
+      completed: false,
+    },
+    {
+      id: 'tr2-03',
+      description: 'Полная ревизия электрошкафов',
+      requirement: 'Замена автоматов, контакторов, реле',
+      tools: 'Тестер, электроинструмент',
+      completed: false,
+    },
+    {
+      id: 'tr2-04',
+      description: 'Замена гидрошлангов',
+      requirement: 'Замена всех РВД',
+      tools: 'Ключи, новые РВД',
+      completed: false,
+    },
+    {
+      id: 'tr2-05',
+      description: 'Ревизия компрессора',
+      requirement: 'Проверка клапанов, поршневой группы',
+      tools: 'Инструмент специальный, манометр',
+      completed: false,
+    },
+    {
+      id: 'tr2-06',
+      description: 'Замена футеровки',
+      requirement: 'Замена защитных элементов',
+      tools: 'Сварочный аппарат, листовая сталь',
+      completed: false,
+    },
+    {
+      id: 'tr2-07',
+      description: 'Ревизия поворотной платформы',
+      requirement: 'Проверка ОПУ, смазка',
+      tools: 'Домкраты, смазка, ключи',
+      completed: false,
+    },
+    {
+      id: 'tr2-08',
+      description: 'Перепрессовка пальцев гусениц',
+      requirement: 'Выпрессовка и запрессовка пальцев',
+      tools: 'Пресс гидравлический',
+      completed: false,
+    },
+    {
+      id: 'tr2-09',
+      description: 'Ревизия вращателя',
+      requirement: 'Полная разборка и дефектация',
+      tools: 'Съёмник, стенд, запчасти',
+      completed: false,
+    },
+    {
+      id: 'tr2-10',
+      description: 'Проверка рамы',
+      requirement: 'Дефектоскопия сварных швов рамы',
+      tools: 'Дефектоскоп ультразвуковой',
+      completed: false,
+    },
+  ],
+  'ТР-3': [
+    {
+      id: 'tr3-01',
+      description: 'Разборка/сборка ходовой части',
+      requirement: 'Полная разборка с дефектацией',
+      tools: 'Кран, домкраты, инструмент',
+      completed: false,
+    },
+    {
+      id: 'tr3-02',
+      description: 'Замена вращателя',
+      requirement: 'Демонтаж старого, установка нового',
+      tools: 'Кран, ключи, стропы',
+      completed: false,
+    },
+    {
+      id: 'tr3-03',
+      description: 'Капремонт компрессора',
+      requirement: 'Полная разборка, замена поршневой',
+      tools: 'Стенд, запчасти, инструмент',
+      completed: false,
+    },
+    {
+      id: 'tr3-04',
+      description: 'Замена электродвигателей',
+      requirement: 'Демонтаж и установка новых двигателей',
+      tools: 'Кран, электроинструмент',
+      completed: false,
+    },
+    {
+      id: 'tr3-05',
+      description: 'Полная дефектация гидросистемы',
+      requirement: 'Проверка всех гидрокомпонентов',
+      tools: 'Стенд гидравлический, манометры',
+      completed: false,
+    },
+    {
+      id: 'tr3-06',
+      description: 'Ревизия мачты с заменой секций',
+      requirement: 'Замена повреждённых секций',
+      tools: 'Кран, сварочный аппарат',
+      completed: false,
+    },
+    {
+      id: 'tr3-07',
+      description: 'Замена кабельного барабана',
+      requirement: 'Демонтаж и установка нового',
+      tools: 'Кран, электроинструмент',
+      completed: false,
+    },
+    {
+      id: 'tr3-08',
+      description: 'Ревизия системы пылеподавления',
+      requirement: 'Проверка форсунок, насоса, трубопроводов',
+      tools: 'Ключи, манометр',
+      completed: false,
+    },
+    {
+      id: 'tr3-09',
+      description: 'Замена опорно-поворотного устройства',
+      requirement: 'Демонтаж и установка нового ОПУ',
+      tools: 'Кран, домкраты, болты',
+      completed: false,
+    },
+    {
+      id: 'tr3-10',
+      description: 'Капремонт лебёдки',
+      requirement: 'Разборка, замена барабана, тормозов',
+      tools: 'Стенд, запчасти',
+      completed: false,
+    },
+    {
+      id: 'tr3-11',
+      description: 'Ревизия системы охлаждения',
+      requirement: 'Промывка радиаторов, замена патрубков',
+      tools: 'Моечная установка, запчасти',
+      completed: false,
+    },
+    {
+      id: 'tr3-12',
+      description: 'Восстановление антикоррозийного покрытия',
+      requirement: 'Зачистка, грунтовка, покраска',
+      tools: 'Пескоструй, краскопульт',
+      completed: false,
+    },
+  ],
+  КР: [
+    {
+      id: 'kr-01',
+      description: 'Полная дефектация рамы',
+      requirement: 'Ультразвуковая и магнитная дефектоскопия',
+      tools: 'Дефектоскоп, стенд',
+      completed: false,
+    },
+    {
+      id: 'kr-02',
+      description: 'Восстановление/замена мачты',
+      requirement: 'Полная замена или восстановление секций',
+      tools: 'Кран, сварочный пост',
+      completed: false,
+    },
+    {
+      id: 'kr-03',
+      description: 'Замена ходовой части',
+      requirement: 'Полная замена гусениц, катков, звёздочек',
+      tools: 'Кран, пресс, запчасти',
+      completed: false,
+    },
+    {
+      id: 'kr-04',
+      description: 'Полная замена гидросистемы',
+      requirement: 'Замена всех гидрокомпонентов и трубопроводов',
+      tools: 'Стенд, трубогиб',
+      completed: false,
+    },
+    {
+      id: 'kr-05',
+      description: 'Замена всех электродвигателей',
+      requirement: 'Установка новых двигателей',
+      tools: 'Кран, электроинструмент',
+      completed: false,
+    },
+    {
+      id: 'kr-06',
+      description: 'Замена компрессора',
+      requirement: 'Установка нового компрессора',
+      tools: 'Кран, ключи, стропы',
+      completed: false,
+    },
+    {
+      id: 'kr-07',
+      description: 'Восстановление кабины оператора',
+      requirement: 'Ремонт/замена кабины, остекление',
+      tools: 'Сварочный пост, стёкла',
+      completed: false,
+    },
+    {
+      id: 'kr-08',
+      description: 'Полная замена КИП',
+      requirement: 'Установка новых приборов и датчиков',
+      tools: 'Электроинструмент, тестер',
+      completed: false,
+    },
+    {
+      id: 'kr-09',
+      description: 'Восстановление системы пылеподавления',
+      requirement: 'Полная замена системы',
+      tools: 'Сварочный пост, запчасти',
+      completed: false,
+    },
+    {
+      id: 'kr-10',
+      description: 'Замена поворотной платформы',
+      requirement: 'Установка новой платформы',
+      tools: 'Кран, домкраты',
+      completed: false,
+    },
+    {
+      id: 'kr-11',
+      description: 'Установка нового вращателя',
+      requirement: 'Монтаж и центровка',
+      tools: 'Кран, уровень, ключи',
+      completed: false,
+    },
+    {
+      id: 'kr-12',
+      description: 'Монтаж новой лебёдки',
+      requirement: 'Установка и обкатка',
+      tools: 'Кран, стенд обкатки',
+      completed: false,
+    },
+    {
+      id: 'kr-13',
+      description: 'Полная замена кабельного хозяйства',
+      requirement: 'Прокладка новых кабелей и проводов',
+      tools: 'Электроинструмент, кабель',
+      completed: false,
+    },
+    {
+      id: 'kr-14',
+      description: 'Покраска и антикоррозийная обработка',
+      requirement: 'Полная покраска станка',
+      tools: 'Пескоструй, краскопульт, краска',
+      completed: false,
+    },
+    {
+      id: 'kr-15',
+      description: 'Комплексные испытания',
+      requirement: 'Обкатка всех систем под нагрузкой',
+      tools: 'Стенд нагрузочный, приборы',
+      completed: false,
+    },
+  ],
 }
 
 const scheduleDb = {
@@ -290,4 +613,248 @@ export function completeChecklistItem(equipmentId, itemId) {
     }
   }
   return false
+}
+
+const MOCK_ORDERS = [
+  {
+    id: 'MO-001',
+    equipmentId: 'БУР-12',
+    type: 'ТО-1',
+    status: 'planned',
+    createdBy: { id: 'user-1', name: 'Иванов А.П.', role: 'engineer' },
+    assignedTo: { id: 'user-2', name: 'Петров С.В.' },
+    reviewedBy: null,
+    createdAt: '2026-03-18T09:00:00',
+    startedAt: null,
+    completedAt: null,
+    reviewedAt: null,
+    returnReason: null,
+    operatingHoursAtStart: null,
+    scheduledDate: '2026-04-01',
+    steps: cloneChecklist(CHECKLISTS['ТО-1']).map((item, i) => ({
+      id: `step-${i + 1}`,
+      description: item.description,
+      requirement: item.requirement,
+      tools: item.tools,
+      status: 'pending',
+      comment: null,
+      completedAt: null,
+    })),
+  },
+  {
+    id: 'MO-002',
+    equipmentId: 'БУР-08',
+    type: 'ТО-2',
+    status: 'in_progress',
+    createdBy: { id: 'user-1', name: 'Иванов А.П.', role: 'engineer' },
+    assignedTo: { id: 'user-3', name: 'Сидоров К.М.' },
+    reviewedBy: null,
+    createdAt: '2026-03-15T08:30:00',
+    startedAt: '2026-03-16T07:00:00',
+    completedAt: null,
+    reviewedAt: null,
+    returnReason: null,
+    operatingHoursAtStart: 12480,
+    scheduledDate: '2026-03-20',
+    steps: cloneChecklist(CHECKLISTS['ТО-2']).map((item, i) => ({
+      id: `step-${i + 1}`,
+      description: item.description,
+      requirement: item.requirement,
+      tools: item.tools,
+      status: i < 3 ? 'passed' : i === 3 ? 'failed' : 'pending',
+      comment: i === 3 ? 'Обнаружена коррозия контактов' : null,
+      completedAt: i < 4 ? '2026-03-16T10:00:00' : null,
+    })),
+  },
+  {
+    id: 'MO-003',
+    equipmentId: 'БУР-15',
+    type: 'ЕО',
+    status: 'review',
+    createdBy: { id: 'user-1', name: 'Иванов А.П.', role: 'engineer' },
+    assignedTo: { id: 'user-2', name: 'Петров С.В.' },
+    reviewedBy: null,
+    createdAt: '2026-03-14T08:00:00',
+    startedAt: '2026-03-14T08:30:00',
+    completedAt: null,
+    reviewedAt: null,
+    returnReason: null,
+    operatingHoursAtStart: 1430,
+    scheduledDate: '2026-03-14',
+    steps: cloneChecklist(CHECKLISTS['ЕО']).map((item, i) => ({
+      id: `step-${i + 1}`,
+      description: item.description,
+      requirement: item.requirement,
+      tools: item.tools,
+      status: i === 5 ? 'skipped' : 'passed',
+      comment: i === 5 ? 'Мегаомметр на поверке' : null,
+      completedAt: '2026-03-14T11:00:00',
+    })),
+  },
+  {
+    id: 'MO-004',
+    equipmentId: 'БУР-17',
+    type: 'ТО-1',
+    status: 'completed',
+    createdBy: { id: 'user-1', name: 'Иванов А.П.', role: 'engineer' },
+    assignedTo: { id: 'user-3', name: 'Сидоров К.М.' },
+    reviewedBy: { id: 'user-4', name: 'Козлов Д.А.' },
+    createdAt: '2026-03-10T09:00:00',
+    startedAt: '2026-03-11T07:00:00',
+    completedAt: '2026-03-12T16:00:00',
+    reviewedAt: '2026-03-12T17:00:00',
+    returnReason: null,
+    operatingHoursAtStart: 6900,
+    scheduledDate: '2026-03-12',
+    steps: cloneChecklist(CHECKLISTS['ТО-1']).map((item, i) => ({
+      id: `step-${i + 1}`,
+      description: item.description,
+      requirement: item.requirement,
+      tools: item.tools,
+      status: 'passed',
+      comment: null,
+      completedAt: '2026-03-12T15:00:00',
+    })),
+  },
+  {
+    id: 'MO-005',
+    equipmentId: 'БУР-03',
+    type: 'ТО-3',
+    status: 'cancelled',
+    createdBy: { id: 'user-1', name: 'Иванов А.П.', role: 'engineer' },
+    assignedTo: null,
+    reviewedBy: null,
+    createdAt: '2026-03-08T09:00:00',
+    startedAt: null,
+    completedAt: null,
+    reviewedAt: null,
+    returnReason: null,
+    operatingHoursAtStart: null,
+    scheduledDate: '2026-03-20',
+    steps: cloneChecklist(CHECKLISTS['ТО-3']).map((item, i) => ({
+      id: `step-${i + 1}`,
+      description: item.description,
+      requirement: item.requirement,
+      tools: item.tools,
+      status: 'pending',
+      comment: null,
+      completedAt: null,
+    })),
+  },
+  {
+    id: 'MO-006',
+    equipmentId: 'БУР-19',
+    type: 'ТР-1',
+    status: 'planned',
+    createdBy: { id: 'user-1', name: 'Иванов А.П.', role: 'engineer' },
+    assignedTo: { id: 'user-2', name: 'Петров С.В.' },
+    reviewedBy: null,
+    createdAt: '2026-03-20T10:00:00',
+    startedAt: null,
+    completedAt: null,
+    reviewedAt: null,
+    returnReason: null,
+    operatingHoursAtStart: null,
+    scheduledDate: '2026-04-05',
+    steps: cloneChecklist(CHECKLISTS['ТР-1']).map((item, i) => ({
+      id: `step-${i + 1}`,
+      description: item.description,
+      requirement: item.requirement,
+      tools: item.tools,
+      status: 'pending',
+      comment: null,
+      completedAt: null,
+    })),
+  },
+]
+
+let orders = MOCK_ORDERS.map((o) => ({ ...o, steps: o.steps.map((s) => ({ ...s })) }))
+
+export function getOrders(filters = {}) {
+  let result = [...orders]
+  if (filters.equipmentId) {
+    result = result.filter((o) => o.equipmentId === filters.equipmentId)
+  }
+  if (filters.type) {
+    result = result.filter((o) => o.type === filters.type)
+  }
+  if (filters.assignedTo) {
+    result = result.filter((o) => o.assignedTo?.id === filters.assignedTo)
+  }
+  if (filters.status) {
+    result = result.filter((o) => o.status === filters.status)
+  }
+  return result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+}
+
+export function getOrder(id) {
+  const order = orders.find((o) => o.id === id)
+  if (!order) throw new Error('Наряд не найден')
+  return { ...order, steps: order.steps.map((s) => ({ ...s })) }
+}
+
+export function createOrder(data) {
+  const template = CHECKLISTS[data.type] || []
+  const newOrder = {
+    id: 'MO-' + Date.now(),
+    equipmentId: data.equipmentId,
+    type: data.type,
+    status: 'planned',
+    createdBy: data.createdBy,
+    assignedTo: data.assignedTo || null,
+    reviewedBy: null,
+    createdAt: new Date().toISOString(),
+    startedAt: null,
+    completedAt: null,
+    reviewedAt: null,
+    returnReason: null,
+    operatingHoursAtStart: null,
+    scheduledDate: data.scheduledDate || null,
+    steps: (data.steps || template).map((item, i) => ({
+      id: `step-${i + 1}`,
+      description: item.description,
+      requirement: item.requirement || '',
+      tools: item.tools || '',
+      status: 'pending',
+      comment: null,
+      completedAt: null,
+    })),
+  }
+  orders.unshift(newOrder)
+  return { ...newOrder, steps: newOrder.steps.map((s) => ({ ...s })) }
+}
+
+export function updateOrderStatus(id, status, payload = {}) {
+  const order = orders.find((o) => o.id === id)
+  if (!order) throw new Error('Наряд не найден')
+  order.status = status
+  if (status === 'in_progress' && payload.operatingHours != null) {
+    order.startedAt = new Date().toISOString()
+    order.operatingHoursAtStart = payload.operatingHours
+    order.returnReason = null
+  }
+  if (status === 'completed' && payload.reviewedBy) {
+    order.completedAt = new Date().toISOString()
+    order.reviewedAt = new Date().toISOString()
+    order.reviewedBy = payload.reviewedBy
+  }
+  if (status === 'in_progress' && payload.returnReason) {
+    order.returnReason = payload.returnReason
+  }
+  return { ...order, steps: order.steps.map((s) => ({ ...s })) }
+}
+
+export function completeOrderStep(orderId, stepId, status, comment) {
+  const order = orders.find((o) => o.id === orderId)
+  if (!order) throw new Error('Наряд не найден')
+  const step = order.steps.find((s) => s.id === stepId)
+  if (!step) throw new Error('Шаг не найден')
+  step.status = status
+  step.comment = comment || null
+  step.completedAt = new Date().toISOString()
+  return { ...step }
+}
+
+export function getChecklistTemplate(type) {
+  return cloneChecklist(CHECKLISTS[type] || [])
 }
