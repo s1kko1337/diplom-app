@@ -89,7 +89,7 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import LoadingSpinner from '@/components/LoadingSpinner.vue'
@@ -106,39 +106,43 @@ const maintenanceStore = useMaintenanceStore()
 const { currentOrder, ordersLoading } = storeToRefs(maintenanceStore)
 const { canExecute, canReview, canCancel } = usePermissions()
 
-const id = route.params.id
+const id = computed(() => route.params.id)
 
-onMounted(async () => {
-  await maintenanceStore.loadOrder(id)
-})
+watch(
+  id,
+  (val) => {
+    if (val) maintenanceStore.loadOrder(val)
+  },
+  { immediate: true },
+)
 
 async function handleStartOrder() {
   await maintenanceStore.startOrder(currentOrder.value.id)
-  await maintenanceStore.loadOrder(id)
+  await maintenanceStore.loadOrder(id.value)
 }
 
 async function handleCancelOrder() {
   await maintenanceStore.cancelOrder(currentOrder.value.id)
-  await maintenanceStore.loadOrder(id)
+  await maintenanceStore.loadOrder(id.value)
 }
 
 async function handleStepCompleted() {
-  await maintenanceStore.loadOrder(id)
+  await maintenanceStore.loadOrder(id.value)
 }
 
 async function handleSubmitForReview() {
   await maintenanceStore.submitForReview(currentOrder.value.id)
-  await maintenanceStore.loadOrder(id)
+  await maintenanceStore.loadOrder(id.value)
 }
 
 async function handleApprove() {
   await maintenanceStore.approveOrder(currentOrder.value.id)
-  await maintenanceStore.loadOrder(id)
+  await maintenanceStore.loadOrder(id.value)
 }
 
 async function handleReturn(reason) {
   await maintenanceStore.returnOrder(currentOrder.value.id, reason)
-  await maintenanceStore.loadOrder(id)
+  await maintenanceStore.loadOrder(id.value)
 }
 </script>
 

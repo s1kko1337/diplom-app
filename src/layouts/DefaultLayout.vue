@@ -4,7 +4,7 @@
     <div class="flex flex-1 flex-col overflow-hidden">
       <AppHeader @toggle-sidebar="handleToggleSidebar" />
       <main class="flex-1 overflow-y-auto p-4 lg:p-6">
-        <RouterView />
+        <RouterView :key="$route.fullPath" />
       </main>
       <AppFooter />
     </div>
