@@ -1,4 +1,12 @@
-import { Home, LayoutDashboard, Server, Bell, BarChart3, Settings } from 'lucide-vue-next'
+import {
+  Home,
+  LayoutDashboard,
+  Server,
+  Bell,
+  BarChart3,
+  Settings,
+  ClipboardCheck,
+} from 'lucide-vue-next'
 
 export const menuGroups = [
   {
@@ -7,6 +15,7 @@ export const menuGroups = [
       { to: '/', icon: Home, label: 'Главная', exact: true },
       { to: '/dashboard', icon: LayoutDashboard, label: 'Мониторинг' },
       { to: '/equipment', icon: Server, label: 'Оборудование' },
+      { to: '/maintenance', icon: ClipboardCheck, label: 'Техобслуживание' },
     ],
   },
   {

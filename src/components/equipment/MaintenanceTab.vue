@@ -157,15 +157,62 @@
         </div>
       </CardContent>
     </Card>
+
+    <!-- Recent maintenance orders -->
+    <Card>
+      <CardHeader>
+        <div class="flex items-center justify-between">
+          <CardTitle class="text-xs">НАРЯДЫ ТО</CardTitle>
+          <Button v-if="canCreate" size="sm" variant="outline" class="text-xs h-7" as-child>
+            <RouterLink :to="`/maintenance/create?equipmentId=${props.equipmentId}`">
+              Создать наряд
+            </RouterLink>
+          </Button>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div v-if="maintenanceStore.ordersLoading" class="text-center py-6 opacity-50">
+          <LoadingSpinner />
+        </div>
+        <div v-else-if="recentOrders.length === 0" class="text-center py-6 text-sm opacity-40">
+          Нет нарядов
+        </div>
+        <div v-else class="space-y-2">
+          <RouterLink
+            v-for="order in recentOrders"
+            :key="order.id"
+            :to="`/maintenance/${order.id}`"
+            class="flex items-center justify-between py-2 border-b border-border last:border-0 hover:opacity-80 transition-opacity"
+          >
+            <div class="flex items-center gap-3">
+              <Badge variant="outline">{{ order.type }}</Badge>
+              <span
+                class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium text-white"
+                :class="ORDER_STATUS_COLORS[order.status]"
+              >
+                {{ ORDER_STATUS_LABELS[order.status] }}
+              </span>
+            </div>
+            <div class="flex items-center gap-4 text-xs opacity-60">
+              <span>{{ order.assignedTo?.name || '—' }}</span>
+              <span class="metric-value">{{ order.createdAt?.split('T')[0] }}</span>
+            </div>
+          </RouterLink>
+        </div>
+      </CardContent>
+    </Card>
   </div>
 </template>
 
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue'
+import { RouterLink } from 'vue-router'
 import { useMaintenanceStore } from '@/stores/maintenance'
-import { MAINTENANCE_SCHEDULE } from '@/utils/constants'
+import { MAINTENANCE_SCHEDULE, ORDER_STATUS_LABELS, ORDER_STATUS_COLORS } from '@/utils/constants'
+import { usePermissions } from '@/composables/usePermissions'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import {
   Select,
   SelectContent,
@@ -181,6 +228,7 @@ const props = defineProps({
 })
 
 const maintenanceStore = useMaintenanceStore()
+const { canCreate } = usePermissions()
 
 const selectedChecklistType = ref('ЕО')
 const checklistTypes = Object.keys(MAINTENANCE_SCHEDULE)
@@ -237,6 +285,9 @@ const nextProgressClass = computed(() => {
 // Schedule
 const scheduleItems = ref([])
 
+// Recent orders
+const recentOrders = computed(() => maintenanceStore.orders.slice(0, 5))
+
 // Checklist
 const completedCount = computed(() => maintenanceStore.checklist.filter((i) => i.completed).length)
 
@@ -262,5 +313,6 @@ watch(
 onMounted(async () => {
   await maintenanceStore.loadSchedule(props.equipmentId)
   scheduleItems.value = maintenanceStore.schedule[props.equipmentId] || []
+  maintenanceStore.loadOrders({ equipmentId: props.equipmentId })
 })
 </script>
