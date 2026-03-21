@@ -64,6 +64,20 @@ export const widgetTypes = {
     requiresSensor: false,
     component: defineAsyncComponent(() => import('./PartsWidget.vue')),
   },
+  'maintenance-timeline': {
+    component: defineAsyncComponent(() => import('./MaintenanceTimelineWidget.vue')),
+    label: 'Цикл ТО',
+    description: 'Таймлайн технического обслуживания',
+    defaultSize: { w: 6, h: 4 },
+    requiresSensor: false,
+  },
+  'subsystem-health': {
+    component: defineAsyncComponent(() => import('./SubsystemHealthWidget.vue')),
+    label: 'Здоровье подсистем',
+    description: 'Состояние подсистем оборудования',
+    defaultSize: { w: 4, h: 3 },
+    requiresSensor: false,
+  },
 }
 
 export function getWidgetComponent(type) {
