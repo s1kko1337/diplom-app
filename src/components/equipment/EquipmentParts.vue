@@ -17,22 +17,24 @@
           <TableRow>
             <TableHead>ДАТА</TableHead>
             <TableHead>ДЕТАЛЬ</TableHead>
-            <TableHead>АРТИКУЛ</TableHead>
-            <TableHead>ОРИГИНАЛ</TableHead>
-            <TableHead>ИСПОЛНИТЕЛЬ</TableHead>
+            <TableHead class="hidden md:table-cell">АРТИКУЛ</TableHead>
+            <TableHead class="hidden sm:table-cell">ОРИГИНАЛ</TableHead>
+            <TableHead class="hidden md:table-cell">ИСПОЛНИТЕЛЬ</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           <TableRow v-for="part in parts" :key="part.id">
             <TableCell class="metric-value opacity-70">{{ part.date }}</TableCell>
             <TableCell>{{ part.partName }}</TableCell>
-            <TableCell class="metric-value opacity-50">{{ part.partNumber }}</TableCell>
-            <TableCell>
+            <TableCell class="metric-value opacity-50 hidden md:table-cell">{{
+              part.partNumber
+            }}</TableCell>
+            <TableCell class="hidden sm:table-cell">
               <Badge :variant="part.isOriginal ? 'default' : 'destructive'">
                 {{ part.isOriginal ? 'ОРИГИНАЛ' : 'АНАЛОГ' }}
               </Badge>
             </TableCell>
-            <TableCell class="opacity-70">{{ part.replacedBy }}</TableCell>
+            <TableCell class="opacity-70 hidden md:table-cell">{{ part.replacedBy }}</TableCell>
           </TableRow>
         </TableBody>
       </Table>

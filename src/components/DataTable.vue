@@ -13,13 +13,13 @@
           <TableHead>
             <div class="text-xs">ОБОРУДОВАНИЕ</div>
           </TableHead>
-          <TableHead class="text-right">
+          <TableHead class="text-right hidden md:table-cell">
             <div class="text-xs">ГЛУБИНА (М)</div>
           </TableHead>
-          <TableHead class="text-right">
+          <TableHead class="text-right hidden md:table-cell">
             <div class="text-xs">СКОРОСТЬ (RPM)</div>
           </TableHead>
-          <TableHead class="text-right">
+          <TableHead class="text-right hidden sm:table-cell">
             <div class="text-xs">ТЕМПЕРАТУРА (°C)</div>
           </TableHead>
           <TableHead>
@@ -31,13 +31,13 @@
         <TableRow v-for="row in data" :key="row.id">
           <TableCell class="metric-value text-sm">{{ row.id }}</TableCell>
           <TableCell class="text-sm">{{ row.equipment }}</TableCell>
-          <TableCell class="metric-value text-sm text-right">
+          <TableCell class="metric-value text-sm text-right hidden md:table-cell">
             {{ row.depth.toFixed(1) }}
           </TableCell>
-          <TableCell class="metric-value text-sm text-right">
+          <TableCell class="metric-value text-sm text-right hidden md:table-cell">
             {{ row.speed.toLocaleString() }}
           </TableCell>
-          <TableCell class="metric-value text-sm text-right">
+          <TableCell class="metric-value text-sm text-right hidden sm:table-cell">
             {{ row.temperature }}
           </TableCell>
           <TableCell class="text-sm">

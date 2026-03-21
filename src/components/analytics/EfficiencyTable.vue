@@ -8,18 +8,20 @@
         <TableHeader>
           <TableRow>
             <TableHead>Оборудование</TableHead>
-            <TableHead>Модель</TableHead>
+            <TableHead class="hidden md:table-cell">Модель</TableHead>
             <TableHead class="text-right">Эффективность</TableHead>
-            <TableHead class="w-64">Прогресс</TableHead>
+            <TableHead class="hidden sm:table-cell w-64">Прогресс</TableHead>
             <TableHead class="text-center">Тренд</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           <TableRow v-for="row in rows" :key="row.id">
             <TableCell class="font-medium">{{ row.id }}</TableCell>
-            <TableCell class="text-muted-foreground">{{ row.model }}</TableCell>
+            <TableCell class="text-muted-foreground hidden md:table-cell">{{
+              row.model
+            }}</TableCell>
             <TableCell class="text-right metric-value">{{ row.efficiency }}%</TableCell>
-            <TableCell>
+            <TableCell class="hidden sm:table-cell">
               <div class="flex items-center gap-3">
                 <div class="flex-1 h-2 rounded-full bg-muted">
                   <div

@@ -1,5 +1,5 @@
 <template>
-  <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
     <Card v-for="metric in metrics" :key="metric.label">
       <CardHeader class="pb-2">
         <CardDescription>{{ metric.label }}</CardDescription>

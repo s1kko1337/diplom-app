@@ -1,6 +1,6 @@
 <template>
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-    <Card class="lg:col-span-2">
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <Card>
       <CardHeader>
         <CardTitle class="text-sm font-medium">Производительность по месяцам</CardTitle>
       </CardHeader>

@@ -1,5 +1,51 @@
 <template>
-  <Dialog :open="show" @update:open="handleOpenChange">
+  <!-- Mobile: Sheet from bottom -->
+  <Sheet v-if="isMobile" :open="show" @update:open="handleOpenChange">
+    <SheetContent
+      side="bottom"
+      class="max-h-[90vh] overflow-y-auto bg-status-critical-bg text-status-critical-text border-primary animate-pulse rounded-t-lg"
+    >
+      <SheetHeader>
+        <SheetTitle class="text-2xl text-status-critical-text">
+          &#9888; КРИТИЧЕСКОЕ УВЕДОМЛЕНИЕ
+        </SheetTitle>
+        <SheetDescription class="metric-value text-sm text-status-critical-text/70">
+          {{ timestamp }}
+        </SheetDescription>
+      </SheetHeader>
+
+      <div class="space-y-6 py-4">
+        <div>
+          <label class="text-xs mb-2 block opacity-70">ОБОРУДОВАНИЕ</label>
+          <div class="text-xl metric-value">{{ alert.equipment }}</div>
+        </div>
+
+        <div>
+          <label class="text-xs mb-2 block opacity-70">ОПИСАНИЕ ПРОБЛЕМЫ</label>
+          <div class="text-lg">{{ alert.title }}</div>
+          <div class="mt-3 text-base opacity-80">{{ alert.description }}</div>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-3 pt-6 border-t border-current">
+        <button
+          class="w-full min-h-[44px] px-6 py-3 border border-current rounded-md hover:bg-status-critical-text hover:text-status-critical-bg transition-all duration-150"
+          @click="handleClose"
+        >
+          <span class="text-sm">ПОДТВЕРДИТЬ И ЗАКРЫТЬ</span>
+        </button>
+
+        <button
+          class="w-full min-h-[44px] px-6 py-3 bg-primary text-status-critical-bg border border-current rounded-md hover:opacity-80 transition-all duration-150"
+        >
+          <span class="text-sm">ЭКСТРЕННАЯ ОСТАНОВКА</span>
+        </button>
+      </div>
+    </SheetContent>
+  </Sheet>
+
+  <!-- Desktop: Dialog -->
+  <Dialog v-else :open="show" @update:open="handleOpenChange">
     <DialogContent
       class="max-w-2xl bg-status-critical-bg text-status-critical-text border-primary animate-pulse rounded-lg"
     >
@@ -27,14 +73,14 @@
 
       <DialogFooter class="pt-6 border-t border-current gap-4">
         <button
-          class="flex-1 px-6 py-4 border border-current rounded-md hover:bg-status-critical-text hover:text-status-critical-bg transition-all duration-150"
+          class="flex-1 min-h-[44px] px-6 py-4 border border-current rounded-md hover:bg-status-critical-text hover:text-status-critical-bg transition-all duration-150"
           @click="handleClose"
         >
           <span class="text-sm">ПОДТВЕРДИТЬ И ЗАКРЫТЬ</span>
         </button>
 
         <button
-          class="flex-1 px-6 py-4 bg-primary text-status-critical-bg border border-current rounded-md hover:opacity-80 transition-all duration-150"
+          class="flex-1 min-h-[44px] px-6 py-4 bg-primary text-status-critical-bg border border-current rounded-md hover:opacity-80 transition-all duration-150"
         >
           <span class="text-sm">ЭКСТРЕННАЯ ОСТАНОВКА</span>
         </button>
@@ -45,6 +91,7 @@
 
 <script setup>
 import { ref, watch } from 'vue'
+import { useBreakpoint } from '@/composables/useBreakpoint'
 import {
   Dialog,
   DialogContent,
@@ -53,6 +100,13 @@ import {
   DialogDescription,
   DialogFooter,
 } from '@/components/ui/dialog'
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+} from '@/components/ui/sheet'
 
 const props = defineProps({
   show: { type: Boolean, default: false },
@@ -61,6 +115,7 @@ const props = defineProps({
 
 const emit = defineEmits(['close'])
 
+const { isMobile } = useBreakpoint()
 const timestamp = ref('')
 
 function handleClose() {

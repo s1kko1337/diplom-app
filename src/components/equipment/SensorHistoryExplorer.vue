@@ -4,11 +4,11 @@
       <CardTitle class="text-xs">ИСТОРИЧЕСКИЕ ДАННЫЕ ДАТЧИКОВ</CardTitle>
     </CardHeader>
     <CardContent>
-      <div class="flex flex-wrap items-end gap-4 mb-4">
-        <div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:flex lg:flex-wrap items-end gap-4 mb-4">
+        <div class="sm:col-span-2 lg:col-auto">
           <label class="text-xs opacity-50 mb-1 block">ДАТЧИК</label>
           <Select v-model="historySensorId">
-            <SelectTrigger class="w-[240px]">
+            <SelectTrigger class="w-full lg:w-[240px]">
               <SelectValue placeholder="Выберите датчик" />
             </SelectTrigger>
             <SelectContent>
@@ -20,13 +20,19 @@
         </div>
         <div>
           <label class="text-xs opacity-50 mb-1 block">ОТ</label>
-          <Input v-model="historyFrom" type="date" class="w-[160px]" />
+          <Input v-model="historyFrom" type="date" class="w-full lg:w-[160px]" />
         </div>
         <div>
           <label class="text-xs opacity-50 mb-1 block">ДО</label>
-          <Input v-model="historyTo" type="date" class="w-[160px]" />
+          <Input v-model="historyTo" type="date" class="w-full lg:w-[160px]" />
         </div>
-        <Button variant="outline" @click="loadHistory">ЗАГРУЗИТЬ</Button>
+        <Button
+          variant="outline"
+          class="min-h-[44px] sm:min-h-0 sm:col-span-2 lg:col-auto"
+          @click="loadHistory"
+        >
+          ЗАГРУЗИТЬ
+        </Button>
       </div>
 
       <div v-if="historyLoading" class="text-center py-8 opacity-50">

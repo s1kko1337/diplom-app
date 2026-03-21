@@ -1,5 +1,5 @@
 <template>
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+  <div class="grid grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6">
     <MetricCard
       title="СКОРОСТЬ ВРАЩЕНИЯ"
       :value="getSensorDisplay('speed')"

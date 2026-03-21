@@ -1,48 +1,48 @@
 <template>
   <div class="space-y-4">
-    <div class="flex items-center justify-between">
-      <div class="flex items-center gap-4">
-        <RouterLink
-          to="/"
-          class="p-3 border-2 border-border hover:bg-surface-2 transition-all duration-150"
-        >
-          <ArrowLeft class="w-5 h-5" />
-        </RouterLink>
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div class="flex items-center gap-3 sm:gap-4">
+        <Button variant="outline" size="icon" class="min-h-[44px] min-w-[44px]" as-child>
+          <RouterLink to="/">
+            <ArrowLeft class="w-5 h-5" />
+          </RouterLink>
+        </Button>
         <div>
-          <h2 class="text-2xl">{{ equipmentId }}</h2>
-          <div class="text-sm opacity-50 mt-1">Панель мониторинга</div>
+          <h2 class="text-xl sm:text-2xl font-semibold">{{ equipmentId }}</h2>
+          <div class="text-xs sm:text-sm text-muted-foreground mt-1">Панель мониторинга</div>
         </div>
       </div>
 
-      <div class="flex items-center gap-2">
-        <button
+      <div class="flex items-center gap-2 flex-wrap">
+        <Button
           v-if="dashboardsStore.editing"
-          class="flex items-center gap-2 px-4 py-2 border border-border text-sm hover:bg-surface-2 transition-all duration-150"
+          variant="outline"
+          size="sm"
+          class="min-h-[44px] sm:min-h-0"
           @click="showAddWidget = true"
         >
           <Plus class="w-4 h-4" />
-          <span>ВИДЖЕТ</span>
-        </button>
-        <button
+          Виджет
+        </Button>
+        <Button
           v-if="dashboardsStore.editing"
-          class="flex items-center gap-2 px-4 py-2 border border-border text-sm hover:bg-surface-2 transition-all duration-150"
+          variant="outline"
+          size="sm"
+          class="min-h-[44px] sm:min-h-0"
           @click="handleReset"
         >
           <RotateCcw class="w-4 h-4" />
-          <span>СБРОС</span>
-        </button>
-        <button
-          class="flex items-center gap-2 px-4 py-2 border-2 text-sm transition-all duration-150"
-          :class="
-            dashboardsStore.editing
-              ? 'border-primary bg-surface-2'
-              : 'border-border hover:bg-surface-2'
-          "
+          Сброс
+        </Button>
+        <Button
+          :variant="dashboardsStore.editing ? 'default' : 'outline'"
+          size="sm"
+          class="min-h-[44px] sm:min-h-0"
           @click="toggleEdit"
         >
           <component :is="dashboardsStore.editing ? Save : Pencil" class="w-4 h-4" />
-          <span>{{ dashboardsStore.editing ? 'СОХРАНИТЬ' : 'НАСТРОИТЬ' }}</span>
-        </button>
+          {{ dashboardsStore.editing ? 'Сохранить' : 'Настроить' }}
+        </Button>
       </div>
     </div>
 
@@ -51,11 +51,11 @@
     <GridLayout
       v-else-if="layout.length"
       v-model:layout="layout"
-      :col-num="12"
-      :row-height="60"
-      :margin="[12, 12]"
-      :is-draggable="dashboardsStore.editing"
-      :is-resizable="dashboardsStore.editing"
+      :col-num="isMobile ? 1 : 12"
+      :row-height="isMobile ? 80 : 60"
+      :margin="isMobile ? [8, 8] : [12, 12]"
+      :is-draggable="!isMobile && dashboardsStore.editing"
+      :is-resizable="!isMobile && dashboardsStore.editing"
       @layout-updated="handleLayoutUpdate"
     >
       <GridItem
@@ -77,15 +77,12 @@
       </GridItem>
     </GridLayout>
 
-    <div v-else class="text-center py-12 border-2 border-border border-dashed opacity-50">
-      <div class="text-sm mb-2">НЕТ ВИДЖЕТОВ</div>
-      <button
-        class="px-4 py-2 border border-border text-xs hover:bg-surface-2 transition-all duration-150"
-        @click="handleStartAdding"
-      >
-        ДОБАВИТЬ ВИДЖЕТ
-      </button>
-    </div>
+    <Card v-else class="border-dashed">
+      <CardContent class="text-center py-12">
+        <div class="text-sm text-muted-foreground mb-3">Нет виджетов</div>
+        <Button variant="outline" size="sm" @click="handleStartAdding"> Добавить виджет </Button>
+      </CardContent>
+    </Card>
 
     <AddWidgetModal
       :show="showAddWidget"
@@ -97,18 +94,22 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { ArrowLeft, Pencil, Save, Plus, RotateCcw } from 'lucide-vue-next'
 import { GridLayout, GridItem } from 'grid-layout-plus'
+import { useBreakpoint } from '@/composables/useBreakpoint'
 import { useDashboardsStore } from '@/stores/dashboards'
 import { useSensorsStore } from '@/stores/sensors'
 import { useEquipmentStore } from '@/stores/equipment'
+import { Card, CardContent } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
 import WidgetWrapper from '@/components/widgets/WidgetWrapper.vue'
 import AddWidgetModal from '@/components/widgets/AddWidgetModal.vue'
 import LoadingSpinner from '@/components/LoadingSpinner.vue'
 
 const route = useRoute()
+const { isMobile } = useBreakpoint()
 const dashboardsStore = useDashboardsStore()
 const sensorsStore = useSensorsStore()
 const equipmentStore = useEquipmentStore()
@@ -116,12 +117,29 @@ const equipmentStore = useEquipmentStore()
 const equipmentId = computed(() => route.params.id)
 const showAddWidget = ref(false)
 
+// IMPORTANT: layout MUST be a mutable ref, NOT computed.
+// grid-layout-plus mutates the array in-place during drag/resize.
 const layout = ref([])
 const sensorDefs = computed(() => sensorsStore.getSensorDefs(equipmentId.value))
 
 function syncLayoutFromStore() {
-  layout.value = dashboardsStore.getLayout(equipmentId.value).map((item) => ({ ...item }))
+  const items = dashboardsStore.getLayout(equipmentId.value).map((item) => ({ ...item }))
+  if (isMobile.value) {
+    items.forEach((item, idx) => {
+      item.x = 0
+      item.w = 1
+      item.y = idx
+    })
+  }
+  layout.value = items
 }
+
+// Re-sync layout when breakpoint changes to/from mobile
+watch(isMobile, () => {
+  if (layout.value.length) {
+    syncLayoutFromStore()
+  }
+})
 
 onMounted(async () => {
   await Promise.all([

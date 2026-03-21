@@ -3,8 +3,8 @@
     <LoadingSpinner v-if="equipmentStore.loading && !equipmentStore.list.length" />
 
     <template v-else>
-      <div class="flex items-center justify-between">
-        <h1 class="text-2xl font-semibold">Аналитика</h1>
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <h1 class="text-xl sm:text-2xl font-semibold">Аналитика</h1>
         <AnalyticsPeriodSelector v-model="period" />
       </div>
 

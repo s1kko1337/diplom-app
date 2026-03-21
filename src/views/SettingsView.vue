@@ -1,30 +1,32 @@
 <template>
   <div class="space-y-6">
-    <div class="flex items-center justify-between">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       <div>
-        <h2 class="text-2xl">НАСТРОЙКИ СИСТЕМЫ</h2>
-        <div class="text-sm text-muted-foreground mt-1">Конфигурация системы мониторинга</div>
+        <h2 class="text-xl sm:text-2xl">НАСТРОЙКИ СИСТЕМЫ</h2>
+        <div class="text-xs sm:text-sm text-muted-foreground mt-1">
+          Конфигурация системы мониторинга
+        </div>
       </div>
-      <div class="flex items-center gap-4">
+      <div class="flex items-center gap-3 sm:gap-4">
         <span
           v-if="saveMessage"
           class="text-sm px-3 py-1 border border-primary bg-surface-2 transition-all duration-300"
         >
           {{ saveMessage }}
         </span>
-        <Button variant="outline" @click="resetSettings">
+        <Button variant="outline" class="min-h-[44px] sm:min-h-0" @click="resetSettings">
           <RefreshCw class="w-4 h-4" />
-          СБРОСИТЬ
+          <span class="hidden sm:inline">СБРОСИТЬ</span>
         </Button>
-        <Button @click="saveSettings">
+        <Button class="min-h-[44px] sm:min-h-0" @click="saveSettings">
           <Save class="w-4 h-4" />
-          СОХРАНИТЬ
+          <span class="hidden sm:inline">СОХРАНИТЬ</span>
         </Button>
       </div>
     </div>
 
     <Tabs default-value="display">
-      <TabsList class="w-full justify-start">
+      <TabsList class="w-full justify-start overflow-x-auto">
         <TabsTrigger value="display">Отображение</TabsTrigger>
         <TabsTrigger value="notifications">Уведомления</TabsTrigger>
         <TabsTrigger value="thresholds">Пороги</TabsTrigger>
