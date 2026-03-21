@@ -6,14 +6,17 @@
     <CardContent>
       <form class="space-y-4" @submit.prevent="handleLogin">
         <div class="space-y-2">
-          <label class="text-sm font-medium" for="login-username">Логин</label>
-          <Input
-            id="login-username"
-            v-model="username"
-            type="text"
-            placeholder="admin"
-            autocomplete="username"
-          />
+          <label class="text-sm font-medium">Пользователь</label>
+          <Select v-model="selectedUserId">
+            <SelectTrigger>
+              <SelectValue placeholder="Выберите пользователя" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem v-for="u in MOCK_USERS" :key="u.id" :value="u.id">
+                {{ u.name }} — {{ ROLE_LABELS[u.role] }}
+              </SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         <div class="space-y-2">
@@ -25,20 +28,6 @@
             placeholder="••••••"
             autocomplete="current-password"
           />
-        </div>
-
-        <div class="space-y-2">
-          <label class="text-sm font-medium">Роль</label>
-          <Select v-model="role">
-            <SelectTrigger>
-              <SelectValue placeholder="Выберите роль" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem v-for="(label, key) in ROLE_LABELS" :key="key" :value="key">
-                {{ label }}
-              </SelectItem>
-            </SelectContent>
-          </Select>
         </div>
 
         <div
@@ -54,7 +43,7 @@
       </form>
 
       <div class="mt-6 text-center text-xs text-muted-foreground">
-        Введите любой логин и пароль, выберите роль для входа
+        Выберите пользователя и введите любой пароль
       </div>
     </CardContent>
   </Card>
@@ -65,6 +54,7 @@ import { ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { ROLE_LABELS } from '@/utils/constants'
+import { MOCK_USERS } from '@/api/mock/users'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
@@ -80,15 +70,14 @@ const router = useRouter()
 const route = useRoute()
 const authStore = useAuthStore()
 
-const username = ref('')
+const selectedUserId = ref('user-1')
 const password = ref('')
-const role = ref('engineer')
 
 async function handleLogin() {
   const success = await authStore.login({
-    username: username.value,
-    password: password.value,
-    role: role.value,
+    username: 'mock',
+    password: password.value || 'mock',
+    userId: selectedUserId.value,
   })
   if (success) {
     const redirect = route.query.redirect

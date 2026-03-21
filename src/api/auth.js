@@ -9,9 +9,14 @@ export function login(credentials) {
     if (!credentials.username || !credentials.password) {
       throw new Error('Введите логин и пароль')
     }
-    const role = credentials.role || 'engineer'
-    const user = MOCK_USERS.find((u) => u.role === role)
-    if (!user) throw new Error('Роль не найдена')
+    let user
+    if (credentials.userId) {
+      user = MOCK_USERS.find((u) => u.id === credentials.userId)
+    } else {
+      const role = credentials.role || 'engineer'
+      user = MOCK_USERS.find((u) => u.role === role)
+    }
+    if (!user) throw new Error('Пользователь не найден')
     currentUser = { ...user }
     localStorage.setItem(USER_KEY, currentUser.id)
     return {
