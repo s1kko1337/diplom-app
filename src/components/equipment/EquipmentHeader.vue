@@ -3,7 +3,7 @@
     <div class="flex items-center gap-4">
       <RouterLink
         to="/equipment"
-        class="p-3 min-h-[44px] min-w-[44px] flex items-center justify-center border-2 border-border hover:bg-surface-2 transition-all duration-150 rounded-md"
+        class="p-3 min-h-[44px] min-w-[44px] flex items-center justify-center border border-border hover:bg-surface-2 transition-all duration-150 rounded-md"
       >
         <ArrowLeft class="w-5 h-5" />
       </RouterLink>

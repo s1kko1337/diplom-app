@@ -162,10 +162,10 @@ const equipmentWithCards = computed(() =>
 
 const statusTabs = computed(() => [
   { key: 'all', label: 'Все', count: equipmentStore.list.length },
-  { key: 'working', label: 'Работа', count: equipmentStore.workingCount },
-  { key: 'idle', label: 'Простой', count: equipmentStore.idleCount },
-  { key: 'malfunction', label: 'Авария', count: equipmentStore.malfunctionCount },
-  { key: 'offline', label: 'Отключено', count: equipmentStore.offlineCount },
+  { key: 'working', label: STATUS_LABELS.working, count: equipmentStore.workingCount },
+  { key: 'idle', label: STATUS_LABELS.idle, count: equipmentStore.idleCount },
+  { key: 'malfunction', label: STATUS_LABELS.malfunction, count: equipmentStore.malfunctionCount },
+  { key: 'offline', label: STATUS_LABELS.offline, count: equipmentStore.offlineCount },
 ])
 
 const filteredEquipment = computed(() => {

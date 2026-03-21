@@ -8,10 +8,10 @@
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="all">Все статусы</SelectItem>
-          <SelectItem value="working">Работа</SelectItem>
-          <SelectItem value="idle">Простой</SelectItem>
-          <SelectItem value="malfunction">Авария</SelectItem>
-          <SelectItem value="offline">Отключён</SelectItem>
+          <SelectItem value="working">{{ STATUS_LABELS.working }}</SelectItem>
+          <SelectItem value="idle">{{ STATUS_LABELS.idle }}</SelectItem>
+          <SelectItem value="malfunction">{{ STATUS_LABELS.malfunction }}</SelectItem>
+          <SelectItem value="offline">{{ STATUS_LABELS.offline }}</SelectItem>
         </SelectContent>
       </Select>
     </div>
