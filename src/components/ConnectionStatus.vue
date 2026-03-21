@@ -1,6 +1,6 @@
 <template>
-  <div class="flex items-center gap-2 px-3 py-1 border border-border" :class="containerClass">
-    <div class="w-2 h-2" :class="dotClass" />
+  <div class="flex items-center gap-2 px-3 py-1 border rounded-md" :class="containerClass">
+    <div class="w-2 h-2 rounded-full" :class="dotClass" />
     <span class="text-xs" :class="textClass">{{ label }}</span>
   </div>
 </template>
@@ -18,15 +18,15 @@ const label = computed(() => {
 })
 
 const dotClass = computed(() => {
-  if (connectionStore.isOnline) return 'bg-primary animate-pulse'
+  if (connectionStore.isOnline) return 'bg-primary'
   if (connectionStore.isReconnecting) return 'bg-yellow-500 animate-pulse'
-  return 'bg-red-500'
+  return 'bg-red-500 animate-pulse'
 })
 
 const containerClass = computed(() => {
   if (connectionStore.isDisconnected) return 'border-red-500'
   if (connectionStore.isReconnecting) return 'border-yellow-500'
-  return ''
+  return 'border-border'
 })
 
 const textClass = computed(() => {

@@ -1,6 +1,6 @@
 <template>
   <div
-    class="h-full bg-surface-1 border-2 border-border overflow-hidden"
+    class="h-full bg-surface-1 border border-border rounded-md overflow-hidden"
     :class="editing ? 'ring-1 ring-primary/30' : ''"
   >
     <component
@@ -18,7 +18,7 @@
 
     <button
       v-if="editing"
-      class="absolute top-1 right-1 w-6 h-6 flex items-center justify-center bg-surface-2 border border-border hover:bg-red-500/20 hover:border-red-500 text-xs transition-all duration-150 z-10"
+      class="absolute top-1 right-1 w-6 h-6 flex items-center justify-center bg-surface-2 border border-border rounded-md hover:bg-red-500/20 hover:border-red-500 text-xs transition-all duration-150 z-10"
       @click.stop="$emit('remove')"
     >
       &times;

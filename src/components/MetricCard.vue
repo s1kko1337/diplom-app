@@ -1,14 +1,8 @@
 <template>
   <div
-    class="relative p-6 border-2 transition-all duration-150 hover:translate-x-[2px] hover:translate-y-[-2px]"
+    class="relative p-6 border rounded-md shadow-sm transition-all duration-150 hover:shadow-md hover:border-primary/30"
     :class="statusClasses"
-    :style="{ clipPath: 'polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 0 100%)' }"
   >
-    <div
-      class="absolute top-0 right-0 w-[20px] h-[20px] bg-primary opacity-10"
-      :style="{ clipPath: 'polygon(0 0, 100% 0, 100% 100%)' }"
-    />
-
     <div class="flex items-start justify-between mb-4">
       <label class="text-xs opacity-70">{{ title }}</label>
       <div class="opacity-60">

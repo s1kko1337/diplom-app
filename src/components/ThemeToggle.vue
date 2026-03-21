@@ -1,6 +1,6 @@
 <template>
   <button
-    class="p-2 border border-border hover:bg-surface-2 transition-all duration-150"
+    class="p-2 border border-border rounded-md hover:bg-surface-2 transition-all duration-150"
     aria-label="Переключить тему"
     @click="toggleTheme"
   >

@@ -1,9 +1,9 @@
 <template>
   <div
-    class="bg-surface-1 border-2 transition-all duration-150 hover:translate-x-[2px] hover:translate-y-[-2px]"
+    class="bg-surface-1 border rounded-md shadow-sm transition-all duration-150 hover:shadow-md"
     :class="isActive ? 'border-primary' : 'border-border'"
   >
-    <div class="p-4 border-b-2 border-border">
+    <div class="p-4 border-b border-border">
       <div class="flex items-center gap-2">
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
           <path d="M10 2 L14 6 L12 6 L12 18 L8 18 L8 6 L6 6 Z" fill="currentColor" />
