@@ -2,14 +2,14 @@
   <div class="flex flex-wrap gap-3 items-center">
     <!-- Equipment filter -->
     <Select
-      :model-value="modelValue.equipmentId"
+      :model-value="modelValue.equipmentId || ALL"
       @update:model-value="update('equipmentId', $event)"
     >
       <SelectTrigger class="w-48">
         <SelectValue placeholder="Все станки" />
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value="">Все станки</SelectItem>
+        <SelectItem :value="ALL">Все станки</SelectItem>
         <SelectItem v-for="equip in equipmentStore.list" :key="equip.id" :value="equip.id">
           {{ equip.id }} — {{ equip.model }}
         </SelectItem>
@@ -17,12 +17,15 @@
     </Select>
 
     <!-- Type filter -->
-    <Select :model-value="modelValue.type" @update:model-value="update('type', $event)">
+    <Select
+      :model-value="modelValue.type || ALL"
+      @update:model-value="update('type', $event)"
+    >
       <SelectTrigger class="w-36">
         <SelectValue placeholder="Все типы" />
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value="">Все типы</SelectItem>
+        <SelectItem :value="ALL">Все типы</SelectItem>
         <SelectItem v-for="typeKey in maintenanceTypes" :key="typeKey" :value="typeKey">
           {{ typeKey }}
         </SelectItem>
@@ -30,12 +33,15 @@
     </Select>
 
     <!-- Assignee filter -->
-    <Select :model-value="modelValue.assignedTo" @update:model-value="update('assignedTo', $event)">
+    <Select
+      :model-value="modelValue.assignedTo || ALL"
+      @update:model-value="update('assignedTo', $event)"
+    >
       <SelectTrigger class="w-44">
         <SelectValue placeholder="Все исполнители" />
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value="">Все исполнители</SelectItem>
+        <SelectItem :value="ALL">Все исполнители</SelectItem>
         <SelectItem v-for="user in users" :key="user.id" :value="user.id">
           {{ user.name }}
         </SelectItem>
@@ -74,6 +80,8 @@ import { useAuthStore } from '@/stores/auth'
 import { MAINTENANCE_SCHEDULE } from '@/utils/constants'
 import { getUsers } from '@/api/users'
 
+const ALL = '__all__'
+
 const props = defineProps({
   modelValue: {
     type: Object,
@@ -94,8 +102,6 @@ onMounted(async () => {
 })
 
 function update(field, value) {
-  emit('update:modelValue', { ...props.modelValue, [field]: value || null })
+  emit('update:modelValue', { ...props.modelValue, [field]: value === ALL ? null : value })
 }
 </script>
-
-<style scoped></style>

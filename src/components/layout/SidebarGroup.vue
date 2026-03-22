@@ -8,14 +8,14 @@
     </div>
     <Separator v-else class="my-2" />
 
-    <RouterLink v-for="item in items" :key="item.to" :to="item.to" custom v-slot="{ navigate }">
+    <template v-for="item in items" :key="item.to">
       <TooltipProvider v-if="!expanded" :delay-duration="300">
         <Tooltip>
           <TooltipTrigger as-child>
             <button
               class="flex w-full items-center gap-3 rounded-md px-2 py-2 text-sm transition-colors"
               :class="itemClass(item)"
-              @click="handleClick(navigate)"
+              @click="handleClick(item)"
             >
               <component :is="item.icon" class="h-4 w-4 shrink-0" />
             </button>
@@ -27,17 +27,17 @@
         v-else
         class="flex w-full items-center gap-3 rounded-md px-2 py-2 text-sm transition-colors"
         :class="itemClass(item)"
-        @click="handleClick(navigate)"
+        @click="handleClick(item)"
       >
         <component :is="item.icon" class="h-4 w-4 shrink-0" />
         <span class="truncate">{{ item.label }}</span>
       </button>
-    </RouterLink>
+    </template>
   </div>
 </template>
 
 <script setup>
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { Separator } from '@/components/ui/separator'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 
@@ -50,6 +50,7 @@ defineProps({
 const emit = defineEmits(['navigate'])
 
 const route = useRoute()
+const router = useRouter()
 
 function isActive(item) {
   if (item.exact) return route.path === item.to
@@ -62,8 +63,8 @@ function itemClass(item) {
     : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
 }
 
-function handleClick(navigate) {
-  navigate()
+function handleClick(item) {
+  router.push(item.to)
   emit('navigate')
 }
 </script>

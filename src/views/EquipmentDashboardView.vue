@@ -18,7 +18,7 @@
           v-if="dashboardsStore.editing"
           variant="outline"
           size="sm"
-          class="min-h-[44px] sm:min-h-0"
+          class="min-h-11 sm:min-h-0"
           @click="showAddWidget = true"
         >
           <Plus class="w-4 h-4" />
@@ -28,7 +28,7 @@
           v-if="dashboardsStore.editing"
           variant="outline"
           size="sm"
-          class="min-h-[44px] sm:min-h-0"
+          class="min-h-11 sm:min-h-0"
           @click="handleReset"
         >
           <RotateCcw class="w-4 h-4" />
@@ -37,7 +37,7 @@
         <Button
           :variant="dashboardsStore.editing ? 'default' : 'outline'"
           size="sm"
-          class="min-h-[44px] sm:min-h-0"
+          class="min-h-11 sm:min-h-0"
           @click="toggleEdit"
         >
           <component :is="dashboardsStore.editing ? Save : Pencil" class="w-4 h-4" />
