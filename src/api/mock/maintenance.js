@@ -617,7 +617,7 @@ export function completeChecklistItem(equipmentId, itemId) {
 
 const MOCK_ORDERS = [
   {
-    id: 'MO-001',
+    id: 'ТО-001',
     equipmentId: 'БУР-12',
     type: 'ТО-1',
     status: 'planned',
@@ -642,7 +642,7 @@ const MOCK_ORDERS = [
     })),
   },
   {
-    id: 'MO-002',
+    id: 'ТО-002',
     equipmentId: 'БУР-08',
     type: 'ТО-2',
     status: 'in_progress',
@@ -667,7 +667,7 @@ const MOCK_ORDERS = [
     })),
   },
   {
-    id: 'MO-003',
+    id: 'ТО-003',
     equipmentId: 'БУР-15',
     type: 'ЕО',
     status: 'review',
@@ -692,7 +692,7 @@ const MOCK_ORDERS = [
     })),
   },
   {
-    id: 'MO-004',
+    id: 'ТО-004',
     equipmentId: 'БУР-17',
     type: 'ТО-1',
     status: 'completed',
@@ -717,7 +717,7 @@ const MOCK_ORDERS = [
     })),
   },
   {
-    id: 'MO-005',
+    id: 'ТО-005',
     equipmentId: 'БУР-03',
     type: 'ТО-3',
     status: 'cancelled',
@@ -742,7 +742,7 @@ const MOCK_ORDERS = [
     })),
   },
   {
-    id: 'MO-006',
+    id: 'ТО-006',
     equipmentId: 'БУР-19',
     type: 'ТР-1',
     status: 'planned',
@@ -757,6 +757,32 @@ const MOCK_ORDERS = [
     operatingHoursAtStart: null,
     scheduledDate: '2026-04-05',
     steps: cloneChecklist(CHECKLISTS['ТР-1']).map((item, i) => ({
+      id: `step-${i + 1}`,
+      description: item.description,
+      requirement: item.requirement,
+      tools: item.tools,
+      status: 'pending',
+      comment: null,
+      completedAt: null,
+    })),
+  },
+  // ТО-007: in_progress для Петрова — демо прохождения шагов
+  {
+    id: 'ТО-007',
+    equipmentId: 'БУР-21',
+    type: 'ТО-1',
+    status: 'in_progress',
+    createdBy: { id: 'user-1', name: 'Иванов А.П.', role: 'engineer' },
+    assignedTo: { id: 'user-2', name: 'Петров С.В.' },
+    reviewedBy: null,
+    createdAt: '2026-03-21T08:00:00',
+    startedAt: '2026-03-22T07:00:00',
+    completedAt: null,
+    reviewedAt: null,
+    returnReason: null,
+    operatingHoursAtStart: 540,
+    scheduledDate: '2026-03-22',
+    steps: cloneChecklist(CHECKLISTS['ТО-1']).map((item, i) => ({
       id: `step-${i + 1}`,
       description: item.description,
       requirement: item.requirement,
@@ -796,7 +822,7 @@ export function getOrder(id) {
 export function createOrder(data) {
   const template = CHECKLISTS[data.type] || []
   const newOrder = {
-    id: 'MO-' + Date.now(),
+    id: 'ТО-' + Date.now(),
     equipmentId: data.equipmentId,
     type: data.type,
     status: 'planned',

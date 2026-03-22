@@ -28,6 +28,13 @@
         {{ equipment.operatingHours }} ч
       </div>
 
+      <RouterLink :to="`/equipment/${equipment.id}/dashboard`">
+        <Button variant="outline" size="sm" class="min-h-[44px] sm:min-h-0">
+          <LayoutDashboard class="w-4 h-4" />
+          Дашборд
+        </Button>
+      </RouterLink>
+
       <Button variant="outline" size="sm" class="min-h-[44px] sm:min-h-0" @click="handleToggle">
         <component :is="isPolling ? Pause : Play" class="w-4 h-4" />
         {{ isPolling ? 'ПАУЗА' : 'ОПРОС' }}
@@ -38,7 +45,7 @@
 
 <script setup>
 import { computed } from 'vue'
-import { ArrowLeft, Pause, Play } from 'lucide-vue-next'
+import { ArrowLeft, LayoutDashboard, Pause, Play } from 'lucide-vue-next'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 
