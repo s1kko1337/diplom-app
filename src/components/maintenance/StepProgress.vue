@@ -44,6 +44,7 @@ function dotClass(step, index) {
   if (index === props.currentStep) return 'bg-primary ring-2 ring-primary ring-offset-2'
   if (step.status === 'passed') return 'bg-green-500'
   if (step.status === 'failed') return 'bg-red-500'
+  if (step.status === 'in_progress') return 'bg-yellow-500'
   if (step.status === 'skipped') return 'bg-zinc-400'
   return 'bg-muted-foreground/30'
 }

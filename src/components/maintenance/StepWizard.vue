@@ -73,7 +73,7 @@ async function autoStartStep() {
 watch(
   currentStepIndex,
   () => {
-    autoStartStep()
+    autoStartStep().catch(() => {})
   },
   { immediate: true },
 )
