@@ -72,6 +72,12 @@ const router = createRouter({
           component: () => import('@/views/SettingsView.vue'),
         },
         {
+          path: 'journal',
+          name: 'journal',
+          meta: { breadcrumb: 'Журнал ТС' },
+          component: () => import('@/views/JournalView.vue'),
+        },
+        {
           path: 'maintenance',
           name: 'maintenance',
           meta: { breadcrumb: 'Техобслуживание' },

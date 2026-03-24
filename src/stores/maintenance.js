@@ -2,6 +2,7 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { MAINTENANCE_SCHEDULE } from '@/utils/constants'
 import * as maintenanceApi from '@/api/maintenance'
+import * as journalApi from '@/api/journal'
 import { addEntry } from '@/api/audit'
 import { useEquipmentStore } from './equipment'
 import { useAuthStore } from './auth'
@@ -149,6 +150,14 @@ export const useMaintenanceStore = defineStore('maintenance', () => {
     }
     const result = await maintenanceApi.updateOrderStatus(id, 'completed', { reviewedBy })
     result.acceptedBy = { name: authStore.userName, position: 'Мастер' }
+    const order = orders.value.find((o) => o.id === id) || currentOrder.value
+    await journalApi.createEntry({
+      equipmentId: order?.equipmentId || result.equipmentId,
+      description: `Проведено ${result.type} (наряд ${id}). Все работы выполнены.`,
+      clearance: 'Допущен к эксплуатации',
+      authorName: authStore.userName,
+      orderId: id,
+    })
     await addEntry({
       action: 'maintenance_order_approved',
       details: `Наряд ${id} утверждён`,

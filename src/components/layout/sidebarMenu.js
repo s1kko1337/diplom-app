@@ -6,6 +6,7 @@ import {
   BarChart3,
   Settings,
   ClipboardCheck,
+  BookOpen,
 } from 'lucide-vue-next'
 
 export const menuGroups = [
@@ -16,6 +17,7 @@ export const menuGroups = [
       { to: '/dashboard', icon: LayoutDashboard, label: 'Мониторинг' },
       { to: '/equipment', icon: Server, label: 'Оборудование' },
       { to: '/maintenance', icon: ClipboardCheck, label: 'Техобслуживание' },
+      { to: '/journal', icon: BookOpen, label: 'Журнал ТС' },
     ],
   },
   {
