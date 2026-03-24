@@ -7,6 +7,16 @@ export function formatDuration(ms) {
   return [h, m, s].map((v) => String(v).padStart(2, '0')).join(':')
 }
 
+export function formatDurationHuman(ms) {
+  if (!ms || ms < 0) return '0м'
+  const totalMin = Math.floor(ms / 60000)
+  const h = Math.floor(totalMin / 60)
+  const m = totalMin % 60
+  if (h > 0 && m > 0) return `${h}ч ${m}м`
+  if (h > 0) return `${h}ч`
+  return `${m}м`
+}
+
 export function durationBetween(startIso, endIso) {
   if (!startIso) return 0
   const start = new Date(startIso).getTime()
