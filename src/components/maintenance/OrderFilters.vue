@@ -17,10 +17,7 @@
     </Select>
 
     <!-- Type filter -->
-    <Select
-      :model-value="modelValue.type || ALL"
-      @update:model-value="update('type', $event)"
-    >
+    <Select :model-value="modelValue.type || ALL" @update:model-value="update('type', $event)">
       <SelectTrigger class="w-36">
         <SelectValue placeholder="Все типы" />
       </SelectTrigger>

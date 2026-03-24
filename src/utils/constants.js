@@ -63,6 +63,7 @@ export const ORDER_STATUS_COLORS = {
 
 export const STEP_STATUSES = {
   pending: 'pending',
+  in_progress: 'in_progress',
   passed: 'passed',
   failed: 'failed',
   skipped: 'skipped',
@@ -70,6 +71,7 @@ export const STEP_STATUSES = {
 
 export const STEP_STATUS_LABELS = {
   pending: 'Ожидает',
+  in_progress: 'Выполняется',
   passed: 'Выполнено',
   failed: 'Не выполнено',
   skipped: 'Пропущено',
@@ -79,4 +81,13 @@ export const ROLE_LABELS = {
   engineer: 'Инженер',
   mechanic: 'Механик',
   foreman: 'Мастер',
+}
+
+export const MEASUREMENT_UNITS = ['мм', 'Ом', 'МОм', 'В', 'А', 'кг', 'л', '°C', 'мм²', 'бар']
+
+export const DOCUMENT_TYPES = {
+  eo_checklist: 'Чек-лист ЕО',
+  act_to1: 'Акт ТО-1',
+  act_to2: 'Акт ТО-2',
+  act_to3: 'Акт ТО-3',
 }

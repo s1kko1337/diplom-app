@@ -33,6 +33,10 @@ export function completeOrderStep(orderId, stepId, status, comment) {
   return request(() => mock.completeOrderStep(orderId, stepId, status, comment))
 }
 
+export function startStep(orderId, stepId) {
+  return request(() => mock.startOrderStep(orderId, stepId))
+}
+
 export function getChecklistTemplate(type) {
   return request(() => mock.getChecklistTemplate(type))
 }

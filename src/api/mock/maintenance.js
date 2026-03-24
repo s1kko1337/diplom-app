@@ -106,6 +106,16 @@ const CHECKLISTS = {
       requirement: 'Тормозной момент по паспорту',
       tools: 'Динамометрический ключ, набор щупов',
       completed: false,
+      measurements: [
+        {
+          id: 'meas-brake',
+          description: 'Величина отхода тормозных колодок',
+          unit: 'мм',
+          norm: '1.7 (не более)',
+          fact: null,
+          passed: null,
+        },
+      ],
     },
     {
       id: 'to1-08',
@@ -113,6 +123,16 @@ const CHECKLISTS = {
       requirement: 'Износ не более 10%, отсутствие обрывов проволок',
       tools: 'Штангенциркуль, лупа',
       completed: false,
+      measurements: [
+        {
+          id: 'meas-rope',
+          description: 'Износ каната',
+          unit: '%',
+          norm: '10 (не более)',
+          fact: null,
+          passed: null,
+        },
+      ],
     },
     {
       id: 'to1-09',
@@ -136,6 +156,16 @@ const CHECKLISTS = {
       requirement: 'Сопротивление заземления не более 4 Ом',
       tools: 'Мегаомметр, омметр',
       completed: false,
+      measurements: [
+        {
+          id: 'meas-ground',
+          description: 'Сопротивление защитного заземления',
+          unit: 'Ом',
+          norm: '4 (не более)',
+          fact: null,
+          passed: null,
+        },
+      ],
     },
     {
       id: 'to2-03',
@@ -150,6 +180,16 @@ const CHECKLISTS = {
       requirement: 'Не менее 0.5 МОм',
       tools: 'Мегаомметр 500В',
       completed: false,
+      measurements: [
+        {
+          id: 'meas-insulation',
+          description: 'Сопротивление изоляции электродвигателей',
+          unit: 'МОм',
+          norm: '0.5 (не менее)',
+          fact: null,
+          passed: null,
+        },
+      ],
     },
     {
       id: 'to2-05',
@@ -171,6 +211,10 @@ const CHECKLISTS = {
       requirement: 'По карте смазки ТО-2',
       tools: 'Шприц-маслёнка, смазка ЦИАТИМ-201, Литол-24',
       completed: false,
+      materials: [
+        { id: 'mat-grease-1', name: 'Смазка ЦИАТИМ-201', unit: 'кг', volume: null, brand: null },
+        { id: 'mat-grease-2', name: 'Смазка Литол-24', unit: 'кг', volume: null, brand: null },
+      ],
     },
   ],
   'ТО-3': [
@@ -180,6 +224,15 @@ const CHECKLISTS = {
       requirement: 'Промывка, заливка нового масла ТАД-17и',
       tools: 'Ёмкость для слива, воронка, масло ТАД-17и',
       completed: false,
+      materials: [
+        {
+          id: 'mat-trans-oil',
+          name: 'Масло трансмиссионное ТАД-17и',
+          unit: 'л',
+          volume: null,
+          brand: null,
+        },
+      ],
     },
     {
       id: 'to3-02',
@@ -187,6 +240,9 @@ const CHECKLISTS = {
       requirement: 'Промывка, заливка нового масла',
       tools: 'Ёмкость для слива, воронка, масло ИГП-72',
       completed: false,
+      materials: [
+        { id: 'mat-rotator-oil', name: 'Масло ИГП-72', unit: 'л', volume: null, brand: null },
+      ],
     },
     {
       id: 'to3-03',
@@ -194,6 +250,15 @@ const CHECKLISTS = {
       requirement: 'Полная замена гидромасла, промывка бака',
       tools: 'Ёмкость для слива, фильтр заливной, масло МГЕ-46В',
       completed: false,
+      materials: [
+        {
+          id: 'mat-hydro-oil',
+          name: 'Масло гидравлическое МГЕ-46В',
+          unit: 'л',
+          volume: null,
+          brand: null,
+        },
+      ],
     },
     {
       id: 'to3-04',
@@ -631,6 +696,9 @@ const MOCK_ORDERS = [
     returnReason: null,
     operatingHoursAtStart: null,
     scheduledDate: '2026-04-01',
+    executors: [],
+    acceptedBy: null,
+    remarks: null,
     steps: cloneChecklist(CHECKLISTS['ТО-1']).map((item, i) => ({
       id: `step-${i + 1}`,
       description: item.description,
@@ -638,7 +706,10 @@ const MOCK_ORDERS = [
       tools: item.tools,
       status: 'pending',
       comment: null,
+      startedAt: null,
       completedAt: null,
+      measurements: item.measurements || [],
+      materials: item.materials || [],
     })),
   },
   {
@@ -656,6 +727,9 @@ const MOCK_ORDERS = [
     returnReason: null,
     operatingHoursAtStart: 12480,
     scheduledDate: '2026-03-20',
+    executors: [{ name: 'Сидоров К.М.', position: 'Механик' }],
+    acceptedBy: null,
+    remarks: null,
     steps: cloneChecklist(CHECKLISTS['ТО-2']).map((item, i) => ({
       id: `step-${i + 1}`,
       description: item.description,
@@ -663,7 +737,10 @@ const MOCK_ORDERS = [
       tools: item.tools,
       status: i < 3 ? 'passed' : i === 3 ? 'failed' : 'pending',
       comment: i === 3 ? 'Обнаружена коррозия контактов' : null,
-      completedAt: i < 4 ? '2026-03-16T10:00:00' : null,
+      startedAt: i < 4 ? `2026-03-16T0${7 + i}:00:00` : null,
+      completedAt: i < 4 ? `2026-03-16T0${7 + i}:45:00` : null,
+      measurements: item.measurements || [],
+      materials: item.materials || [],
     })),
   },
   {
@@ -681,6 +758,9 @@ const MOCK_ORDERS = [
     returnReason: null,
     operatingHoursAtStart: 1430,
     scheduledDate: '2026-03-14',
+    executors: [{ name: 'Петров С.В.', position: 'Механик' }],
+    acceptedBy: null,
+    remarks: null,
     steps: cloneChecklist(CHECKLISTS['ЕО']).map((item, i) => ({
       id: `step-${i + 1}`,
       description: item.description,
@@ -688,7 +768,10 @@ const MOCK_ORDERS = [
       tools: item.tools,
       status: i === 5 ? 'skipped' : 'passed',
       comment: i === 5 ? 'Мегаомметр на поверке' : null,
-      completedAt: '2026-03-14T11:00:00',
+      startedAt: `2026-03-14T${String(8 + Math.floor(i / 3)).padStart(2, '0')}:${String((i % 3) * 20).padStart(2, '0')}:00`,
+      completedAt: `2026-03-14T${String(8 + Math.floor((i + 1) / 3)).padStart(2, '0')}:${String(((i + 1) % 3) * 20).padStart(2, '0')}:00`,
+      measurements: item.measurements || [],
+      materials: item.materials || [],
     })),
   },
   {
@@ -706,6 +789,12 @@ const MOCK_ORDERS = [
     returnReason: null,
     operatingHoursAtStart: 6900,
     scheduledDate: '2026-03-12',
+    executors: [
+      { name: 'Сидоров К.М.', position: 'Механик' },
+      { name: 'Волков И.Р.', position: 'Электрик' },
+    ],
+    acceptedBy: { name: 'Козлов Д.А.', position: 'Мастер' },
+    remarks: 'Рекомендуется замена тормозных колодок при следующем ТО-2',
     steps: cloneChecklist(CHECKLISTS['ТО-1']).map((item, i) => ({
       id: `step-${i + 1}`,
       description: item.description,
@@ -713,7 +802,10 @@ const MOCK_ORDERS = [
       tools: item.tools,
       status: 'passed',
       comment: null,
-      completedAt: '2026-03-12T15:00:00',
+      startedAt: `2026-03-11T${String(7 + Math.floor(i / 2)).padStart(2, '0')}:${i % 2 === 0 ? '00' : '30'}:00`,
+      completedAt: `2026-03-11T${String(7 + Math.floor((i + 1) / 2)).padStart(2, '0')}:${(i + 1) % 2 === 0 ? '00' : '30'}:00`,
+      measurements: item.measurements || [],
+      materials: item.materials || [],
     })),
   },
   {
@@ -731,6 +823,9 @@ const MOCK_ORDERS = [
     returnReason: null,
     operatingHoursAtStart: null,
     scheduledDate: '2026-03-20',
+    executors: [],
+    acceptedBy: null,
+    remarks: null,
     steps: cloneChecklist(CHECKLISTS['ТО-3']).map((item, i) => ({
       id: `step-${i + 1}`,
       description: item.description,
@@ -738,7 +833,10 @@ const MOCK_ORDERS = [
       tools: item.tools,
       status: 'pending',
       comment: null,
+      startedAt: null,
       completedAt: null,
+      measurements: item.measurements || [],
+      materials: item.materials || [],
     })),
   },
   {
@@ -756,6 +854,9 @@ const MOCK_ORDERS = [
     returnReason: null,
     operatingHoursAtStart: null,
     scheduledDate: '2026-04-05',
+    executors: [],
+    acceptedBy: null,
+    remarks: null,
     steps: cloneChecklist(CHECKLISTS['ТР-1']).map((item, i) => ({
       id: `step-${i + 1}`,
       description: item.description,
@@ -763,7 +864,10 @@ const MOCK_ORDERS = [
       tools: item.tools,
       status: 'pending',
       comment: null,
+      startedAt: null,
       completedAt: null,
+      measurements: item.measurements || [],
+      materials: item.materials || [],
     })),
   },
   // ТО-007: in_progress для Петрова — демо прохождения шагов
@@ -782,6 +886,9 @@ const MOCK_ORDERS = [
     returnReason: null,
     operatingHoursAtStart: 540,
     scheduledDate: '2026-03-22',
+    executors: [{ name: 'Петров С.В.', position: 'Механик' }],
+    acceptedBy: null,
+    remarks: null,
     steps: cloneChecklist(CHECKLISTS['ТО-1']).map((item, i) => ({
       id: `step-${i + 1}`,
       description: item.description,
@@ -789,7 +896,10 @@ const MOCK_ORDERS = [
       tools: item.tools,
       status: 'pending',
       comment: null,
+      startedAt: null,
       completedAt: null,
+      measurements: item.measurements || [],
+      materials: item.materials || [],
     })),
   },
 ]
@@ -836,6 +946,9 @@ export function createOrder(data) {
     returnReason: null,
     operatingHoursAtStart: null,
     scheduledDate: data.scheduledDate || null,
+    executors: [],
+    acceptedBy: null,
+    remarks: null,
     steps: (data.steps || template).map((item, i) => ({
       id: `step-${i + 1}`,
       description: item.description,
@@ -843,7 +956,10 @@ export function createOrder(data) {
       tools: item.tools || '',
       status: 'pending',
       comment: null,
+      startedAt: null,
       completedAt: null,
+      measurements: item.measurements || [],
+      materials: item.materials || [],
     })),
   }
   orders.unshift(newOrder)
@@ -878,6 +994,20 @@ export function completeOrderStep(orderId, stepId, status, comment) {
   step.status = status
   step.comment = comment || null
   step.completedAt = new Date().toISOString()
+  if (!step.startedAt) {
+    step.startedAt = step.completedAt
+  }
+  return { ...step }
+}
+
+export function startOrderStep(orderId, stepId) {
+  const order = orders.find((o) => o.id === orderId)
+  if (!order) throw new Error('Наряд не найден')
+  const step = order.steps.find((s) => s.id === stepId)
+  if (!step) throw new Error('Шаг не найден')
+  if (step.status === 'in_progress') return { ...step }
+  step.status = 'in_progress'
+  step.startedAt = new Date().toISOString()
   return { ...step }
 }
 

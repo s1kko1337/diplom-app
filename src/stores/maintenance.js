@@ -99,6 +99,17 @@ export const useMaintenanceStore = defineStore('maintenance', () => {
     return result
   }
 
+  async function startStep(orderId, stepId) {
+    const step = await maintenanceApi.startStep(orderId, stepId)
+    if (currentOrder.value && currentOrder.value.id === orderId) {
+      const idx = currentOrder.value.steps.findIndex((s) => s.id === stepId)
+      if (idx !== -1) {
+        currentOrder.value.steps[idx] = { ...step }
+      }
+    }
+    return step
+  }
+
   async function completeStep(orderId, stepId, status, comment) {
     const step = await maintenanceApi.completeOrderStep(orderId, stepId, status, comment)
     if (currentOrder.value && currentOrder.value.id === orderId) {
@@ -165,6 +176,7 @@ export const useMaintenanceStore = defineStore('maintenance', () => {
       failed: steps.filter((s) => s.status === 'failed').length,
       skipped: steps.filter((s) => s.status === 'skipped').length,
       pending: steps.filter((s) => s.status === 'pending').length,
+      in_progress: steps.filter((s) => s.status === 'in_progress').length,
     }
   }
 
@@ -183,6 +195,7 @@ export const useMaintenanceStore = defineStore('maintenance', () => {
     loadOrder,
     createOrder,
     startOrder,
+    startStep,
     completeStep,
     submitForReview,
     approveOrder,
