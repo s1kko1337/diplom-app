@@ -104,14 +104,24 @@ export const useMaintenanceStore = defineStore('maintenance', () => {
     if (currentOrder.value && currentOrder.value.id === orderId) {
       const idx = currentOrder.value.steps.findIndex((s) => s.id === stepId)
       if (idx !== -1) {
-        currentOrder.value.steps[idx] = { ...step }
+        const existing = currentOrder.value.steps[idx]
+        currentOrder.value.steps[idx] = {
+          ...step,
+          measurements: existing.measurements || step.measurements,
+          materials: existing.materials || step.materials,
+        }
       }
     }
     return step
   }
 
   async function completeStep(orderId, stepId, status, comment) {
-    const step = await maintenanceApi.completeOrderStep(orderId, stepId, status, comment)
+    const currentStep = currentOrder.value?.steps?.find((s) => s.id === stepId)
+    const data = {
+      measurements: currentStep?.measurements,
+      materials: currentStep?.materials,
+    }
+    const step = await maintenanceApi.completeOrderStep(orderId, stepId, status, comment, data)
     if (currentOrder.value && currentOrder.value.id === orderId) {
       const idx = currentOrder.value.steps.findIndex((s) => s.id === stepId)
       if (idx !== -1) {

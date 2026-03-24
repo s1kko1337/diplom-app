@@ -986,7 +986,7 @@ export function updateOrderStatus(id, status, payload = {}) {
   return { ...order, steps: order.steps.map((s) => ({ ...s })) }
 }
 
-export function completeOrderStep(orderId, stepId, status, comment) {
+export function completeOrderStep(orderId, stepId, status, comment, data = {}) {
   const order = orders.find((o) => o.id === orderId)
   if (!order) throw new Error('Наряд не найден')
   const step = order.steps.find((s) => s.id === stepId)
@@ -997,6 +997,8 @@ export function completeOrderStep(orderId, stepId, status, comment) {
   if (!step.startedAt) {
     step.startedAt = step.completedAt
   }
+  if (data.measurements) step.measurements = data.measurements
+  if (data.materials) step.materials = data.materials
   return { ...step }
 }
 

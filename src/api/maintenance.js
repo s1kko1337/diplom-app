@@ -29,8 +29,8 @@ export function updateOrderStatus(id, status, payload) {
   return request(() => mock.updateOrderStatus(id, status, payload))
 }
 
-export function completeOrderStep(orderId, stepId, status, comment) {
-  return request(() => mock.completeOrderStep(orderId, stepId, status, comment))
+export function completeOrderStep(orderId, stepId, status, comment, data) {
+  return request(() => mock.completeOrderStep(orderId, stepId, status, comment, data))
 }
 
 export function startStep(orderId, stepId) {
