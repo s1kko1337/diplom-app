@@ -138,6 +138,7 @@ export const useMaintenanceStore = defineStore('maintenance', () => {
       name: authStore.userName,
     }
     const result = await maintenanceApi.updateOrderStatus(id, 'completed', { reviewedBy })
+    result.acceptedBy = { name: authStore.userName, position: 'Мастер' }
     await addEntry({
       action: 'maintenance_order_approved',
       details: `Наряд ${id} утверждён`,

@@ -83,7 +83,7 @@ export const ROLE_LABELS = {
   foreman: 'Мастер',
 }
 
-export const MEASUREMENT_UNITS = ['мм', 'Ом', 'МОм', 'В', 'А', 'кг', 'л', '°C', 'мм²', 'бар']
+export const MEASUREMENT_UNITS = ['мм', '%', 'Ом', 'МОм', 'В', 'А', 'кг', 'л', '°C', 'мм²', 'бар']
 
 export const DOCUMENT_TYPES = {
   eo_checklist: 'Чек-лист ЕО',
