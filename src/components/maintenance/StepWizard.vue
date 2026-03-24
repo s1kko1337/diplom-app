@@ -37,7 +37,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { Button } from '@/components/ui/button'
 import StepProgress from './StepProgress.vue'
 import StepCard from './StepCard.vue'
@@ -55,11 +55,28 @@ const emit = defineEmits(['step-completed', 'submit-for-review'])
 
 const maintenanceStore = useMaintenanceStore()
 
-const initialPendingIndex = props.order.steps.findIndex((s) => s.status === 'pending')
-const currentStepIndex = ref(initialPendingIndex >= 0 ? initialPendingIndex : 0)
+const initialIndex = props.order.steps.findIndex(
+  (s) => s.status === 'pending' || s.status === 'in_progress',
+)
+const currentStepIndex = ref(initialIndex >= 0 ? initialIndex : 0)
 const showSummary = ref(false)
 
 const currentStep = computed(() => props.order.steps[currentStepIndex.value])
+
+async function autoStartStep() {
+  const step = currentStep.value
+  if (step && step.status === 'pending') {
+    await maintenanceStore.startStep(props.order.id, step.id)
+  }
+}
+
+watch(
+  currentStepIndex,
+  () => {
+    autoStartStep()
+  },
+  { immediate: true },
+)
 
 async function handleStepComplete({ status, comment }) {
   const step = currentStep.value
@@ -67,7 +84,9 @@ async function handleStepComplete({ status, comment }) {
   emit('step-completed')
 
   // Check if all steps are done
-  const allDone = props.order.steps.every((s) => s.status !== 'pending')
+  const allDone = props.order.steps.every(
+    (s) => s.status !== 'pending' && s.status !== 'in_progress',
+  )
   if (allDone) {
     showSummary.value = true
     return

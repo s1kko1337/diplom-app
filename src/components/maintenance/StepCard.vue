@@ -5,6 +5,13 @@
       <div>
         <p class="text-xs text-muted-foreground mb-1">Шаг {{ stepNumber }}</p>
         <h3 class="text-lg font-semibold">{{ step.description }}</h3>
+        <StepTimer
+          v-if="step.startedAt || step.status === 'in_progress'"
+          :started-at="step.startedAt"
+          :completed-at="step.completedAt"
+          :active="step.status === 'in_progress'"
+          class="mt-1"
+        />
       </div>
 
       <!-- Requirement -->
@@ -84,6 +91,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { STEP_STATUS_LABELS } from '@/utils/constants'
+import StepTimer from './StepTimer.vue'
 
 defineProps({
   step: {
@@ -115,6 +123,8 @@ function stepStatusBadgeClass(status) {
     return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
   if (status === 'failed') return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
   if (status === 'skipped') return 'bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300'
+  if (status === 'in_progress')
+    return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300'
   return ''
 }
 
