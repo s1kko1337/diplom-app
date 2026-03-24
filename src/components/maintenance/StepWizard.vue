@@ -16,6 +16,7 @@
         :step-number="currentStepIndex + 1"
         :readonly="false"
         @complete="handleStepComplete"
+        @update:step="handleStepUpdate"
       />
 
       <!-- Navigation buttons -->
@@ -100,6 +101,14 @@ async function handleStepComplete({ status, comment }) {
     currentStepIndex.value = nextPending
   } else if (currentStepIndex.value < props.order.steps.length - 1) {
     currentStepIndex.value++
+  }
+}
+
+function handleStepUpdate(updatedStep) {
+  if (!maintenanceStore.currentOrder) return
+  const idx = maintenanceStore.currentOrder.steps.findIndex((s) => s.id === updatedStep.id)
+  if (idx !== -1) {
+    maintenanceStore.currentOrder.steps[idx] = { ...updatedStep }
   }
 }
 

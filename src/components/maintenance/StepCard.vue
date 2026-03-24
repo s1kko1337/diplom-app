@@ -26,6 +26,30 @@
         <p class="text-sm">{{ step.tools }}</p>
       </div>
 
+      <!-- Measurements -->
+      <div v-if="step.measurements?.length" class="space-y-2">
+        <p class="text-xs font-medium uppercase tracking-wide text-muted-foreground">Измерения</p>
+        <MeasurementInput
+          v-for="(meas, mIdx) in step.measurements"
+          :key="meas.id"
+          :measurement="meas"
+          :readonly="isMeasurementsReadonly"
+          @update:measurement="handleMeasurementUpdate(mIdx, $event)"
+        />
+      </div>
+
+      <!-- Materials -->
+      <div v-if="step.materials?.length" class="space-y-2">
+        <p class="text-xs font-medium uppercase tracking-wide text-muted-foreground">Материалы</p>
+        <MaterialInput
+          v-for="(mat, matIdx) in step.materials"
+          :key="mat.id"
+          :material="mat"
+          :readonly="isMeasurementsReadonly"
+          @update:material="handleMaterialUpdate(matIdx, $event)"
+        />
+      </div>
+
       <!-- Readonly mode -->
       <template v-if="readonly">
         <div v-if="step.status && step.status !== 'pending'" class="space-y-2">
@@ -85,15 +109,17 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { STEP_STATUS_LABELS } from '@/utils/constants'
 import StepTimer from './StepTimer.vue'
+import MeasurementInput from './MeasurementInput.vue'
+import MaterialInput from './MaterialInput.vue'
 
-defineProps({
+const props = defineProps({
   step: {
     type: Object,
     required: true,
@@ -108,10 +134,28 @@ defineProps({
   },
 })
 
-const emit = defineEmits(['complete'])
+const emit = defineEmits(['complete', 'update:step'])
+
+const isMeasurementsReadonly = computed(() => {
+  if (props.readonly) return true
+  const status = props.step.status
+  return status !== 'in_progress' && status !== 'pending'
+})
 
 const comment = ref('')
 const wantsToFail = ref(false)
+
+function handleMeasurementUpdate(index, updated) {
+  const measurements = [...props.step.measurements]
+  measurements[index] = updated
+  emit('update:step', { ...props.step, measurements })
+}
+
+function handleMaterialUpdate(index, updated) {
+  const materials = [...props.step.materials]
+  materials[index] = updated
+  emit('update:step', { ...props.step, materials })
+}
 
 function handleComplete(status) {
   wantsToFail.value = status === 'failed'
