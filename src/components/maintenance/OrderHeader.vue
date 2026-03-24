@@ -19,6 +19,16 @@
         <span class="w-2.5 h-2.5 rounded-full" :class="ORDER_STATUS_COLORS[order.status]" />
         <span>{{ ORDER_STATUS_LABELS[order.status] }}</span>
       </span>
+
+      <!-- Document button for completed/review orders -->
+      <RouterLink
+        v-if="showDocumentButton"
+        :to="`/maintenance/${order.id}/document`"
+        class="inline-flex items-center gap-1.5 rounded-md border border-input bg-background px-3 py-1.5 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors"
+      >
+        <FileText class="w-4 h-4" />
+        Акт
+      </RouterLink>
     </div>
 
     <!-- People section -->
@@ -66,15 +76,21 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
+import { FileText } from 'lucide-vue-next'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { ORDER_STATUS_LABELS, ORDER_STATUS_COLORS } from '@/utils/constants'
 
-defineProps({
+const props = defineProps({
   order: {
     type: Object,
     required: true,
   },
+})
+
+const showDocumentButton = computed(() => {
+  return props.order.status === 'completed' || props.order.status === 'review'
 })
 
 function formatDate(value) {

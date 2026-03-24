@@ -90,6 +90,12 @@ const router = createRouter({
           component: () => import('@/views/MaintenanceCreateView.vue'),
         },
         {
+          path: 'maintenance/:id/document',
+          name: 'maintenance-document',
+          meta: { breadcrumb: 'Техобслуживание / :id / Акт' },
+          component: () => import('@/views/MaintenanceDocumentView.vue'),
+        },
+        {
           path: 'maintenance/:id',
           name: 'maintenance-detail',
           meta: { breadcrumb: 'Техобслуживание / :id' },
