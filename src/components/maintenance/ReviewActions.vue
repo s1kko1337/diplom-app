@@ -46,6 +46,15 @@
       </span>
     </div>
 
+    <!-- Document preview link -->
+    <RouterLink
+      :to="`/maintenance/${order.id}/document`"
+      class="inline-flex items-center gap-1.5 rounded-md border border-input bg-background px-3 py-1.5 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors"
+    >
+      <FileText class="w-4 h-4" />
+      Предварительный просмотр акта
+    </RouterLink>
+
     <!-- Action buttons -->
     <div class="space-y-4">
       <div class="flex flex-wrap gap-3">
@@ -89,6 +98,7 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+import { FileText } from 'lucide-vue-next'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
