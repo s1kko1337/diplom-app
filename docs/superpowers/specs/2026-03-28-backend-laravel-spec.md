@@ -19,6 +19,12 @@
 - Симулятор датчиков для демонстрации, архитектура готова к реальным источникам
 - Оборудование и датчики полностью динамические (CRUD)
 
+**Каноническая модель статусов:**
+Этот бекенд-спек является source of truth. Статусы нарядов: `planned`, `in_progress`, `review`, `completed`, `cancelled` — совпадают с фронтенд-моком (`src/utils/constants.js`). Ранее созданный API-контракт (`docs/api-contract/maintenance-api.md`) использовал другие имена (`draft`, `accepted`, `rejected`) — он устарел и будет заменён новым контрактом из backend-репо.
+
+**Типы ТО — латинские slugs в API:**
+В БД и API используются латинские slugs: `EO`, `TO-1`, `TO-2`, `TO-3`, `TR-1`, `TR-2`, `TR-3`, `KR`. Кириллические метки (`ЕО`, `ТО-1`...) — только в presentation layer (фронтенд). Это безопасно для URL, query-параметров и enum-значений.
+
 ---
 
 ## 2. Инфраструктура: Docker Compose
@@ -30,16 +36,19 @@
 | `app` | PHP 8.3-FPM + Laravel | — | Основное приложение |
 | `nginx` | nginx:alpine | 8000 | Reverse proxy → app |
 | `db` | postgres:16-alpine | 5432 | База данных |
+| `redis` | redis:7-alpine | 6379 | Кэш, очереди, сессии |
 | `reverb` | (тот же app-образ) | 8080 | WebSocket сервер (`artisan reverb:start`) |
+| `worker` | (тот же app-образ) | — | Queue worker (`artisan queue:work`) |
 
 ### Детали
 
-- Один `Dockerfile` для PHP (app, reverb, simulator используют один образ)
+- Один `Dockerfile` для PHP (app, reverb, worker, simulator используют один образ)
 - `simulator` запускается как artisan-команда в отдельном процессе или контейнере
-- `.env` управляет конфигурацией (DB credentials, Reverb host/port, Sanctum domain)
+- `.env` управляет конфигурацией (DB credentials, Reverb host/port, Sanctum stateful domains)
 - `Makefile` для удобства: `make up`, `make down`, `make migrate`, `make seed`, `make fresh`, `make test`
-- Volume `postgres_data` — персистентность БД между рестартами
+- Volumes: `postgres_data` (БД), `redis_data` (персистентность очередей)
 - Код монтируется bind-mount для hot-reload при разработке
+- **CORS**: Sanctum `stateful` domains настроены в `.env` (`SANCTUM_STATEFUL_DOMAINS=localhost:5173`). Nginx проксирует CORS-заголовки для dev.
 
 ---
 
@@ -72,8 +81,15 @@
 | status | enum | working, idle, malfunction, offline |
 | operating_hours | decimal | Наработка в часах |
 | last_maintenance_at | timestamp nullable | |
+| last_maintenance_type | string nullable | Тип последнего ТО (TO-1, TO-2...) |
+| last_maintenance_hours | decimal nullable | Наработка при последнем ТО |
 | subsystem_health | jsonb | `{hydraulic, electrical, mechanical, compressor}` — 0-100 |
 | created_at, updated_at | timestamps | |
+
+**Computed fields (в `EquipmentResource`):**
+- `fullModel` — `"{name} {model}"` (e.g. "Буровой станок СБШ-250МНА") — вычисляется из `name` + `model`
+- `statusLabel` — человекочитаемая метка статуса (e.g. "В работе", "Неисправен") — из `EquipmentStatus` enum
+- `lastMaintenance` — объект `{type, date, hours}` из колонок `last_maintenance_*`
 
 #### equipment_specs
 | Колонка | Тип | Описание |
@@ -106,7 +122,12 @@
 | timestamp | timestamp | Время измерения |
 
 **Индекс:** `(sensor_definition_id, timestamp)` — основной запрос по истории.
-Самая быстрорастущая таблица. В будущем можно партиционировать по времени.
+Самая быстрорастущая таблица (~1.6M строк/день при 96 датчиках × 5с интервал).
+
+**Стратегия хранения:**
+- Artisan-команда `app:prune-sensor-readings` — удаляет raw-данные старше 30 дней
+- Для долгосрочной аналитики — агрегированные данные (часовые/суточные средние) в отдельной таблице `sensor_readings_aggregated` (создаётся во второй итерации если потребуется)
+- Команда добавляется в Laravel `schedule()` — ежедневный запуск
 
 #### alerts
 | Колонка | Тип | Описание |
@@ -142,7 +163,7 @@
 | id | bigint PK | |
 | display_id | string unique | Человекочитаемый ID (ТО-001, ТР-015) |
 | equipment_id | FK equipment | |
-| type | enum | ЕО, ТО-1, ТО-2, ТО-3, ТР-1, ТР-2, ТР-3, КР |
+| type | enum | EO, TO-1, TO-2, TO-3, TR-1, TR-2, TR-3, KR |
 | status | enum | planned, in_progress, review, completed, cancelled |
 | created_by | FK users | |
 | assigned_to | FK users nullable | |
@@ -197,11 +218,13 @@
 | Колонка | Тип | Описание |
 |---------|-----|----------|
 | id | bigint PK | |
-| type | enum | ЕО, ТО-1, ТО-2, ТО-3, ТР-1, ТР-2, ТР-3, КР |
+| type | enum | EO, TO-1, TO-2, TO-3, TR-1, TR-2, TR-3, KR |
+| label | string | Человекочитаемое название типа (e.g. "Техническое обслуживание №1") |
 | sort_order | integer | |
 | description | text | |
 | requirement | text nullable | |
 | tools | text nullable | |
+| estimated_duration_minutes | integer nullable | Ориентировочная продолжительность |
 
 #### checklist_template_measurements
 | Колонка | Тип | Описание |
@@ -238,10 +261,14 @@
 |---------|-----|----------|
 | id | bigint PK | |
 | user_id | FK users | |
-| action | string | Тип действия |
+| action | string | Тип действия (см. список ниже) |
 | equipment_id | FK equipment nullable | |
 | details | text nullable | |
 | created_at | timestamp | |
+
+**Типы action:** `login`, `logout`, `maintenance_order_created`, `maintenance_order_started`, `maintenance_order_submitted`, `maintenance_order_approved`, `maintenance_order_returned`, `maintenance_order_cancelled`, `alert_acknowledged`, `widget_added`, `widget_removed`, `settings_changed`, `equipment_created`, `equipment_updated`.
+
+**В `AuditLogResource`:** поле `userName` вычисляется из связи `user.name`.
 
 #### parts_replacements
 | Колонка | Тип | Описание |
@@ -263,6 +290,21 @@
 | type | string | Тип обслуживания |
 | status | string | Результат |
 
+**Lifecycle:** Запись создаётся автоматически в listener `CreateServiceHistoryEntry` при событии `OrderApproved`. Также создаётся через seeder для начальных данных. Это денормализация для быстрого отображения в карточке станка без join на `maintenance_orders`.
+
+#### maintenance_schedule
+| Колонка | Тип | Описание |
+|---------|-----|----------|
+| id | bigint PK | |
+| equipment_id | FK equipment | |
+| type | enum | EO, TO-1, TO-2, TO-3, TR-1, TR-2, TR-3, KR |
+| scheduled_date | date nullable | Плановая дата |
+| scheduled_hours | decimal nullable | Плановая наработка |
+| status | string | planned, overdue, completed |
+| created_at, updated_at | timestamps | |
+
+**Lifecycle:** Создаётся при добавлении оборудования (начальный план-график). Обновляется при завершении наряда соответствующего типа.
+
 ### Связи (Eloquent)
 
 ```
@@ -273,6 +315,7 @@ Equipment hasMany MaintenanceOrder
 Equipment hasMany JournalEntry
 Equipment hasMany PartsReplacement
 Equipment hasMany ServiceHistory
+Equipment hasMany MaintenanceSchedule
 Equipment hasMany DashboardConfig
 
 SensorDefinition hasMany SensorReading
@@ -424,6 +467,20 @@ User hasMany AuditLog
 
 **Итого: ~35 эндпоинтов + 2 WebSocket канала.**
 
+### Пагинация
+Все collection-эндпоинты (orders, alerts, journal, audit, parts, equipment) поддерживают offset-пагинацию: `?page=1&per_page=20`. Используется Laravel `paginate()` — стандартный формат ответа.
+
+### Формат ответов (JSON envelope)
+Используется стандартный формат Laravel `JsonResource`:
+- Единичный объект: `{ "data": { ... } }`
+- Коллекция с пагинацией: `{ "data": [...], "meta": { "current_page", "last_page", "per_page", "total" }, "links": { "first", "last", "prev", "next" } }`
+
+### Сериализация связей
+API Resources раскрывают FK в объекты:
+- `MaintenanceOrderResource`: `createdBy`, `assignedTo`, `reviewedBy` → `{ id, name }` (+ `role` для `createdBy`). Request-ы принимают `created_by_id`, `assigned_to_id` (числовые ID).
+- `AuditLogResource`: `userName` вычисляется из `user.name`
+- `EquipmentResource`: `lastMaintenance` → `{ type, date, hours }` из колонок `last_maintenance_*`
+
 ---
 
 ## 5. Сервисный слой
@@ -482,7 +539,9 @@ Artisan-команда `app:simulate-sensors`:
 | `SensorReadingRecorded` | `CheckThresholds`, `BroadcastSensorReading` | Проверка порогов + WS push |
 | `ThresholdExceeded` | `CreateAlert`, `BroadcastAlert` | Алерт в БД + WS push |
 | `OrderStatusChanged` | `LogAuditEntry` | Запись в аудит |
-| `OrderApproved` | `CreateJournalEntry`, `LogAuditEntry` | Журнал тех. состояния + аудит |
+| `OrderApproved` | `CreateJournalEntry`, `CreateServiceHistoryEntry`, `LogAuditEntry` | Журнал + история обслуживания + аудит |
+
+**Очереди:** Listeners `BroadcastSensorReading`, `CheckThresholds`, `CreateAlert`, `BroadcastAlert` реализуют `ShouldQueue` и обрабатываются через Redis-очередь (сервис `worker`). Это не блокирует симулятор и HTTP-запросы.
 
 ---
 
@@ -544,7 +603,8 @@ rudgormash-backend/
 │   │   ├── JournalEntry.php
 │   │   ├── AuditLog.php
 │   │   ├── PartsReplacement.php
-│   │   └── ServiceHistory.php
+│   │   ├── ServiceHistory.php
+│   │   └── MaintenanceSchedule.php
 │   │
 │   ├── Services/
 │   │   ├── MaintenanceService.php
@@ -599,7 +659,8 @@ rudgormash-backend/
 │   │       ├── JournalEntryResource.php
 │   │       ├── AuditLogResource.php
 │   │       ├── PartsReplacementResource.php
-│   │       └── ServiceHistoryResource.php
+│   │       ├── ServiceHistoryResource.php
+│   │       └── MaintenanceScheduleResource.php
 │   │
 │   ├── Events/
 │   │   ├── SensorReadingRecorded.php
@@ -613,7 +674,8 @@ rudgormash-backend/
 │   │   ├── BroadcastAlert.php
 │   │   ├── BroadcastSensorReading.php
 │   │   ├── LogAuditEntry.php
-│   │   └── CreateJournalEntry.php
+│   │   ├── CreateJournalEntry.php
+│   │   └── CreateServiceHistoryEntry.php
 │   │
 │   ├── Policies/
 │   │   ├── EquipmentPolicy.php
@@ -630,7 +692,8 @@ rudgormash-backend/
 │   │   └── MaintenanceType.php
 │   │
 │   └── Console/Commands/
-│       └── SimulateSensors.php
+│       ├── SimulateSensors.php
+│       └── PruneSensorReadings.php
 │
 ├── database/
 │   ├── migrations/ (20+ миграций)
