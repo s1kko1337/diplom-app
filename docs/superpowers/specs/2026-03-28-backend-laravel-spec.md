@@ -163,7 +163,7 @@
 | id | bigint PK | |
 | display_id | string unique | Человекочитаемый ID (ТО-001, ТР-015) |
 | equipment_id | FK equipment | |
-| type | enum | EO, TO-1, TO-2, TO-3, TR-1, TR-2, TR-3, KR |
+| maintenance_type_id | FK maintenance_types | Тип ТО |
 | status | enum | planned, in_progress, review, completed, cancelled |
 | created_by | FK users | |
 | assigned_to | FK users nullable | |
@@ -214,17 +214,26 @@
 | volume | string nullable | Объём/количество |
 | brand | string nullable | Марка |
 
+#### maintenance_types
+| Колонка | Тип | Описание |
+|---------|-----|----------|
+| id | bigint PK | |
+| slug | string unique | Латинский slug (EO, TO-1, TO-2, TO-3, TR-1, TR-2, TR-3, KR) |
+| label | string | Человекочитаемое название ("Ежесменное обслуживание", "Техническое обслуживание №1"...) |
+| estimated_duration_minutes | integer nullable | Ориентировочная продолжительность |
+| sort_order | integer default 0 | Порядок отображения |
+
+Lookup-таблица: 8 записей, заполняется `MaintenanceTypeSeeder`. Используется как FK в `checklist_templates`, `maintenance_orders`, `maintenance_schedule`.
+
 #### checklist_templates
 | Колонка | Тип | Описание |
 |---------|-----|----------|
 | id | bigint PK | |
-| type | enum | EO, TO-1, TO-2, TO-3, TR-1, TR-2, TR-3, KR |
-| label | string | Человекочитаемое название типа (e.g. "Техническое обслуживание №1") |
-| sort_order | integer | |
+| maintenance_type_id | FK maintenance_types | Тип ТО |
+| sort_order | integer | Порядок шага внутри типа |
 | description | text | |
 | requirement | text nullable | |
 | tools | text nullable | |
-| estimated_duration_minutes | integer nullable | Ориентировочная продолжительность |
 
 #### checklist_template_measurements
 | Колонка | Тип | Описание |
@@ -297,10 +306,10 @@
 |---------|-----|----------|
 | id | bigint PK | |
 | equipment_id | FK equipment | |
-| type | enum | EO, TO-1, TO-2, TO-3, TR-1, TR-2, TR-3, KR |
+| maintenance_type_id | FK maintenance_types | Тип ТО |
 | scheduled_date | date nullable | Плановая дата |
 | scheduled_hours | decimal nullable | Плановая наработка |
-| status | string | planned, overdue, completed |
+| status | enum | planned, overdue, completed |
 | created_at, updated_at | timestamps | |
 
 **Lifecycle:** Создаётся при добавлении оборудования (начальный план-график). Обновляется при завершении наряда соответствующего типа.
@@ -322,6 +331,7 @@ SensorDefinition hasMany SensorReading
 SensorDefinition hasMany Alert
 
 MaintenanceOrder belongsTo Equipment
+MaintenanceOrder belongsTo MaintenanceType
 MaintenanceOrder belongsTo User (createdBy)
 MaintenanceOrder belongsTo User (assignedTo)
 MaintenanceOrder belongsTo User (reviewedBy)
@@ -331,6 +341,11 @@ MaintenanceStep belongsTo MaintenanceOrder
 MaintenanceStep hasMany StepMeasurement
 MaintenanceStep hasMany StepMaterial
 
+MaintenanceType hasMany ChecklistTemplate
+MaintenanceType hasMany MaintenanceOrder
+MaintenanceType hasMany MaintenanceSchedule
+
+ChecklistTemplate belongsTo MaintenanceType
 ChecklistTemplate hasMany ChecklistTemplateMeasurement
 ChecklistTemplate hasMany ChecklistTemplateMaterial
 
@@ -433,8 +448,9 @@ User hasMany AuditLog
 ### Checklist Templates
 | Метод | Endpoint | Описание | Роли |
 |-------|----------|----------|------|
-| GET | `/api/maintenance/templates` | Все шаблоны (`?type=`) | Все |
-| GET | `/api/maintenance/templates/{type}` | Шаблон конкретного типа | Все |
+| GET | `/api/maintenance/templates` | Все шаблоны (`?type=EO`) | Все |
+| GET | `/api/maintenance/templates/{typeSlug}` | Шаблон по slug типа (e.g. `TO-1`) | Все |
+| GET | `/api/maintenance/types` | Список типов ТО (maintenance_types) | Все |
 | POST | `/api/maintenance/templates` | Создать | engineer, admin |
 | PUT | `/api/maintenance/templates/{id}` | Обновить | engineer, admin |
 
@@ -477,9 +493,10 @@ User hasMany AuditLog
 
 ### Сериализация связей
 API Resources раскрывают FK в объекты:
-- `MaintenanceOrderResource`: `createdBy`, `assignedTo`, `reviewedBy` → `{ id, name }` (+ `role` для `createdBy`). Request-ы принимают `created_by_id`, `assigned_to_id` (числовые ID).
+- `MaintenanceOrderResource`: `createdBy`, `assignedTo`, `reviewedBy` → `{ id, name }` (+ `role` для `createdBy`). `type` → slug из `maintenanceType.slug`. Request-ы принимают `created_by_id`, `assigned_to_id` (числовые ID), `type` как slug строку.
 - `AuditLogResource`: `userName` вычисляется из `user.name`
 - `EquipmentResource`: `lastMaintenance` → `{ type, date, hours }` из колонок `last_maintenance_*`
+- `ChecklistTemplateResource`: включает `type` (slug) и `typeLabel` из связи `maintenanceType`
 
 ---
 
@@ -604,7 +621,8 @@ rudgormash-backend/
 │   │   ├── AuditLog.php
 │   │   ├── PartsReplacement.php
 │   │   ├── ServiceHistory.php
-│   │   └── MaintenanceSchedule.php
+│   │   ├── MaintenanceSchedule.php
+│   │   └── MaintenanceType.php
 │   │
 │   ├── Services/
 │   │   ├── MaintenanceService.php
@@ -660,7 +678,8 @@ rudgormash-backend/
 │   │       ├── AuditLogResource.php
 │   │       ├── PartsReplacementResource.php
 │   │       ├── ServiceHistoryResource.php
-│   │       └── MaintenanceScheduleResource.php
+│   │       ├── MaintenanceScheduleResource.php
+│   │       └── MaintenanceTypeResource.php
 │   │
 │   ├── Events/
 │   │   ├── SensorReadingRecorded.php
@@ -688,8 +707,7 @@ rudgormash-backend/
 │   │   ├── EquipmentStatus.php
 │   │   ├── OrderStatus.php
 │   │   ├── StepStatus.php
-│   │   ├── AlertType.php
-│   │   └── MaintenanceType.php
+│   │   └── AlertType.php
 │   │
 │   └── Console/Commands/
 │       ├── SimulateSensors.php
@@ -702,6 +720,7 @@ rudgormash-backend/
 │   │   ├── RoleSeeder.php
 │   │   ├── UserSeeder.php
 │   │   ├── EquipmentSeeder.php
+│   │   ├── MaintenanceTypeSeeder.php
 │   │   ├── ChecklistTemplateSeeder.php
 │   │   ├── MaintenanceOrderSeeder.php
 │   │   └── AlertSeeder.php
@@ -737,6 +756,19 @@ rudgormash-backend/
 
 ### EquipmentSeeder
 8 станков с полными данными: specs, 12 датчиков на каждый (type, label, unit, min, max, thresholds).
+
+### MaintenanceTypeSeeder
+8 типов ТО:
+| slug | label |
+|------|-------|
+| EO | Ежесменное обслуживание |
+| TO-1 | Техническое обслуживание №1 |
+| TO-2 | Техническое обслуживание №2 |
+| TO-3 | Техническое обслуживание №3 |
+| TR-1 | Текущий ремонт №1 |
+| TR-2 | Текущий ремонт №2 |
+| TR-3 | Текущий ремонт №3 |
+| KR | Капитальный ремонт |
 
 ### ChecklistTemplateSeeder
 Шаблоны для всех 8 типов (ЕО, ТО-1..3, ТР-1..3, КР) с measurements и materials.
