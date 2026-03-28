@@ -2,7 +2,7 @@
 
 **Дата:** 2026-03-28
 **Статус:** Утверждён
-**Стек:** Laravel 12, PHP 8.3, PostgreSQL 16, Laravel Reverb, Sanctum, Spatie Permission
+**Стек:** Laravel 13, PHP 8.4, PostgreSQL 16, Laravel Reverb, Sanctum, Spatie Permission
 **Инфраструктура:** Docker Compose (dev-first, production-ready)
 
 ---
@@ -33,7 +33,7 @@
 
 | Сервис | Образ | Порт | Назначение |
 |--------|-------|------|------------|
-| `app` | PHP 8.3-FPM + Laravel | — | Основное приложение |
+| `app` | PHP 8.4-FPM + Laravel | — | Основное приложение |
 | `nginx` | nginx:alpine | 8000 | Reverse proxy → app |
 | `db` | postgres:16-alpine | 5432 | База данных |
 | `redis` | redis:7-alpine | 6379 | Кэш, очереди, сессии |

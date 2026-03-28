@@ -4,9 +4,9 @@
 
 **Goal:** Build a full Laravel API backend replacing the frontend mock layer — covering auth, equipment, sensors (real-time via WebSocket), alerts, dashboards, maintenance orders with step-level execution, document generation, journal, audit log, and parts tracking.
 
-**Architecture:** Laravel 12 with service layer pattern — thin controllers delegate to service classes for business logic. Sanctum for API token auth, Spatie Permission for RBAC. Laravel Reverb for WebSocket broadcasting of sensor readings and alerts. Sensor simulator as artisan command. PostgreSQL 16 for storage, Redis for queues/cache.
+**Architecture:** Laravel 13 with service layer pattern — thin controllers delegate to service classes for business logic. Sanctum for API token auth, Spatie Permission for RBAC. Laravel Reverb for WebSocket broadcasting of sensor readings and alerts. Sensor simulator as artisan command. PostgreSQL 16 for storage, Redis for queues/cache.
 
-**Tech Stack:** Laravel 12, PHP 8.3, PostgreSQL 16, Redis 7, Laravel Reverb, Sanctum, Spatie Permission, Docker Compose
+**Tech Stack:** Laravel 13, PHP 8.4, PostgreSQL 16, Redis 7, Laravel Reverb, Sanctum, Spatie Permission, Docker Compose
 
 **Spec:** `docs/superpowers/specs/2026-03-28-backend-laravel-spec.md` in `rudgormash-frontend` repo
 
@@ -21,7 +21,7 @@
 ### Инфраструктура
 | Файл | Ответственность |
 |------|----------------|
-| `docker/php/Dockerfile` | PHP 8.3-FPM образ с extensions (pdo_pgsql, redis, pcntl) |
+| `docker/php/Dockerfile` | PHP 8.4-FPM образ с extensions (pdo_pgsql, redis, pcntl) |
 | `docker-compose.yml` | 6 сервисов: app, nginx, db, redis, reverb, worker |
 | `docker/nginx/default.conf` | Nginx → PHP-FPM проксирование |
 | `Makefile` | Команды: up, down, migrate, seed, fresh, test, shell |
@@ -151,7 +151,7 @@ git init
 
 Create `docker/php/Dockerfile`:
 ```dockerfile
-FROM php:8.3-fpm-alpine
+FROM php:8.4-fpm-alpine
 
 RUN apk add --no-cache \
     postgresql-dev \
@@ -368,7 +368,7 @@ make up
 docker compose ps
 # Expected: 6 services running
 make artisan --version
-# Expected: Laravel Framework 12.x.x
+# Expected: Laravel Framework 13.x.x
 ```
 
 - [ ] **Step 11: Commit**
@@ -2778,7 +2778,7 @@ class OrderApproved
 
 - [ ] **Step 3: Register event→listener mapping**
 
-Laravel 12 не создаёт `EventServiceProvider` по умолчанию. Зарегистрировать mapping в `AppServiceProvider::boot()` или через атрибуты на listener-классах (`#[AsListener(SensorReadingRecorded::class)]`).
+Laravel 13 не создаёт `EventServiceProvider` по умолчанию. Зарегистрировать mapping в `AppServiceProvider::boot()` или через атрибуты на listener-классах (`#[AsListener(SensorReadingRecorded::class)]`).
 
 Mapping:
 ```php
@@ -2967,7 +2967,7 @@ Broadcast::channel('equipment.{equipmentId}.alerts', function ($user, $equipment
 
 - [ ] **Step 5: Настроить scheduler**
 
-В `routes/console.php` (Laravel 12):
+В `routes/console.php` (Laravel 13):
 ```php
 use Illuminate\Support\Facades\Schedule;
 
