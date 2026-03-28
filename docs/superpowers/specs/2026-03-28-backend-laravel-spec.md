@@ -554,11 +554,13 @@ Artisan-команда `app:simulate-sensors`:
 | Event | Listener(s) | Что делает |
 |-------|-------------|------------|
 | `SensorReadingRecorded` | `CheckThresholds`, `BroadcastSensorReading` | Проверка порогов + WS push |
-| `ThresholdExceeded` | `CreateAlert`, `BroadcastAlert` | Алерт в БД + WS push |
+| `ThresholdExceeded` | `BroadcastAlert` | WS push (алерт уже создан в `AlertService::checkThresholds()` → `createAlert()`) |
 | `OrderStatusChanged` | `LogAuditEntry` | Запись в аудит |
 | `OrderApproved` | `CreateJournalEntry`, `CreateServiceHistoryEntry`, `LogAuditEntry` | Журнал + история обслуживания + аудит |
 
-**Очереди:** Listeners `BroadcastSensorReading`, `CheckThresholds`, `CreateAlert`, `BroadcastAlert` реализуют `ShouldQueue` и обрабатываются через Redis-очередь (сервис `worker`). Это не блокирует симулятор и HTTP-запросы.
+**Поток алертов:** `CheckThresholds` listener вызывает `AlertService::checkThresholds()`, который при превышении порога создаёт алерт через `createAlert()` и dispatch `ThresholdExceeded`. Отдельный `CreateAlert` listener не нужен — алерт уже в БД.
+
+**Очереди:** Listeners `BroadcastSensorReading`, `CheckThresholds`, `BroadcastAlert` реализуют `ShouldQueue` и обрабатываются через Redis-очередь (сервис `worker`). Это не блокирует симулятор и HTTP-запросы.
 
 ---
 
@@ -689,7 +691,6 @@ rudgormash-backend/
 │   │
 │   ├── Listeners/
 │   │   ├── CheckThresholds.php
-│   │   ├── CreateAlert.php
 │   │   ├── BroadcastAlert.php
 │   │   ├── BroadcastSensorReading.php
 │   │   ├── LogAuditEntry.php
@@ -707,7 +708,8 @@ rudgormash-backend/
 │   │   ├── EquipmentStatus.php
 │   │   ├── OrderStatus.php
 │   │   ├── StepStatus.php
-│   │   └── AlertType.php
+│   │   ├── AlertType.php
+│   │   └── ScheduleStatus.php
 │   │
 │   └── Console/Commands/
 │       ├── SimulateSensors.php
