@@ -140,6 +140,18 @@ export const equipmentDb = {
     year: 2023,
     status: 'working',
     statusLabel: 'В РАБОТЕ',
+    operatingHours: 4820,
+    lastMaintenance: {
+      type: 'ТО-2',
+      date: '2026-02-15',
+      hours: 4500,
+    },
+    subsystemHealth: {
+      hydraulic: 88,
+      electrical: 95,
+      mechanical: 82,
+      compressor: 90,
+    },
     sensors: createSensors({
       'temp-engine': { currentValue: 82 },
       speed: { currentValue: 2340 },
@@ -178,6 +190,18 @@ export const equipmentDb = {
     year: 2023,
     status: 'working',
     statusLabel: 'В РАБОТЕ',
+    operatingHours: 12350,
+    lastMaintenance: {
+      type: 'ТО-1',
+      date: '2026-01-20',
+      hours: 12100,
+    },
+    subsystemHealth: {
+      hydraulic: 85,
+      electrical: 92,
+      mechanical: 78,
+      compressor: 86,
+    },
     sensors: createSensors({
       'temp-engine': { currentValue: 78 },
       speed: { currentValue: 2180 },
@@ -215,6 +239,18 @@ export const equipmentDb = {
     year: 2022,
     status: 'idle',
     statusLabel: 'ПРОСТОЙ',
+    operatingHours: 1200,
+    lastMaintenance: {
+      type: 'ТО-1',
+      date: '2026-01-30',
+      hours: 1100,
+    },
+    subsystemHealth: {
+      hydraulic: 75,
+      electrical: 88,
+      mechanical: 80,
+      compressor: 82,
+    },
     sensors: createSensors({
       'temp-engine': { currentValue: 45 },
       speed: { currentValue: 0 },
@@ -251,6 +287,18 @@ export const equipmentDb = {
     year: 2024,
     status: 'malfunction',
     statusLabel: 'НЕИСПРАВНОСТЬ',
+    operatingHours: 8900,
+    lastMaintenance: {
+      type: 'ТО-2',
+      date: '2026-02-01',
+      hours: 8500,
+    },
+    subsystemHealth: {
+      hydraulic: 52,
+      electrical: 61,
+      mechanical: 45,
+      compressor: 58,
+    },
     sensors: createSensors({
       'temp-engine': { currentValue: 95 },
       speed: { currentValue: 2510 },
@@ -288,6 +336,18 @@ export const equipmentDb = {
     year: 2024,
     status: 'working',
     statusLabel: 'В РАБОТЕ',
+    operatingHours: 320,
+    lastMaintenance: {
+      type: 'ТО-1',
+      date: '2026-02-12',
+      hours: 250,
+    },
+    subsystemHealth: {
+      hydraulic: 97,
+      electrical: 99,
+      mechanical: 96,
+      compressor: 98,
+    },
     sensors: createSensors({
       'temp-engine': { currentValue: 73 },
       speed: { currentValue: 2220 },
@@ -324,6 +384,18 @@ export const equipmentDb = {
     year: 2023,
     status: 'working',
     statusLabel: 'В РАБОТЕ',
+    operatingHours: 6700,
+    lastMaintenance: {
+      type: 'ТО-1',
+      date: '2026-01-18',
+      hours: 6500,
+    },
+    subsystemHealth: {
+      hydraulic: 84,
+      electrical: 91,
+      mechanical: 79,
+      compressor: 87,
+    },
     sensors: createSensors({
       'temp-engine': { currentValue: 76 },
       speed: { currentValue: 2290 },
@@ -360,6 +432,18 @@ export const equipmentDb = {
     year: 2022,
     status: 'offline',
     statusLabel: 'ОТКЛЮЧЕНО',
+    operatingHours: 15600,
+    lastMaintenance: {
+      type: 'ТО-3',
+      date: '2026-01-22',
+      hours: 15000,
+    },
+    subsystemHealth: {
+      hydraulic: 42,
+      electrical: 68,
+      mechanical: 55,
+      compressor: 60,
+    },
     sensors: createSensors({
       'temp-engine': { currentValue: 38 },
       speed: { currentValue: 0 },
@@ -396,6 +480,18 @@ export const equipmentDb = {
     year: 2024,
     status: 'working',
     statusLabel: 'В РАБОТЕ',
+    operatingHours: 2100,
+    lastMaintenance: {
+      type: 'ТО-2',
+      date: '2026-02-11',
+      hours: 2000,
+    },
+    subsystemHealth: {
+      hydraulic: 91,
+      electrical: 94,
+      mechanical: 87,
+      compressor: 93,
+    },
     sensors: createSensors({
       'temp-engine': { currentValue: 84 },
       speed: { currentValue: 2420 },

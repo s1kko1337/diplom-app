@@ -1,0 +1,111 @@
+const MOCK_ENTRIES = [
+  {
+    id: 'journal-1',
+    equipmentId: 'БУР-17',
+    date: '2026-03-12',
+    time: '17:00',
+    description: 'Проведено ТО-1 (наряд ТО-004). Все работы выполнены в полном объёме.',
+    clearance: 'Допущен к эксплуатации',
+    authorName: 'Козлов Д.А.',
+    orderId: 'ТО-004',
+  },
+  {
+    id: 'journal-2',
+    equipmentId: 'БУР-08',
+    date: '2026-03-10',
+    time: '08:00',
+    description: 'Проведено ЕО. Обнаружена течь масла в соединении гидроцилиндра подачи.',
+    clearance: 'Допущен к эксплуатации с ограничениями',
+    authorName: 'Петров С.В.',
+    orderId: null,
+  },
+  {
+    id: 'journal-3',
+    equipmentId: 'БУР-12',
+    date: '2026-03-08',
+    time: '16:30',
+    description: 'Проведено ТО-2. Заменены фильтры гидросистемы, смазаны все узлы.',
+    clearance: 'Допущен к эксплуатации',
+    authorName: 'Козлов Д.А.',
+    orderId: null,
+  },
+  {
+    id: 'journal-4',
+    equipmentId: 'БУР-03',
+    date: '2026-03-05',
+    time: '09:15',
+    description: 'Внеплановый осмотр после срабатывания защиты двигателя вращателя.',
+    clearance: 'Не допущен к эксплуатации до замены обмотки',
+    authorName: 'Сидоров К.М.',
+    orderId: null,
+  },
+  {
+    id: 'journal-5',
+    equipmentId: 'БУР-21',
+    date: '2026-03-03',
+    time: '07:30',
+    description: 'Проведено ЕО. Замечаний нет.',
+    clearance: 'Допущен к эксплуатации',
+    authorName: 'Петров С.В.',
+    orderId: null,
+  },
+  {
+    id: 'journal-6',
+    equipmentId: 'БУР-15',
+    date: '2026-03-01',
+    time: '14:00',
+    description: 'Проведено ТО-1. Отрегулированы тормоза, подтянуты крепления мачты.',
+    clearance: 'Допущен к эксплуатации',
+    authorName: 'Козлов Д.А.',
+    orderId: null,
+  },
+  {
+    id: 'journal-7',
+    equipmentId: 'БУР-19',
+    date: '2026-02-28',
+    time: '11:00',
+    description: 'Проведено ЕО. Уровень масла в баке гидросистемы ниже нормы — долито.',
+    clearance: 'Допущен к эксплуатации',
+    authorName: 'Петров С.В.',
+    orderId: null,
+  },
+]
+
+let entries = MOCK_ENTRIES.map((e) => ({ ...e }))
+let nextId = entries.length + 1
+
+export function getEntries(filters = {}) {
+  let result = [...entries]
+  if (filters.equipmentId) {
+    result = result.filter((e) => e.equipmentId === filters.equipmentId)
+  }
+  if (filters.dateFrom) {
+    result = result.filter((e) => e.date >= filters.dateFrom)
+  }
+  if (filters.dateTo) {
+    result = result.filter((e) => e.date <= filters.dateTo)
+  }
+  return result.sort((a, b) => {
+    const dateCompare = b.date.localeCompare(a.date)
+    if (dateCompare !== 0) return dateCompare
+    return b.time.localeCompare(a.time)
+  })
+}
+
+export function createEntry(data) {
+  const now = new Date()
+  const entry = {
+    id: `journal-${nextId++}`,
+    equipmentId: data.equipmentId,
+    date: data.date || now.toISOString().slice(0, 10),
+    time:
+      data.time ||
+      `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`,
+    description: data.description,
+    clearance: data.clearance || 'Допущен к эксплуатации',
+    authorName: data.authorName || 'Система',
+    orderId: data.orderId || null,
+  }
+  entries.unshift(entry)
+  return { ...entry }
+}

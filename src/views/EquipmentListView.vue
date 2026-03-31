@@ -3,130 +3,171 @@
     <LoadingSpinner v-if="equipmentStore.loading && !equipmentStore.list.length" />
 
     <template v-else>
-      <div class="flex items-center justify-between">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 class="text-2xl">СПИСОК ОБОРУДОВАНИЯ</h2>
-          <div class="text-sm opacity-50 mt-1">Весь парк бурового оборудования</div>
-        </div>
-        <div class="bg-surface-1 border-2 border-border px-6 py-3">
-          <div class="text-xs opacity-70 mb-1">АКТИВНО</div>
-          <div class="metric-value text-2xl">
-            {{ equipmentStore.workingCount }}/{{ equipmentStore.list.length }}
+          <h2 class="text-xl sm:text-2xl font-semibold">Список оборудования</h2>
+          <div class="text-xs sm:text-sm text-muted-foreground mt-1">
+            Весь парк бурового оборудования
           </div>
         </div>
+        <Card class="px-4 sm:px-6 py-3">
+          <div class="text-xs text-muted-foreground mb-1">АКТИВНО</div>
+          <div class="metric-value text-xl sm:text-2xl">
+            {{ equipmentStore.workingCount }}/{{ equipmentStore.list.length }}
+          </div>
+        </Card>
       </div>
 
       <div class="flex items-center gap-4">
         <div class="flex-1 relative">
-          <Search class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 opacity-50" />
-          <input
+          <Search class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <Input
             v-model="searchQuery"
             type="text"
-            placeholder="ПОИСК ПО ID ИЛИ МОДЕЛИ..."
-            class="w-full pl-12 pr-4 py-3 bg-surface-1 border-2 border-border text-sm"
+            placeholder="Поиск по ID или модели..."
+            class="pl-10"
           />
         </div>
-        <button
-          class="flex items-center gap-2 px-4 py-3 border-2 border-border hover:bg-surface-2 transition-all duration-150"
-        >
-          <Filter class="w-4 h-4" />
-          <span class="text-sm">ФИЛЬТРЫ</span>
-        </button>
       </div>
 
-      <div class="flex items-center gap-2">
-        <button
-          v-for="tab in statusTabs"
-          :key="tab.key"
-          class="px-4 py-2 text-sm transition-all duration-150"
-          :class="
-            activeTab === tab.key
-              ? 'border-2 border-primary bg-surface-2'
-              : 'border border-border hover:bg-surface-2'
-          "
-          @click="activeTab = tab.key"
-        >
-          {{ tab.label }} ({{ tab.count }})
-        </button>
-      </div>
+      <Tabs v-model="activeTab" default-value="all">
+        <TabsList>
+          <TabsTrigger v-for="tab in statusTabs" :key="tab.key" :value="tab.key">
+            {{ tab.label }} ({{ tab.count }})
+          </TabsTrigger>
+        </TabsList>
+      </Tabs>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        <RouterLink
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+        <Card
           v-for="item in filteredEquipment"
           :key="item.id"
-          :to="{ name: 'equipment-detail', params: { id: item.id } }"
-          class="cursor-pointer"
+          class="group transition-colors hover:border-primary"
         >
-          <EquipmentCard
-            :name="item.id"
-            :equipment-id="item.model"
-            :is-active="item.status === 'working'"
-            :status="item.cardStatus"
-          />
-        </RouterLink>
+          <RouterLink :to="{ name: 'equipment-detail', params: { id: item.id } }" class="block">
+            <CardHeader class="pb-3">
+              <div class="flex items-center justify-between">
+                <CardTitle class="text-lg">{{ item.id }}</CardTitle>
+                <Badge :variant="item.status === 'malfunction' ? 'destructive' : 'outline'">
+                  <span
+                    class="inline-block h-2 w-2 rounded-full"
+                    :class="STATUS_DOT_COLORS[item.status]"
+                  />
+                  {{ STATUS_LABELS[item.status] }}
+                </Badge>
+              </div>
+              <CardDescription>{{ item.fullModel || item.model }}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div class="grid grid-cols-3 gap-2 text-sm mb-3">
+                <div>
+                  <div class="text-muted-foreground text-xs">Темп.</div>
+                  <div class="metric-value">{{ getSensor(item.id, 'temp-engine') }} °C</div>
+                </div>
+                <div>
+                  <div class="text-muted-foreground text-xs">Обороты</div>
+                  <div class="metric-value">{{ getSensor(item.id, 'speed') }} RPM</div>
+                </div>
+                <div>
+                  <div class="text-muted-foreground text-xs">Глубина</div>
+                  <div class="metric-value">{{ getSensor(item.id, 'depth') }} м</div>
+                </div>
+              </div>
+
+              <div
+                v-if="getNextMaintenance(item.id)"
+                class="flex items-center gap-2 text-xs text-muted-foreground border-t pt-3"
+              >
+                <WrenchIcon class="h-3.5 w-3.5 shrink-0" />
+                <span>
+                  Следующее ТО: {{ getNextMaintenance(item.id).type }} (через
+                  {{ getNextMaintenance(item.id).hoursRemaining }} ч)
+                </span>
+              </div>
+            </CardContent>
+          </RouterLink>
+        </Card>
       </div>
 
-      <div class="bg-surface-1 border-2 border-border">
-        <div class="p-4 border-b-2 border-border">
-          <label class="text-xs">ДЕТАЛЬНАЯ ИНФОРМАЦИЯ</label>
-        </div>
-        <div class="overflow-x-auto">
-          <table class="w-full">
-            <thead>
-              <tr class="border-b border-border">
-                <th class="text-left p-4"><div class="text-xs opacity-70">ID</div></th>
-                <th class="text-left p-4"><div class="text-xs opacity-70">МОДЕЛЬ</div></th>
-                <th class="text-left p-4"><div class="text-xs opacity-70">ГОД</div></th>
-                <th class="text-left p-4"><div class="text-xs opacity-70">СЕРИЙНЫЙ №</div></th>
-                <th class="text-left p-4"><div class="text-xs opacity-70">СТАТУС</div></th>
-                <th class="text-left p-4"><div class="text-xs opacity-70">ДЕЙСТВИЯ</div></th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                v-for="item in filteredEquipment"
-                :key="item.id"
-                class="border-b border-border hover:bg-surface-2 transition-all duration-150"
-              >
-                <td class="p-4 metric-value text-sm">{{ item.id }}</td>
-                <td class="p-4 text-sm">{{ item.model }}</td>
-                <td class="p-4 metric-value text-sm">{{ item.year }}</td>
-                <td class="p-4 metric-value text-sm">{{ item.serial }}</td>
-                <td class="p-4 text-sm">
-                  <span
-                    class="px-2 py-1 text-xs border"
-                    :class="
-                      item.status === 'working' ? 'border-primary' : 'border-border opacity-50'
-                    "
+      <Card class="hidden sm:block">
+        <CardHeader class="pb-3">
+          <CardTitle class="text-sm font-medium">Детальная информация</CardTitle>
+        </CardHeader>
+        <CardContent class="p-0 overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>ID</TableHead>
+                <TableHead>Модель</TableHead>
+                <TableHead class="hidden md:table-cell">Год</TableHead>
+                <TableHead class="hidden md:table-cell">Серийный №</TableHead>
+                <TableHead>Статус</TableHead>
+                <TableHead class="hidden sm:table-cell">Действия</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              <TableRow v-for="item in filteredEquipment" :key="item.id">
+                <TableCell class="metric-value text-sm">{{ item.id }}</TableCell>
+                <TableCell class="text-sm">{{ item.model }}</TableCell>
+                <TableCell class="metric-value text-sm hidden md:table-cell">{{
+                  item.year
+                }}</TableCell>
+                <TableCell class="metric-value text-sm hidden md:table-cell">{{
+                  item.serial
+                }}</TableCell>
+                <TableCell>
+                  <Badge
+                    :variant="item.status === 'working' ? 'default' : 'outline'"
+                    :class="STATUS_COLORS[item.status]"
                   >
+                    <span
+                      class="inline-block h-1.5 w-1.5 rounded-full"
+                      :class="STATUS_DOT_COLORS[item.status]"
+                    />
                     {{ STATUS_LABELS[item.status] || item.status }}
-                  </span>
-                </td>
-                <td class="p-4">
-                  <RouterLink
-                    :to="{ name: 'equipment-detail', params: { id: item.id } }"
-                    class="px-3 py-1 border border-border hover:bg-surface-2 text-xs transition-all duration-150"
-                  >
-                    ДЕТАЛИ
-                  </RouterLink>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
+                  </Badge>
+                </TableCell>
+                <TableCell class="hidden sm:table-cell">
+                  <Button variant="outline" size="sm" as-child>
+                    <RouterLink :to="{ name: 'equipment-detail', params: { id: item.id } }">
+                      Детали
+                    </RouterLink>
+                  </Button>
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
     </template>
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { Search, Filter } from 'lucide-vue-next'
+import { Search, WrenchIcon } from 'lucide-vue-next'
 import { useEquipmentStore } from '@/stores/equipment'
-import EquipmentCard from '@/components/EquipmentCard.vue'
+import { useSensorsStore } from '@/stores/sensors'
+import { useMaintenanceStore } from '@/stores/maintenance'
+import { STATUS_LABELS, STATUS_COLORS, STATUS_DOT_COLORS } from '@/utils/constants'
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from '@/components/ui/table'
 import LoadingSpinner from '@/components/LoadingSpinner.vue'
 
 const equipmentStore = useEquipmentStore()
+const sensorsStore = useSensorsStore()
+const maintenanceStore = useMaintenanceStore()
 
 onMounted(() => {
   if (!equipmentStore.list.length) {
@@ -137,43 +178,16 @@ onMounted(() => {
 const searchQuery = ref('')
 const activeTab = ref('all')
 
-const STATUS_LABELS = {
-  working: 'РАБОТА',
-  idle: 'ПРОСТОЙ',
-  malfunction: 'АВАРИЯ',
-  offline: 'ОТКЛЮЧЕНО',
-}
-
-const STATUS_CARD_MAP = {
-  working: 'active',
-  malfunction: 'error',
-  idle: 'warning',
-  offline: 'warning',
-}
-
-const equipmentWithCards = computed(() =>
-  equipmentStore.list.map((eq) => {
-    const statusKey = STATUS_CARD_MAP[eq.status] || 'warning'
-    return {
-      ...eq,
-      cardStatus: [
-        { label: 'Модель', value: eq.model, status: statusKey },
-        { label: 'Статус', value: STATUS_LABELS[eq.status] || eq.status, status: statusKey },
-      ],
-    }
-  }),
-)
-
 const statusTabs = computed(() => [
-  { key: 'all', label: 'ВСЕ', count: equipmentStore.list.length },
-  { key: 'working', label: 'РАБОТА', count: equipmentStore.workingCount },
-  { key: 'idle', label: 'ПРОСТОЙ', count: equipmentStore.idleCount },
-  { key: 'malfunction', label: 'АВАРИЯ', count: equipmentStore.malfunctionCount },
-  { key: 'offline', label: 'ОТКЛЮЧЕНО', count: equipmentStore.offlineCount },
+  { key: 'all', label: 'Все', count: equipmentStore.list.length },
+  { key: 'working', label: STATUS_LABELS.working, count: equipmentStore.workingCount },
+  { key: 'idle', label: STATUS_LABELS.idle, count: equipmentStore.idleCount },
+  { key: 'malfunction', label: STATUS_LABELS.malfunction, count: equipmentStore.malfunctionCount },
+  { key: 'offline', label: STATUS_LABELS.offline, count: equipmentStore.offlineCount },
 ])
 
 const filteredEquipment = computed(() => {
-  let result = equipmentWithCards.value
+  let result = equipmentStore.list
   if (activeTab.value !== 'all') {
     result = result.filter((e) => e.status === activeTab.value)
   }
@@ -185,4 +199,19 @@ const filteredEquipment = computed(() => {
   }
   return result
 })
+
+function getSensor(equipmentId, sensorId) {
+  const live = sensorsStore.getSensorValue(equipmentId, sensorId)
+  if (live !== null) return live
+  const detail = equipmentStore.getDetail(equipmentId)
+  if (detail?.sensors) {
+    const sensor = detail.sensors.find((s) => s.id === sensorId)
+    return sensor?.currentValue ?? '—'
+  }
+  return '—'
+}
+
+function getNextMaintenance(equipmentId) {
+  return maintenanceStore.getNextMaintenance(equipmentId)
+}
 </script>

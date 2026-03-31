@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-surface-1 border-2 border-border p-6">
+  <div class="bg-surface-1 border border-border rounded-md p-6">
     <div class="flex items-center justify-between mb-4">
       <label class="text-xs">{{ title }}</label>
       <div class="text-xs opacity-50 metric-value">{{ lastValue }} {{ unit }}</div>
@@ -65,7 +65,7 @@ const chartOption = computed(() => {
       trigger: 'axis',
       backgroundColor: c.surface2,
       borderColor: c.border,
-      borderRadius: 0,
+      borderRadius: 6,
       textStyle: { fontFamily: 'JetBrains Mono', fontSize: 12, color: c.foreground },
     },
     series: [

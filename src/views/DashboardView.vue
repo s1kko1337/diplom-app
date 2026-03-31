@@ -3,7 +3,7 @@
     <LoadingSpinner v-if="equipmentStore.loading && !equipmentStore.list.length" />
 
     <template v-else>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         <MetricCard
           v-for="metric in topMetrics"
           :key="metric.title"
@@ -26,7 +26,7 @@
         />
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         <StatusIndicator
           label="МОЩНОСТЬ"
           :value="liveVal('power', 87)"
@@ -55,23 +55,36 @@
         />
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
         <RouterLink
           v-for="eq in equipmentCards"
           :key="eq.id"
           :to="{ name: 'equipment-detail', params: { id: eq.id } }"
           class="cursor-pointer"
         >
-          <EquipmentCard
-            :name="eq.id"
-            :equipment-id="eq.model"
-            :is-active="eq.status === 'working'"
-            :status="eq.cardStatus"
-          />
+          <Card class="h-full transition-colors hover:bg-accent/50">
+            <CardHeader class="pb-2">
+              <CardTitle class="text-base">{{ eq.id }}</CardTitle>
+              <div class="text-xs text-muted-foreground">{{ eq.model }}</div>
+            </CardHeader>
+            <CardContent>
+              <div class="flex items-center gap-2">
+                <span
+                  class="inline-block h-2 w-2 rounded-full"
+                  :class="STATUS_DOT_COLORS[eq.status]"
+                />
+                <span class="text-sm" :class="STATUS_COLORS[eq.status]">
+                  {{ STATUS_LABELS[eq.status] || eq.status }}
+                </span>
+              </div>
+            </CardContent>
+          </Card>
         </RouterLink>
       </div>
 
-      <DataTable :data="tableData" />
+      <div class="overflow-x-auto">
+        <DataTable :data="tableData" />
+      </div>
     </template>
   </div>
 </template>
@@ -80,10 +93,11 @@
 import { computed, onMounted, onUnmounted } from 'vue'
 import { useEquipmentStore } from '@/stores/equipment'
 import { useSensorsStore } from '@/stores/sensors'
+import { STATUS_LABELS, STATUS_COLORS, STATUS_DOT_COLORS } from '@/utils/constants'
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import MetricCard from '@/components/MetricCard.vue'
 import ChartWidget from '@/components/ChartWidget.vue'
 import StatusIndicator from '@/components/StatusIndicator.vue'
-import EquipmentCard from '@/components/EquipmentCard.vue'
 import DataTable from '@/components/DataTable.vue'
 import LoadingSpinner from '@/components/LoadingSpinner.vue'
 
@@ -108,13 +122,6 @@ onUnmounted(() => {
 function liveVal(sensorId, fallback) {
   if (!primaryId.value) return fallback
   return sensorsStore.getSensorValue(primaryId.value, sensorId) ?? fallback
-}
-
-const STATUS_LABELS = {
-  working: 'РАБОТА',
-  idle: 'ПРОСТОЙ',
-  malfunction: 'АВАРИЯ',
-  offline: 'ОТКЛЮЧЕНО',
 }
 
 const topMetrics = computed(() => {
@@ -171,19 +178,7 @@ const temperatureData = computed(() =>
   })),
 )
 
-const equipmentCards = computed(() =>
-  equipmentStore.list.slice(0, 5).map((eq) => {
-    const statusKey =
-      eq.status === 'working' ? 'active' : eq.status === 'malfunction' ? 'error' : 'warning'
-    return {
-      ...eq,
-      cardStatus: [
-        { label: 'Модель', value: eq.model, status: statusKey },
-        { label: 'Статус', value: STATUS_LABELS[eq.status] || eq.status, status: statusKey },
-      ],
-    }
-  }),
-)
+const equipmentCards = computed(() => equipmentStore.list.slice(0, 8))
 
 const tableData = computed(() =>
   equipmentStore.list.slice(0, 5).map((eq) => ({

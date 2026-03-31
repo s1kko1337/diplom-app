@@ -1,5 +1,5 @@
 <template>
-  <div class="flex items-center gap-3 px-4 py-2 bg-surface-1 border border-border">
+  <div class="flex items-center gap-3 px-4 py-2 bg-surface-1 border border-border rounded-md">
     <Activity class="w-4 h-4 animate-pulse" />
     <div>
       <div class="text-xs opacity-70">{{ label }}</div>

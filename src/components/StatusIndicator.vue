@@ -1,13 +1,13 @@
 <template>
-  <div class="bg-surface-1 border-2 border-border p-4">
+  <div class="bg-surface-1 border border-border rounded-md p-4">
     <div class="flex items-center justify-between mb-3">
       <label class="text-xs">{{ label }}</label>
       <div class="metric-value text-sm">{{ value }} {{ unit }}</div>
     </div>
 
-    <div class="relative h-2 bg-surface-2 border border-border">
+    <div class="relative h-2 bg-surface-2 border border-border rounded-full">
       <div
-        class="absolute top-0 left-0 h-full transition-all duration-150"
+        class="absolute top-0 left-0 h-full rounded-full transition-all duration-150"
         :class="barClass"
         :style="{ width: Math.min(percentage, 100) + '%' }"
       />

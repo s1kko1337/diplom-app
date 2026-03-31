@@ -1,0 +1,106 @@
+const MOCK_AUDIT_LOG = [
+  {
+    id: 'AUD-001',
+    action: 'alert_acknowledged',
+    userId: 'user-1',
+    userName: 'Иванов А.П.',
+    equipmentId: 'БУР-03',
+    details: 'Подтверждено: Температура двигателя 95°C',
+    timestamp: '2026-03-17T14:35:00',
+  },
+  {
+    id: 'AUD-002',
+    action: 'maintenance_completed',
+    userId: 'user-2',
+    userName: 'Петров В.И.',
+    equipmentId: 'БУР-12',
+    details: 'Завершено ТО-1: все пункты чек-листа выполнены',
+    timestamp: '2026-03-16T11:20:00',
+  },
+  {
+    id: 'AUD-003',
+    action: 'widget_added',
+    userId: 'user-1',
+    userName: 'Иванов А.П.',
+    equipmentId: 'БУР-08',
+    details: 'Добавлен виджет: Линейный график — Температура двигателя',
+    timestamp: '2026-03-15T16:45:00',
+  },
+  {
+    id: 'AUD-004',
+    action: 'settings_changed',
+    userId: 'user-3',
+    userName: 'Сидоров К.М.',
+    equipmentId: null,
+    details: 'Изменены пороги уведомлений: предупреждение 80°C → 85°C',
+    timestamp: '2026-03-15T09:10:00',
+  },
+  {
+    id: 'AUD-005',
+    action: 'login',
+    userId: 'user-1',
+    userName: 'Иванов А.П.',
+    equipmentId: null,
+    details: 'Вход в систему',
+    timestamp: '2026-03-14T08:00:00',
+  },
+  {
+    id: 'AUD-006',
+    action: 'maintenance_completed',
+    userId: 'user-2',
+    userName: 'Петров В.И.',
+    equipmentId: 'БУР-21',
+    details: 'Завершено ТО-2: замена фильтров гидросистемы',
+    timestamp: '2026-03-13T15:30:00',
+  },
+  {
+    id: 'AUD-007',
+    action: 'alert_acknowledged',
+    userId: 'user-3',
+    userName: 'Сидоров К.М.',
+    equipmentId: 'БУР-19',
+    details: 'Подтверждено: Повышенная вибрация 1.2 мм/с',
+    timestamp: '2026-03-12T10:15:00',
+  },
+  {
+    id: 'AUD-008',
+    action: 'logout',
+    userId: 'user-2',
+    userName: 'Петров В.И.',
+    equipmentId: null,
+    details: 'Выход из системы',
+    timestamp: '2026-03-11T17:45:00',
+  },
+  {
+    id: 'AUD-009',
+    action: 'widget_added',
+    userId: 'user-3',
+    userName: 'Сидоров К.М.',
+    equipmentId: 'БУР-17',
+    details: 'Добавлен виджет: Индикатор — Давление',
+    timestamp: '2026-03-10T13:20:00',
+  },
+  {
+    id: 'AUD-010',
+    action: 'settings_changed',
+    userId: 'user-1',
+    userName: 'Иванов А.П.',
+    equipmentId: null,
+    details: 'Переключена тема оформления на тёмную',
+    timestamp: '2026-03-09T09:30:00',
+  },
+]
+
+export function getAuditLog({ equipmentId, limit = 20 } = {}) {
+  let log = [...MOCK_AUDIT_LOG]
+  if (equipmentId) log = log.filter((e) => e.equipmentId === equipmentId)
+  return log.slice(0, limit)
+}
+
+export function addAuditEntry(entry) {
+  MOCK_AUDIT_LOG.unshift({
+    ...entry,
+    id: `AUD-${Date.now()}`,
+    timestamp: new Date().toISOString(),
+  })
+}
