@@ -6,17 +6,17 @@ export const STATUS_LABELS = {
 }
 
 export const STATUS_COLORS = {
-  working: 'text-green-500',
-  idle: 'text-yellow-500',
-  malfunction: 'text-red-500',
+  working: 'text-status-success',
+  idle: 'text-status-warning',
+  malfunction: 'text-status-critical',
   offline: 'text-muted-foreground',
 }
 
 export const STATUS_DOT_COLORS = {
-  working: 'bg-green-500',
-  idle: 'bg-yellow-500',
-  malfunction: 'bg-red-500',
-  offline: 'bg-zinc-500',
+  working: 'bg-status-success',
+  idle: 'bg-status-warning',
+  malfunction: 'bg-status-critical',
+  offline: 'bg-muted-foreground',
 }
 
 export const MAINTENANCE_SCHEDULE = {
@@ -54,11 +54,11 @@ export const ORDER_STATUS_LABELS = {
 }
 
 export const ORDER_STATUS_COLORS = {
-  planned: 'bg-blue-500',
-  in_progress: 'bg-yellow-500',
-  review: 'bg-purple-500',
-  completed: 'bg-green-500',
-  cancelled: 'bg-zinc-500',
+  planned: 'bg-status-info',
+  in_progress: 'bg-status-warning',
+  review: 'bg-status-maintenance',
+  completed: 'bg-status-success',
+  cancelled: 'bg-muted-foreground',
 }
 
 export const STEP_STATUSES = {

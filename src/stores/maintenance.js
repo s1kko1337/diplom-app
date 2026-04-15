@@ -86,12 +86,22 @@ export const useMaintenanceStore = defineStore('maintenance', () => {
     return order
   }
 
+  function applyOrderUpdate(result) {
+    if (!result) return
+    if (currentOrder.value && currentOrder.value.id === result.id) {
+      currentOrder.value = result
+    }
+    const idx = orders.value.findIndex((o) => o.id === result.id)
+    if (idx !== -1) orders.value[idx] = result
+  }
+
   async function startOrder(id) {
     const equipmentStore = useEquipmentStore()
     const order = orders.value.find((o) => o.id === id) || currentOrder.value
     const equipment = order ? equipmentStore.getDetail(order.equipmentId) : null
     const operatingHours = equipment?.operatingHours || 0
     const result = await maintenanceApi.updateOrderStatus(id, 'in_progress', { operatingHours })
+    applyOrderUpdate(result)
     await addEntry({
       action: 'maintenance_order_started',
       details: `Начато выполнение наряда ${id}`,
@@ -105,11 +115,14 @@ export const useMaintenanceStore = defineStore('maintenance', () => {
     if (currentOrder.value && currentOrder.value.id === orderId) {
       const idx = currentOrder.value.steps.findIndex((s) => s.id === stepId)
       if (idx !== -1) {
+        // Preserve any in-memory edits the user made while the API was in flight.
         const existing = currentOrder.value.steps[idx]
         currentOrder.value.steps[idx] = {
           ...step,
-          measurements: existing.measurements || step.measurements,
-          materials: existing.materials || step.materials,
+          measurements: existing.measurements?.length
+            ? existing.measurements
+            : step.measurements || [],
+          materials: existing.materials?.length ? existing.materials : step.materials || [],
         }
       }
     }
@@ -119,14 +132,20 @@ export const useMaintenanceStore = defineStore('maintenance', () => {
   async function completeStep(orderId, stepId, status, comment) {
     const currentStep = currentOrder.value?.steps?.find((s) => s.id === stepId)
     const data = {
-      measurements: currentStep?.measurements,
-      materials: currentStep?.materials,
+      measurements: currentStep?.measurements
+        ? currentStep.measurements.map((m) => ({ ...m }))
+        : [],
+      materials: currentStep?.materials ? currentStep.materials.map((m) => ({ ...m })) : [],
     }
     const step = await maintenanceApi.completeOrderStep(orderId, stepId, status, comment, data)
     if (currentOrder.value && currentOrder.value.id === orderId) {
       const idx = currentOrder.value.steps.findIndex((s) => s.id === stepId)
       if (idx !== -1) {
-        currentOrder.value.steps[idx] = { ...step }
+        currentOrder.value.steps[idx] = {
+          ...step,
+          measurements: step.measurements || [],
+          materials: step.materials || [],
+        }
       }
     }
     return step
@@ -134,6 +153,7 @@ export const useMaintenanceStore = defineStore('maintenance', () => {
 
   async function submitForReview(id) {
     const result = await maintenanceApi.updateOrderStatus(id, 'review')
+    applyOrderUpdate(result)
     await addEntry({
       action: 'maintenance_order_submitted',
       details: `Наряд ${id} отправлен на приёмку`,
@@ -150,6 +170,7 @@ export const useMaintenanceStore = defineStore('maintenance', () => {
     }
     const result = await maintenanceApi.updateOrderStatus(id, 'completed', { reviewedBy })
     result.acceptedBy = { name: authStore.userName, position: 'Мастер' }
+    applyOrderUpdate(result)
     const order = orders.value.find((o) => o.id === id) || currentOrder.value
     await journalApi.createEntry({
       equipmentId: order?.equipmentId || result.equipmentId,
@@ -170,6 +191,7 @@ export const useMaintenanceStore = defineStore('maintenance', () => {
     const result = await maintenanceApi.updateOrderStatus(id, 'in_progress', {
       returnReason: reason,
     })
+    applyOrderUpdate(result)
     await addEntry({
       action: 'maintenance_order_returned',
       details: `Наряд ${id} возвращён: ${reason}`,
@@ -180,6 +202,7 @@ export const useMaintenanceStore = defineStore('maintenance', () => {
 
   async function cancelOrder(id) {
     const result = await maintenanceApi.updateOrderStatus(id, 'cancelled')
+    applyOrderUpdate(result)
     await addEntry({
       action: 'maintenance_order_cancelled',
       details: `Наряд ${id} отменён`,

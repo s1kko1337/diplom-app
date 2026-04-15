@@ -19,6 +19,7 @@ import { LineChart } from 'echarts/charts'
 import { GridComponent, TooltipComponent } from 'echarts/components'
 import { CanvasRenderer } from 'echarts/renderers'
 import { useChartColors } from '@/composables/useChartColors'
+import { useChartOptions } from '@/composables/useChartOptions'
 import { getHistory } from '@/api/sensors'
 
 use([LineChart, GridComponent, TooltipComponent, CanvasRenderer])
@@ -29,7 +30,8 @@ const props = defineProps({
   equipmentId: { type: String, default: '' },
 })
 
-const { primaryColor, gridColor, textColor } = useChartColors()
+const { colors } = useChartColors()
+const { lineOption } = useChartOptions()
 
 const chartData = ref([])
 const loading = ref(false)
@@ -51,32 +53,13 @@ onMounted(async () => {
   }
 })
 
-const chartOption = computed(() => ({
-  tooltip: { trigger: 'axis' },
-  grid: { top: 8, right: 8, bottom: 24, left: 40 },
-  xAxis: {
-    type: 'category',
-    data: chartData.value.map((d) =>
+const chartOption = computed(() =>
+  lineOption({
+    categories: chartData.value.map((d) =>
       new Date(d.timestamp).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }),
     ),
-    axisLine: { lineStyle: { color: gridColor.value } },
-    axisLabel: { color: textColor.value, fontSize: 10 },
-  },
-  yAxis: {
-    type: 'value',
-    axisLine: { lineStyle: { color: gridColor.value } },
-    splitLine: { lineStyle: { color: gridColor.value } },
-    axisLabel: { color: textColor.value, fontSize: 10 },
-  },
-  series: [
-    {
-      type: 'line',
-      data: chartData.value.map((d) => d.value),
-      smooth: true,
-      showSymbol: false,
-      lineStyle: { color: primaryColor.value, width: 2 },
-      areaStyle: { color: primaryColor.value, opacity: 0.1 },
-    },
-  ],
-}))
+    values: chartData.value.map((d) => d.value),
+    color: colors.value.chart1,
+  }),
+)
 </script>

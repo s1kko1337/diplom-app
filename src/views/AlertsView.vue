@@ -47,13 +47,7 @@
 
           <div class="space-y-3">
             <Transition v-for="alert in group.alerts" :key="alert.id" name="fade" appear>
-              <Card
-                :class="[
-                  'transition-all duration-150',
-                  alert.acknowledged ? 'opacity-60' : '',
-                  getAlertBorderClass(alert),
-                ]"
-              >
+              <Card :class="['transition-all duration-150 border', alertCardClasses(alert)]">
                 <CardContent class="p-4">
                   <div class="flex items-start justify-between gap-4">
                     <div class="flex items-start gap-3 flex-1 min-w-0">
@@ -158,13 +152,25 @@ const alertIcons = {
 
 function alertIconColor(type) {
   const map = {
-    critical: 'text-destructive',
-    warning: 'text-yellow-500',
-    info: 'text-blue-500',
-    success: 'text-green-500',
-    maintenance: 'text-blue-500',
+    critical: 'text-status-critical',
+    warning: 'text-status-warning',
+    info: 'text-status-info',
+    success: 'text-status-success',
+    maintenance: 'text-status-maintenance',
   }
   return map[type] || 'text-muted-foreground'
+}
+
+function alertCardClasses(alert) {
+  if (alert.acknowledged) return 'opacity-60'
+  const map = {
+    critical: 'bg-status-critical-bg/50 border-status-critical/40',
+    warning: 'bg-status-warning-bg/40 border-status-warning/40',
+    info: 'bg-status-info-bg/30 border-status-info/30',
+    success: 'bg-status-success-bg/30 border-status-success/30',
+    maintenance: 'bg-status-maintenance-bg/30 border-status-maintenance/30',
+  }
+  return map[alert.type] || ''
 }
 
 function alertBadgeVariant(type) {
@@ -181,18 +187,6 @@ function alertTypeLabel(type) {
     maintenance: 'Обслуживание',
   }
   return map[type] || type
-}
-
-function getAlertBorderClass(alert) {
-  if (alert.acknowledged) return ''
-  const map = {
-    critical: 'border-destructive',
-    warning: 'border-yellow-500',
-    info: 'border-blue-500',
-    success: 'border-green-500',
-    maintenance: 'border-blue-400',
-  }
-  return map[alert.type] || ''
 }
 
 const criticalCount = computed(

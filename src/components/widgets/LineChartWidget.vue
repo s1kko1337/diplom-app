@@ -15,6 +15,7 @@ import { LineChart } from 'echarts/charts'
 import { GridComponent, TooltipComponent } from 'echarts/components'
 import { CanvasRenderer } from 'echarts/renderers'
 import { useChartColors } from '@/composables/useChartColors'
+import { useChartOptions } from '@/composables/useChartOptions'
 
 use([LineChart, GridComponent, TooltipComponent, CanvasRenderer])
 
@@ -26,6 +27,7 @@ const props = defineProps({
 })
 
 const { colors } = useChartColors()
+const { lineOption } = useChartOptions()
 
 const chartData = computed(() => {
   if (props.history.length) return props.history
@@ -37,40 +39,11 @@ const chartData = computed(() => {
   }))
 })
 
-const chartOption = computed(() => {
-  const c = colors.value
-  return {
-    grid: { left: 40, right: 10, top: 10, bottom: 25 },
-    xAxis: {
-      type: 'category',
-      data: chartData.value.map((d) => d.time),
-      axisLine: { lineStyle: { color: c.foreground, opacity: 0.2 } },
-      axisLabel: { fontSize: 9, color: c.foreground, opacity: 0.4 },
-      axisTick: { show: false },
-    },
-    yAxis: {
-      type: 'value',
-      axisLine: { show: false },
-      axisLabel: { fontSize: 9, color: c.foreground, opacity: 0.4 },
-      splitLine: { lineStyle: { color: c.foreground, opacity: 0.05 } },
-    },
-    tooltip: {
-      trigger: 'axis',
-      backgroundColor: c.surface2,
-      borderColor: c.border,
-      borderRadius: 0,
-      textStyle: { fontFamily: 'JetBrains Mono', fontSize: 11, color: c.foreground },
-    },
-    series: [
-      {
-        type: 'line',
-        data: chartData.value.map((d) => d.value),
-        smooth: true,
-        symbol: 'none',
-        lineStyle: { width: 2, color: c.foreground },
-        areaStyle: { color: c.foreground, opacity: 0.05 },
-      },
-    ],
-  }
-})
+const chartOption = computed(() =>
+  lineOption({
+    categories: chartData.value.map((d) => d.time),
+    values: chartData.value.map((d) => d.value),
+    color: colors.value.chart1,
+  }),
+)
 </script>

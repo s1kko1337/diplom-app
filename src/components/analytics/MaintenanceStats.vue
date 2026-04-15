@@ -45,12 +45,14 @@ import { BarChart } from 'echarts/charts'
 import { GridComponent, TooltipComponent } from 'echarts/components'
 import { CanvasRenderer } from 'echarts/renderers'
 import { useChartColors } from '@/composables/useChartColors'
+import { useChartOptions } from '@/composables/useChartOptions'
 import { MAINTENANCE_SCHEDULE } from '@/utils/constants'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 use([BarChart, GridComponent, TooltipComponent, CanvasRenderer])
 
 const { colors } = useChartColors()
+const { barOption, base } = useChartOptions()
 
 const laborEntries = computed(() => {
   const counts = {
@@ -75,43 +77,21 @@ const laborChartOption = computed(() => {
   const categories = laborEntries.value.map((e) => e.type)
   const values = laborEntries.value.map((e) => e.cost)
   const chartColors = [c.chart1, c.chart2, c.chart3, c.chart4, c.chart5, c.foreground]
-
-  return {
-    grid: { left: 50, right: 10, top: 10, bottom: 30 },
-    xAxis: {
-      type: 'category',
-      data: categories,
-      axisLine: { lineStyle: { color: c.foreground, opacity: 0.3 } },
-      axisLabel: { fontFamily: 'JetBrains Mono', fontSize: 10, color: c.foreground, opacity: 0.5 },
-      axisTick: { show: false },
+  const opts = barOption({ categories, values, color: c.chart1 })
+  opts.series[0].data = values.map((v, i) => ({
+    value: v,
+    itemStyle: {
+      color: chartColors[i % chartColors.length],
+      borderRadius: [4, 4, 0, 0],
     },
-    yAxis: {
-      type: 'value',
-      axisLine: { lineStyle: { color: c.foreground, opacity: 0.3 } },
-      axisLabel: { fontFamily: 'JetBrains Mono', fontSize: 10, color: c.foreground, opacity: 0.5 },
-      axisTick: { show: false },
-      splitLine: { lineStyle: { color: c.foreground, opacity: 0.1 } },
+  }))
+  opts.tooltip = {
+    ...base.value.tooltip,
+    formatter(params) {
+      const p = params[0]
+      return `${p.name}: ${p.value} чел·ч`
     },
-    tooltip: {
-      trigger: 'axis',
-      backgroundColor: c.surface2,
-      borderColor: c.border,
-      borderRadius: 0,
-      textStyle: { fontFamily: 'JetBrains Mono', color: c.foreground },
-      formatter(params) {
-        const p = params[0]
-        return `${p.name}: ${p.value} чел·ч`
-      },
-    },
-    series: [
-      {
-        type: 'bar',
-        data: values.map((v, i) => ({
-          value: v,
-          itemStyle: { color: chartColors[i % chartColors.length] },
-        })),
-      },
-    ],
   }
+  return opts
 })
 </script>

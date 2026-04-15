@@ -28,6 +28,7 @@ import { GridComponent, TooltipComponent } from 'echarts/components'
 import { CanvasRenderer } from 'echarts/renderers'
 import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card'
 import { useChartColors } from '@/composables/useChartColors'
+import { useChartOptions } from '@/composables/useChartOptions'
 
 use([LineChart, GridComponent, TooltipComponent, CanvasRenderer])
 
@@ -36,6 +37,7 @@ defineProps({
 })
 
 const { colors } = useChartColors()
+const { lineOption } = useChartOptions()
 
 function generateTrend(base, variance, count = 24) {
   return Array.from(
@@ -47,44 +49,21 @@ function generateTrend(base, variance, count = 24) {
 const tempData = generateTrend(78, 6)
 const vibrationData = generateTrend(0.8, 0.3)
 
-function makeSparklineOption(data, color) {
-  const c = colors.value
-  return {
-    grid: { left: 0, right: 0, top: 4, bottom: 0 },
-    xAxis: { type: 'category', show: false, data: data.map((_, i) => i) },
-    yAxis: { type: 'value', show: false },
-    tooltip: {
-      trigger: 'axis',
-      backgroundColor: c.surface2,
-      borderColor: c.border,
-      borderRadius: 4,
-      textStyle: { fontFamily: 'JetBrains Mono', fontSize: 11, color: c.foreground },
-    },
-    series: [
-      {
-        type: 'line',
-        data,
-        smooth: true,
-        symbol: 'none',
-        lineStyle: { width: 2, color },
-        areaStyle: {
-          color: {
-            type: 'linear',
-            x: 0,
-            y: 0,
-            x2: 0,
-            y2: 1,
-            colorStops: [
-              { offset: 0, color: color + '40' },
-              { offset: 1, color: color + '05' },
-            ],
-          },
-        },
-      },
-    ],
-  }
-}
+const tempOption = computed(() =>
+  lineOption({
+    categories: tempData.map((_, i) => i),
+    values: tempData,
+    color: colors.value.chart1,
+    sparkline: true,
+  }),
+)
 
-const tempOption = computed(() => makeSparklineOption(tempData, colors.value.chart1))
-const vibrationOption = computed(() => makeSparklineOption(vibrationData, colors.value.chart4))
+const vibrationOption = computed(() =>
+  lineOption({
+    categories: vibrationData.map((_, i) => i),
+    values: vibrationData,
+    color: colors.value.chart4,
+    sparkline: true,
+  }),
+)
 </script>

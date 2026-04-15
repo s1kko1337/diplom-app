@@ -533,6 +533,48 @@ export function getEquipmentById(id) {
   return equipmentDb[id] || null
 }
 
+export function createEquipmentEntry(data) {
+  if (!data.id) throw new Error('ID обязателен')
+  if (equipmentDb[data.id]) throw new Error(`Оборудование ${data.id} уже существует`)
+  const entry = {
+    id: data.id,
+    model: data.model || '—',
+    fullModel: data.fullModel || data.model || '—',
+    serial: data.serial || `SN-${Date.now()}`,
+    year: Number(data.year) || new Date().getFullYear(),
+    status: data.status || 'idle',
+    statusLabel: 'ПРОСТОЙ',
+    operatingHours: Number(data.operatingHours) || 0,
+    lastMaintenance: null,
+    subsystemHealth: { hydraulic: 100, electrical: 100, mechanical: 100, compressor: 100 },
+    sensors: createSensors(),
+    specs: [
+      { label: 'Модель', value: data.model || '—' },
+      { label: 'Серийный номер', value: data.serial || '—' },
+      { label: 'Год выпуска', value: String(data.year || new Date().getFullYear()) },
+    ],
+    serviceHistory: [],
+  }
+  equipmentDb[data.id] = entry
+  const { sensors: _s, specs: _sp, serviceHistory: _sh, ...rest } = entry
+  return rest
+}
+
+export function updateEquipmentStatus(id, status) {
+  const eq = equipmentDb[id]
+  if (!eq) throw new Error(`Оборудование ${id} не найдено`)
+  eq.status = status
+  eq.statusLabel = status.toUpperCase()
+  const { sensors: _s, specs: _sp, serviceHistory: _sh, ...rest } = eq
+  return rest
+}
+
+export function deleteEquipmentEntry(id) {
+  if (!equipmentDb[id]) throw new Error(`Оборудование ${id} не найдено`)
+  delete equipmentDb[id]
+  return { id }
+}
+
 export function getEquipmentSensors(id) {
   const eq = equipmentDb[id]
   return eq ? eq.sensors : []

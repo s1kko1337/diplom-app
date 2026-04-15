@@ -41,10 +41,10 @@
                 class="h-full rounded-full transition-all"
                 :class="
                   sub.value >= 80
-                    ? 'bg-green-500'
+                    ? 'bg-status-success'
                     : sub.value >= 60
-                      ? 'bg-yellow-500'
-                      : 'bg-red-500'
+                      ? 'bg-status-warning'
+                      : 'bg-status-critical'
                 "
                 :style="{ width: sub.value + '%' }"
               />
@@ -64,6 +64,7 @@ import { BarChart, PieChart } from 'echarts/charts'
 import { GridComponent, TooltipComponent, LegendComponent } from 'echarts/components'
 import { CanvasRenderer } from 'echarts/renderers'
 import { useChartColors } from '@/composables/useChartColors'
+import { useChartOptions } from '@/composables/useChartOptions'
 import { SUBSYSTEMS } from '@/utils/constants'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
@@ -75,6 +76,7 @@ const props = defineProps({
 })
 
 const { colors } = useChartColors()
+const { barOption, pieOption } = useChartOptions()
 
 const productivityData = [
   { month: 'ЯНВ', depth: 1234 },
@@ -113,64 +115,21 @@ const subsystemHealth = computed(() =>
   }),
 )
 
-const barChartOption = computed(() => {
-  const c = colors.value
-  return {
-    grid: { left: 50, right: 20, top: 10, bottom: 30 },
-    xAxis: {
-      type: 'category',
-      data: productivityData.map((d) => d.month),
-      axisLine: { lineStyle: { color: c.foreground, opacity: 0.3 } },
-      axisLabel: { fontFamily: 'JetBrains Mono', fontSize: 11, color: c.foreground, opacity: 0.5 },
-      axisTick: { show: false },
-    },
-    yAxis: {
-      type: 'value',
-      axisLine: { lineStyle: { color: c.foreground, opacity: 0.3 } },
-      axisLabel: { fontFamily: 'JetBrains Mono', fontSize: 11, color: c.foreground, opacity: 0.5 },
-      axisTick: { show: false },
-      splitLine: { lineStyle: { color: c.foreground, opacity: 0.1 } },
-    },
-    tooltip: {
-      trigger: 'axis',
-      backgroundColor: c.surface2,
-      borderColor: c.border,
-      borderRadius: 0,
-      textStyle: { fontFamily: 'JetBrains Mono', color: c.foreground },
-    },
-    series: [
-      {
-        type: 'bar',
-        data: productivityData.map((d) => d.depth),
-        itemStyle: { color: c.chart1 },
-      },
-    ],
-  }
-})
+const barChartOption = computed(() =>
+  barOption({
+    categories: productivityData.map((d) => d.month),
+    values: productivityData.map((d) => d.depth),
+    color: colors.value.chart1,
+  }),
+)
 
-const pieChartOption = computed(() => {
-  const c = colors.value
-  return {
-    tooltip: {
-      trigger: 'item',
-      backgroundColor: c.surface2,
-      borderColor: c.border,
-      borderRadius: 0,
-      textStyle: { fontFamily: 'JetBrains Mono', color: c.foreground },
-    },
-    series: [
-      {
-        type: 'pie',
-        radius: '70%',
-        data: statusData.value.map((d) => ({
-          name: d.name,
-          value: d.value,
-          itemStyle: { color: d.color },
-        })),
-        label: { show: false },
-        itemStyle: { borderColor: c.background, borderWidth: 2 },
-      },
-    ],
-  }
-})
+const pieChartOption = computed(() =>
+  pieOption({
+    data: statusData.value.map((d) => ({
+      name: d.name,
+      value: d.value,
+      itemStyle: { color: d.color },
+    })),
+  }),
+)
 </script>

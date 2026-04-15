@@ -118,31 +118,26 @@ watch(
 
 async function handleStartOrder() {
   await maintenanceStore.startOrder(currentOrder.value.id)
-  await maintenanceStore.loadOrder(id.value)
 }
 
 async function handleCancelOrder() {
   await maintenanceStore.cancelOrder(currentOrder.value.id)
-  await maintenanceStore.loadOrder(id.value)
 }
 
-async function handleStepCompleted() {
-  await maintenanceStore.loadOrder(id.value)
+function handleStepCompleted() {
+  // Store already updated currentOrder in-place — no reload needed.
 }
 
 async function handleSubmitForReview() {
   await maintenanceStore.submitForReview(currentOrder.value.id)
-  await maintenanceStore.loadOrder(id.value)
 }
 
 async function handleApprove() {
   await maintenanceStore.approveOrder(currentOrder.value.id)
-  await maintenanceStore.loadOrder(id.value)
 }
 
 async function handleReturn(reason) {
   await maintenanceStore.returnOrder(currentOrder.value.id, reason)
-  await maintenanceStore.loadOrder(id.value)
 }
 </script>
 

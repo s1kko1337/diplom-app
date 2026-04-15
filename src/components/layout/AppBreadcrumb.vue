@@ -49,6 +49,7 @@ const segments = computed(() => {
         Уведомления: '/alerts',
         Аналитика: '/analytics',
         Настройки: '/settings',
+        Техобслуживание: '/maintenance',
         Главная: '/',
       }
       to = routeMap[part] || '/'

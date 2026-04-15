@@ -39,6 +39,7 @@ import { GridComponent } from 'echarts/components'
 import { CanvasRenderer } from 'echarts/renderers'
 import { useSensorsStore } from '@/stores/sensors'
 import { useChartColors } from '@/composables/useChartColors'
+import { useChartOptions } from '@/composables/useChartOptions'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 
@@ -51,6 +52,7 @@ const props = defineProps({
 
 const sensorsStore = useSensorsStore()
 const { colors } = useChartColors()
+const { lineOption } = useChartOptions()
 
 function getLiveValue(sensor) {
   const live = sensorsStore.getSensorValue(props.equipmentId, sensor.id)
@@ -66,7 +68,6 @@ function getLiveDisplay(sensor) {
 function getThresholdVariant(sensor) {
   const val = getLiveValue(sensor)
   if (sensor.thresholds) {
-    // For oil-level, lower = worse (inverted thresholds)
     if (sensor.id === 'oil-level') {
       if (val <= sensor.thresholds.critical) return 'destructive'
       if (val <= sensor.thresholds.warning) return 'secondary'
@@ -92,7 +93,6 @@ function getThresholdLabel(sensor) {
   return 'НОРМА'
 }
 
-// Generate mock sparkline data for each sensor (last 1 hour, 12 points)
 const sparklineCache = computed(() => {
   const cache = {}
   for (const sensor of props.sensors) {
@@ -110,22 +110,12 @@ const sparklineCache = computed(() => {
 })
 
 function getSparklineOption(sensor) {
-  const c = colors.value
   const data = sparklineCache.value[sensor.id] || []
-  return {
-    grid: { left: 0, right: 0, top: 2, bottom: 0 },
-    xAxis: { type: 'category', show: false, data: data.map((d) => d.time) },
-    yAxis: { type: 'value', show: false },
-    series: [
-      {
-        type: 'line',
-        data: data.map((d) => d.value),
-        smooth: true,
-        showSymbol: false,
-        lineStyle: { width: 1.5, color: c.chart1 },
-        areaStyle: { color: c.chart1, opacity: 0.08 },
-      },
-    ],
-  }
+  return lineOption({
+    categories: data.map((d) => d.time),
+    values: data.map((d) => d.value),
+    color: colors.value.chart1,
+    sparkline: true,
+  })
 }
 </script>

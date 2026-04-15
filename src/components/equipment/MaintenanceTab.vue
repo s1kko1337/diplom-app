@@ -274,7 +274,7 @@ const nextProgress = computed(() => {
 
 const nextProgressClass = computed(() => {
   if (nextMaintenance.value && nextMaintenance.value.hoursRemaining < 100) {
-    return 'bg-status-critical-bg'
+    return 'bg-status-critical'
   }
   if (nextMaintenance.value && nextMaintenance.value.hoursRemaining < 300) {
     return 'bg-primary opacity-80'

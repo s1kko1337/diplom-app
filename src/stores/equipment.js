@@ -46,6 +46,28 @@ export const useEquipmentStore = defineStore('equipment', () => {
     return details.value[id] || null
   }
 
+  async function createEquipment(data) {
+    const created = await equipmentApi.create(data)
+    list.value = [created, ...list.value]
+    return created
+  }
+
+  async function setStatus(id, status) {
+    const updated = await equipmentApi.updateStatus(id, status)
+    const idx = list.value.findIndex((e) => e.id === id)
+    if (idx !== -1) list.value[idx] = updated
+    if (details.value[id]) {
+      details.value[id] = { ...details.value[id], status: updated.status }
+    }
+    return updated
+  }
+
+  async function deleteEquipment(id) {
+    await equipmentApi.remove(id)
+    list.value = list.value.filter((e) => e.id !== id)
+    delete details.value[id]
+  }
+
   return {
     list,
     details,
@@ -58,5 +80,8 @@ export const useEquipmentStore = defineStore('equipment', () => {
     fetchList,
     fetchById,
     getDetail,
+    createEquipment,
+    setStatus,
+    deleteEquipment,
   }
 })

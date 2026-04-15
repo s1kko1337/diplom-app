@@ -3,13 +3,13 @@
   <Sheet v-if="isMobile" :open="show" @update:open="handleOpenChange">
     <SheetContent
       side="bottom"
-      class="max-h-[90vh] overflow-y-auto bg-status-critical-bg text-status-critical-text border-primary animate-pulse rounded-t-lg"
+      class="max-h-[90vh] overflow-y-auto bg-status-critical-solid-bg text-status-critical-solid-text border-status-critical-solid-text/30 animate-pulse rounded-t-lg"
     >
       <SheetHeader>
-        <SheetTitle class="text-2xl text-status-critical-text">
+        <SheetTitle class="text-2xl text-status-critical-solid-text">
           &#9888; КРИТИЧЕСКОЕ УВЕДОМЛЕНИЕ
         </SheetTitle>
-        <SheetDescription class="metric-value text-sm text-status-critical-text/70">
+        <SheetDescription class="metric-value text-sm text-status-critical-solid-text/70">
           {{ timestamp }}
         </SheetDescription>
       </SheetHeader>
@@ -29,14 +29,14 @@
 
       <div class="flex flex-col gap-3 pt-6 border-t border-current">
         <button
-          class="w-full min-h-[44px] px-6 py-3 border border-current rounded-md hover:bg-status-critical-text hover:text-status-critical-bg transition-all duration-150"
+          class="w-full min-h-[44px] px-6 py-3 border border-current rounded-md hover:bg-status-critical-solid-text hover:text-status-critical-solid-bg transition-all duration-150"
           @click="handleClose"
         >
           <span class="text-sm">ПОДТВЕРДИТЬ И ЗАКРЫТЬ</span>
         </button>
 
         <button
-          class="w-full min-h-[44px] px-6 py-3 bg-primary text-status-critical-bg border border-current rounded-md hover:opacity-80 transition-all duration-150"
+          class="w-full min-h-[44px] px-6 py-3 bg-status-critical-solid-text text-status-critical-solid-bg border border-current rounded-md hover:opacity-80 transition-all duration-150"
         >
           <span class="text-sm">ЭКСТРЕННАЯ ОСТАНОВКА</span>
         </button>
@@ -47,13 +47,13 @@
   <!-- Desktop: Dialog -->
   <Dialog v-else :open="show" @update:open="handleOpenChange">
     <DialogContent
-      class="max-w-2xl bg-status-critical-bg text-status-critical-text border-primary animate-pulse rounded-lg"
+      class="max-w-2xl bg-status-critical-solid-bg text-status-critical-solid-text border-status-critical-solid-text/30 animate-pulse rounded-lg"
     >
       <DialogHeader>
-        <DialogTitle class="text-3xl text-status-critical-text">
+        <DialogTitle class="text-3xl text-status-critical-solid-text">
           &#9888; КРИТИЧЕСКОЕ УВЕДОМЛЕНИЕ
         </DialogTitle>
-        <DialogDescription class="metric-value text-sm text-status-critical-text/70">
+        <DialogDescription class="metric-value text-sm text-status-critical-solid-text/70">
           {{ timestamp }}
         </DialogDescription>
       </DialogHeader>
@@ -73,14 +73,14 @@
 
       <DialogFooter class="pt-6 border-t border-current gap-4">
         <button
-          class="flex-1 min-h-[44px] px-6 py-4 border border-current rounded-md hover:bg-status-critical-text hover:text-status-critical-bg transition-all duration-150"
+          class="flex-1 min-h-[44px] px-6 py-4 border border-current rounded-md hover:bg-status-critical-solid-text hover:text-status-critical-solid-bg transition-all duration-150"
           @click="handleClose"
         >
           <span class="text-sm">ПОДТВЕРДИТЬ И ЗАКРЫТЬ</span>
         </button>
 
         <button
-          class="flex-1 min-h-[44px] px-6 py-4 bg-primary text-status-critical-bg border border-current rounded-md hover:opacity-80 transition-all duration-150"
+          class="flex-1 min-h-[44px] px-6 py-4 bg-status-critical-solid-text text-status-critical-solid-bg border border-current rounded-md hover:opacity-80 transition-all duration-150"
         >
           <span class="text-sm">ЭКСТРЕННАЯ ОСТАНОВКА</span>
         </button>

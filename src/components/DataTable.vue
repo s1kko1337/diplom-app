@@ -46,7 +46,7 @@
               :class="{
                 'border-primary': row.status === 'РАБОТА',
                 'border-border opacity-50': row.status === 'ПРОСТОЙ',
-                'bg-status-critical-bg text-status-critical-text border-primary':
+                'bg-status-critical-bg text-status-critical-text border-status-critical/40':
                   row.status === 'АВАРИЯ',
               }"
             >

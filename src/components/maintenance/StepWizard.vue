@@ -20,19 +20,24 @@
       />
 
       <!-- Navigation buttons -->
-      <div class="flex gap-2">
+      <div class="flex items-center gap-2">
         <Button v-if="currentStepIndex > 0" variant="outline" @click="currentStepIndex--">
           ← Назад
         </Button>
         <Button v-if="currentStepIndex < order.steps.length - 1" @click="currentStepIndex++">
           Далее →
         </Button>
+        <div class="flex-1" />
+        <Button variant="outline" @click="showSummary = true"> Завершить работу </Button>
       </div>
     </template>
 
     <!-- Summary view -->
     <template v-else>
-      <OrderSummary :order="order" @submit="handleSubmitForReview" />
+      <div class="space-y-4">
+        <Button variant="outline" @click="showSummary = false"> ← Вернуться к шагам </Button>
+        <OrderSummary :order="order" @submit="handleSubmitForReview" />
+      </div>
     </template>
   </div>
 </template>

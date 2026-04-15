@@ -10,12 +10,18 @@
             Весь парк бурового оборудования
           </div>
         </div>
-        <Card class="px-4 sm:px-6 py-3">
-          <div class="text-xs text-muted-foreground mb-1">АКТИВНО</div>
-          <div class="metric-value text-xl sm:text-2xl">
-            {{ equipmentStore.workingCount }}/{{ equipmentStore.list.length }}
-          </div>
-        </Card>
+        <div class="flex items-center gap-3">
+          <Card class="px-4 sm:px-6 py-3">
+            <div class="text-xs text-muted-foreground mb-1">АКТИВНО</div>
+            <div class="metric-value text-xl sm:text-2xl">
+              {{ equipmentStore.workingCount }}/{{ equipmentStore.list.length }}
+            </div>
+          </Card>
+          <Button @click="openCreate">
+            <Plus class="w-4 h-4 mr-1" />
+            Подключить станок
+          </Button>
+        </div>
       </div>
 
       <div class="flex items-center gap-4">
@@ -44,21 +50,26 @@
           :key="item.id"
           class="group transition-colors hover:border-primary"
         >
-          <RouterLink :to="{ name: 'equipment-detail', params: { id: item.id } }" class="block">
-            <CardHeader class="pb-3">
-              <div class="flex items-center justify-between">
+          <CardHeader class="pb-3">
+            <div class="flex items-center justify-between">
+              <RouterLink
+                :to="{ name: 'equipment-detail', params: { id: item.id } }"
+                class="hover:underline"
+              >
                 <CardTitle class="text-lg">{{ item.id }}</CardTitle>
-                <Badge :variant="item.status === 'malfunction' ? 'destructive' : 'outline'">
-                  <span
-                    class="inline-block h-2 w-2 rounded-full"
-                    :class="STATUS_DOT_COLORS[item.status]"
-                  />
-                  {{ STATUS_LABELS[item.status] }}
-                </Badge>
-              </div>
-              <CardDescription>{{ item.fullModel || item.model }}</CardDescription>
-            </CardHeader>
-            <CardContent>
+              </RouterLink>
+              <Badge :variant="item.status === 'malfunction' ? 'destructive' : 'outline'">
+                <span
+                  class="inline-block h-2 w-2 rounded-full"
+                  :class="STATUS_DOT_COLORS[item.status]"
+                />
+                {{ STATUS_LABELS[item.status] }}
+              </Badge>
+            </div>
+            <CardDescription>{{ item.fullModel || item.model }}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <RouterLink :to="{ name: 'equipment-detail', params: { id: item.id } }" class="block">
               <div class="grid grid-cols-3 gap-2 text-sm mb-3">
                 <div>
                   <div class="text-muted-foreground text-xs">Темп.</div>
@@ -84,8 +95,29 @@
                   {{ getNextMaintenance(item.id).hoursRemaining }} ч)
                 </span>
               </div>
-            </CardContent>
-          </RouterLink>
+            </RouterLink>
+
+            <div class="flex items-center gap-2 mt-3 pt-3 border-t">
+              <Button
+                v-if="item.status !== 'offline'"
+                variant="outline"
+                size="sm"
+                class="flex-1"
+                @click="openDisconnect(item)"
+              >
+                <PowerOff class="w-3.5 h-3.5 mr-1" />
+                Отключить
+              </Button>
+              <Button v-else variant="outline" size="sm" class="flex-1" @click="reconnect(item)">
+                <Power class="w-3.5 h-3.5 mr-1" />
+                Подключить
+              </Button>
+              <Button variant="outline" size="sm" class="flex-1" @click="openDelete(item)">
+                <Trash2 class="w-3.5 h-3.5 mr-1 text-status-critical" />
+                Удалить
+              </Button>
+            </div>
+          </CardContent>
         </Card>
       </div>
 
@@ -128,11 +160,30 @@
                   </Badge>
                 </TableCell>
                 <TableCell class="hidden sm:table-cell">
-                  <Button variant="outline" size="sm" as-child>
-                    <RouterLink :to="{ name: 'equipment-detail', params: { id: item.id } }">
-                      Детали
-                    </RouterLink>
-                  </Button>
+                  <div class="flex items-center gap-2">
+                    <Button variant="outline" size="sm" as-child>
+                      <RouterLink :to="{ name: 'equipment-detail', params: { id: item.id } }">
+                        Детали
+                      </RouterLink>
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon-sm"
+                      :title="item.status === 'offline' ? 'Подключить' : 'Отключить'"
+                      @click="item.status === 'offline' ? reconnect(item) : openDisconnect(item)"
+                    >
+                      <Power v-if="item.status === 'offline'" class="w-4 h-4" />
+                      <PowerOff v-else class="w-4 h-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon-sm"
+                      title="Удалить"
+                      @click="openDelete(item)"
+                    >
+                      <Trash2 class="w-4 h-4 text-status-critical" />
+                    </Button>
+                  </div>
                 </TableCell>
               </TableRow>
             </TableBody>
@@ -140,12 +191,20 @@
         </CardContent>
       </Card>
     </template>
+
+    <EquipmentCreateDialog :open="createOpen" @close="createOpen = false" />
+    <EquipmentActionsDialog
+      :open="actionOpen"
+      :mode="actionMode"
+      :equipment="actionTarget"
+      @close="actionOpen = false"
+    />
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { Search, WrenchIcon } from 'lucide-vue-next'
+import { Search, WrenchIcon, Plus, Power, PowerOff, Trash2 } from 'lucide-vue-next'
 import { useEquipmentStore } from '@/stores/equipment'
 import { useSensorsStore } from '@/stores/sensors'
 import { useMaintenanceStore } from '@/stores/maintenance'
@@ -164,6 +223,8 @@ import {
   TableCell,
 } from '@/components/ui/table'
 import LoadingSpinner from '@/components/LoadingSpinner.vue'
+import EquipmentCreateDialog from '@/components/equipment/EquipmentCreateDialog.vue'
+import EquipmentActionsDialog from '@/components/equipment/EquipmentActionsDialog.vue'
 
 const equipmentStore = useEquipmentStore()
 const sensorsStore = useSensorsStore()
@@ -213,5 +274,34 @@ function getSensor(equipmentId, sensorId) {
 
 function getNextMaintenance(equipmentId) {
   return maintenanceStore.getNextMaintenance(equipmentId)
+}
+
+const createOpen = ref(false)
+const actionOpen = ref(false)
+const actionMode = ref('disconnect')
+const actionTarget = ref(null)
+
+function openCreate() {
+  createOpen.value = true
+}
+
+function openDisconnect(item) {
+  actionTarget.value = item
+  actionMode.value = 'disconnect'
+  actionOpen.value = true
+}
+
+function openDelete(item) {
+  actionTarget.value = item
+  actionMode.value = 'delete'
+  actionOpen.value = true
+}
+
+async function reconnect(item) {
+  try {
+    await equipmentStore.setStatus(item.id, 'idle')
+  } catch (e) {
+    console.error(e)
+  }
 }
 </script>

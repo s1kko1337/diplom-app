@@ -4,6 +4,9 @@ import {
   getEquipmentById as mockGetById,
   getEquipmentSensors as mockGetSensors,
   getLiveSensorData as mockGetLive,
+  createEquipmentEntry as mockCreate,
+  updateEquipmentStatus as mockUpdateStatus,
+  deleteEquipmentEntry as mockDelete,
 } from './mock/equipment'
 
 export function getList() {
@@ -24,4 +27,16 @@ export function getSensors(id) {
 
 export function getLiveData(id) {
   return request(() => mockGetLive(id), { delay: 50 })
+}
+
+export function create(data) {
+  return request(() => mockCreate(data))
+}
+
+export function updateStatus(id, status) {
+  return request(() => mockUpdateStatus(id, status))
+}
+
+export function remove(id) {
+  return request(() => mockDelete(id))
 }

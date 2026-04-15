@@ -38,7 +38,8 @@ const statusClasses = computed(() => {
   const map = {
     normal: 'bg-surface-1 border-border',
     warning: 'bg-surface-2 border-border',
-    critical: 'bg-status-critical-bg text-status-critical-text border-primary animate-pulse',
+    critical:
+      'bg-status-critical-bg text-status-critical-text border-status-critical/40 animate-pulse',
   }
   return map[props.status] || map.normal
 })

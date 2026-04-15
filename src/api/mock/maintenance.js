@@ -633,9 +633,26 @@ const scheduleDb = {
   ],
 }
 
-// Deep clone checklist so each equipment gets independent completed state
+// Deep clone checklist so each equipment gets independent state
 function cloneChecklist(items) {
-  return items.map((item) => ({ ...item, completed: false }))
+  return items.map((item) => ({
+    ...item,
+    completed: false,
+    measurements: item.measurements ? item.measurements.map((m) => ({ ...m })) : [],
+    materials: item.materials ? item.materials.map((m) => ({ ...m })) : [],
+  }))
+}
+
+function deepCloneStep(s) {
+  return {
+    ...s,
+    measurements: s.measurements ? s.measurements.map((m) => ({ ...m })) : [],
+    materials: s.materials ? s.materials.map((m) => ({ ...m })) : [],
+  }
+}
+
+function deepCloneOrder(order) {
+  return { ...order, steps: order.steps.map(deepCloneStep) }
 }
 
 // Track completed items per equipment
@@ -920,13 +937,13 @@ export function getOrders(filters = {}) {
   if (filters.status) {
     result = result.filter((o) => o.status === filters.status)
   }
-  return result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+  return result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).map(deepCloneOrder)
 }
 
 export function getOrder(id) {
   const order = orders.find((o) => o.id === id)
   if (!order) throw new Error('Наряд не найден')
-  return { ...order, steps: order.steps.map((s) => ({ ...s })) }
+  return deepCloneOrder(order)
 }
 
 export function createOrder(data) {
@@ -963,7 +980,7 @@ export function createOrder(data) {
     })),
   }
   orders.unshift(newOrder)
-  return { ...newOrder, steps: newOrder.steps.map((s) => ({ ...s })) }
+  return deepCloneOrder(newOrder)
 }
 
 export function updateOrderStatus(id, status, payload = {}) {
@@ -983,7 +1000,7 @@ export function updateOrderStatus(id, status, payload = {}) {
   if (status === 'in_progress' && payload.returnReason) {
     order.returnReason = payload.returnReason
   }
-  return { ...order, steps: order.steps.map((s) => ({ ...s })) }
+  return deepCloneOrder(order)
 }
 
 export function completeOrderStep(orderId, stepId, status, comment, data = {}) {
@@ -997,9 +1014,9 @@ export function completeOrderStep(orderId, stepId, status, comment, data = {}) {
   if (!step.startedAt) {
     step.startedAt = step.completedAt
   }
-  if (data.measurements) step.measurements = data.measurements
-  if (data.materials) step.materials = data.materials
-  return { ...step }
+  if (data.measurements) step.measurements = data.measurements.map((m) => ({ ...m }))
+  if (data.materials) step.materials = data.materials.map((m) => ({ ...m }))
+  return deepCloneStep(step)
 }
 
 export function startOrderStep(orderId, stepId) {
@@ -1007,10 +1024,10 @@ export function startOrderStep(orderId, stepId) {
   if (!order) throw new Error('Наряд не найден')
   const step = order.steps.find((s) => s.id === stepId)
   if (!step) throw new Error('Шаг не найден')
-  if (step.status === 'in_progress') return { ...step }
+  if (step.status === 'in_progress') return deepCloneStep(step)
   step.status = 'in_progress'
   step.startedAt = new Date().toISOString()
-  return { ...step }
+  return deepCloneStep(step)
 }
 
 export function getChecklistTemplate(type) {

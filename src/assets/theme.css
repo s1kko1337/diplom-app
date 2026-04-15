@@ -23,10 +23,21 @@
   --accent: #f4f4f5;
   --accent-foreground: #09090b;
 
-  --status-normal: #22c55e;
-  --status-warning: #eab308;
-  --status-critical-bg: #ef4444;
-  --status-critical-text: #ffffff;
+  --status-normal: #16a34a;
+  --status-normal-bg: #dcfce7;
+  --status-warning: #d97706;
+  --status-warning-bg: #fef3c7;
+  --status-info: #2563eb;
+  --status-info-bg: #dbeafe;
+  --status-success: #16a34a;
+  --status-success-bg: #dcfce7;
+  --status-maintenance: #0891b2;
+  --status-maintenance-bg: #cffafe;
+  --status-critical: #dc2626;
+  --status-critical-bg: #fee2e2;
+  --status-critical-text: #7f1d1d;
+  --status-critical-solid-bg: #dc2626;
+  --status-critical-solid-text: #ffffff;
 
   --destructive: #dc2626;
   --destructive-foreground: #ffffff;
@@ -72,9 +83,20 @@
   --accent-foreground: #fafafa;
 
   --status-normal: #22c55e;
-  --status-warning: #eab308;
-  --status-critical-bg: #ef4444;
-  --status-critical-text: #fafafa;
+  --status-normal-bg: #052e16;
+  --status-warning: #f59e0b;
+  --status-warning-bg: #422006;
+  --status-info: #3b82f6;
+  --status-info-bg: #0c1a34;
+  --status-success: #22c55e;
+  --status-success-bg: #052e16;
+  --status-maintenance: #06b6d4;
+  --status-maintenance-bg: #083344;
+  --status-critical: #f87171;
+  --status-critical-bg: #3f1212;
+  --status-critical-text: #fecaca;
+  --status-critical-solid-bg: #ef4444;
+  --status-critical-solid-text: #fafafa;
 
   --destructive: #ef4444;
   --destructive-foreground: #fafafa;
@@ -116,9 +138,20 @@
   --color-input-background: var(--input-background);
   --color-ring: var(--ring);
   --color-status-normal: var(--status-normal);
+  --color-status-normal-bg: var(--status-normal-bg);
   --color-status-warning: var(--status-warning);
+  --color-status-warning-bg: var(--status-warning-bg);
+  --color-status-info: var(--status-info);
+  --color-status-info-bg: var(--status-info-bg);
+  --color-status-success: var(--status-success);
+  --color-status-success-bg: var(--status-success-bg);
+  --color-status-maintenance: var(--status-maintenance);
+  --color-status-maintenance-bg: var(--status-maintenance-bg);
+  --color-status-critical: var(--status-critical);
   --color-status-critical-bg: var(--status-critical-bg);
   --color-status-critical-text: var(--status-critical-text);
+  --color-status-critical-solid-bg: var(--status-critical-solid-bg);
+  --color-status-critical-solid-text: var(--status-critical-solid-text);
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);

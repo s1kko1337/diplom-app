@@ -36,7 +36,7 @@ const barClass = computed(() => {
   const map = {
     normal: 'bg-primary',
     warning: 'bg-primary opacity-80',
-    critical: 'bg-status-critical-bg',
+    critical: 'bg-status-critical',
   }
   return map[props.status] || map.normal
 })

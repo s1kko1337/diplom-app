@@ -18,7 +18,7 @@
             :class="
               part.isOriginal
                 ? 'border-primary text-primary'
-                : 'border-status-critical-text text-status-critical-text'
+                : 'border-status-warning text-status-warning'
             "
           >
             {{ part.isOriginal ? 'ОРГ' : 'АНЛ' }}
