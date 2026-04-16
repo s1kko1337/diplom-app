@@ -4,9 +4,7 @@
       <div class="flex items-center justify-between">
         <div>
           <CardTitle class="text-sm font-medium">Активные уведомления</CardTitle>
-          <p class="text-xs text-muted-foreground mt-1">
-            Неподтверждённые события от оборудования
-          </p>
+          <p class="text-xs text-muted-foreground mt-1">Неподтверждённые события от оборудования</p>
         </div>
         <Button variant="ghost" size="sm" as-child>
           <RouterLink :to="{ name: 'alerts' }">Все →</RouterLink>
@@ -67,9 +65,7 @@ onMounted(() => {
   if (!alertsStore.alerts.length) alertsStore.fetchAlerts()
 })
 
-const visibleAlerts = computed(() =>
-  alertsStore.alerts.filter((a) => !a.acknowledged).slice(0, 8),
-)
+const visibleAlerts = computed(() => alertsStore.alerts.filter((a) => !a.acknowledged).slice(0, 8))
 
 function iconFor(alert) {
   if (alert.type === 'critical') return AlertOctagon

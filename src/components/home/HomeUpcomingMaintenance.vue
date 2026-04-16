@@ -1,5 +1,5 @@
 <template>
-  <Card>
+  <Card class="flex flex-col h-full">
     <CardHeader class="pb-3">
       <div class="flex items-center justify-between">
         <div>
@@ -13,13 +13,13 @@
         </Button>
       </div>
     </CardHeader>
-    <CardContent class="p-0">
+    <CardContent class="p-0 flex-1 overflow-y-auto">
       <div class="divide-y divide-border">
         <RouterLink
           v-for="item in sortedUpcoming"
           :key="item.equipmentId"
           :to="{ name: 'equipment-detail', params: { id: item.equipmentId } }"
-          class="flex items-center gap-4 px-6 py-3 hover:bg-accent/50 transition-colors"
+          class="flex items-center gap-3 px-4 py-2.5 hover:bg-accent/50 transition-colors"
         >
           <div class="shrink-0">
             <span

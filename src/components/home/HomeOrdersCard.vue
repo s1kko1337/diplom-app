@@ -84,8 +84,7 @@ const displayedOrders = computed(() => {
   if (props.mode === 'assigned') {
     filtered = list.filter(
       (o) =>
-        o.assignedTo?.id === authStore.userId &&
-        !['completed', 'cancelled'].includes(o.status),
+        o.assignedTo?.id === authStore.userId && !['completed', 'cancelled'].includes(o.status),
     )
   } else if (props.mode === 'review') {
     filtered = list.filter((o) => o.status === 'review')

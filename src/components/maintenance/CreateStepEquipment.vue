@@ -94,8 +94,16 @@ const nextMaintenance = computed(() =>
     : null,
 )
 
+async function ensureDetail(equipmentId) {
+  if (!equipmentId) return
+  if (!equipmentStore.getDetail(equipmentId)) {
+    await equipmentStore.fetchById(equipmentId)
+  }
+}
+
 function updateEquipmentId(value) {
   emit('update:modelValue', { ...props.modelValue, equipmentId: value })
+  ensureDetail(value)
 }
 
 function updateType(value) {
@@ -111,9 +119,9 @@ onMounted(async () => {
       ...props.modelValue,
       equipmentId: route.query.equipmentId,
     })
-    if (!equipmentStore.getDetail(route.query.equipmentId)) {
-      await equipmentStore.fetchById(route.query.equipmentId)
-    }
+    await ensureDetail(route.query.equipmentId)
+  } else if (props.modelValue.equipmentId) {
+    await ensureDetail(props.modelValue.equipmentId)
   }
 })
 </script>

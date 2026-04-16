@@ -211,6 +211,18 @@ export const useMaintenanceStore = defineStore('maintenance', () => {
     return result
   }
 
+  async function restoreOrder(id) {
+    const authStore = useAuthStore()
+    const result = await maintenanceApi.updateOrderStatus(id, 'planned')
+    applyOrderUpdate(result)
+    await addEntry({
+      action: 'maintenance_order_restored',
+      details: `Наряд ${id} восстановлен в Запланировано`,
+      user: authStore.userName || 'Инженер',
+    })
+    return result
+  }
+
   function getProgress(order) {
     const steps = order.steps || []
     return {
@@ -244,6 +256,7 @@ export const useMaintenanceStore = defineStore('maintenance', () => {
     approveOrder,
     returnOrder,
     cancelOrder,
+    restoreOrder,
     getProgress,
   }
 })

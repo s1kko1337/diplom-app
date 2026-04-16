@@ -47,15 +47,15 @@
 
     <!-- My orders toggle (mechanic only) -->
     <div v-if="authStore.userRole === 'mechanic'" class="flex items-center gap-2">
-      <Switch :checked="modelValue.myOnly" @update:checked="update('myOnly', $event)" />
+      <Switch :model-value="modelValue.myOnly" @update:model-value="update('myOnly', $event)" />
       <span class="text-sm">Мои наряды</span>
     </div>
 
     <!-- Show cancelled toggle -->
     <div class="flex items-center gap-2">
       <Switch
-        :checked="modelValue.showCancelled"
-        @update:checked="update('showCancelled', $event)"
+        :model-value="modelValue.showCancelled"
+        @update:model-value="update('showCancelled', $event)"
       />
       <span class="text-sm">Показать отменённые</span>
     </div>

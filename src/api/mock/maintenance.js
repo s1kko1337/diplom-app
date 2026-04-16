@@ -1000,6 +1000,22 @@ export function updateOrderStatus(id, status, payload = {}) {
   if (status === 'in_progress' && payload.returnReason) {
     order.returnReason = payload.returnReason
   }
+  if (status === 'planned') {
+    order.startedAt = null
+    order.completedAt = null
+    order.reviewedAt = null
+    order.reviewedBy = null
+    order.returnReason = null
+    order.operatingHoursAtStart = null
+    order.acceptedBy = null
+    order.steps = order.steps.map((s) => ({
+      ...s,
+      status: 'pending',
+      comment: null,
+      startedAt: null,
+      completedAt: null,
+    }))
+  }
   return deepCloneOrder(order)
 }
 

@@ -9,25 +9,25 @@
           <div class="space-y-1">
             <label class="text-xs text-muted-foreground">Описание</label>
             <Input
-              :value="item.description"
+              :model-value="item.description"
               placeholder="Описание шага"
-              @input="updateField(index, 'description', $event.target.value)"
+              @update:model-value="updateField(index, 'description', $event)"
             />
           </div>
           <div class="space-y-1">
             <label class="text-xs text-muted-foreground">Требование</label>
             <Input
-              :value="item.requirement"
+              :model-value="item.requirement"
               placeholder="Требование"
-              @input="updateField(index, 'requirement', $event.target.value)"
+              @update:model-value="updateField(index, 'requirement', $event)"
             />
           </div>
           <div class="space-y-1">
             <label class="text-xs text-muted-foreground">Инструменты</label>
             <Input
-              :value="item.tools"
+              :model-value="item.tools"
               placeholder="Необходимые инструменты"
-              @input="updateField(index, 'tools', $event.target.value)"
+              @update:model-value="updateField(index, 'tools', $event)"
             />
           </div>
           <!-- Measurements -->
@@ -40,9 +40,9 @@
             >
               <div class="flex-1 space-y-1">
                 <Input
-                  :value="meas.description"
+                  :model-value="meas.description"
                   placeholder="Описание измерения"
-                  @input="updateMeasurementField(index, mIdx, 'description', $event.target.value)"
+                  @update:model-value="updateMeasurementField(index, mIdx, 'description', $event)"
                 />
               </div>
               <div class="w-24 space-y-1">
@@ -62,9 +62,9 @@
               </div>
               <div class="w-36 space-y-1">
                 <Input
-                  :value="meas.norm"
+                  :model-value="meas.norm"
                   placeholder="Норма"
-                  @input="updateMeasurementField(index, mIdx, 'norm', $event.target.value)"
+                  @update:model-value="updateMeasurementField(index, mIdx, 'norm', $event)"
                 />
               </div>
               <Button variant="destructive" size="icon-sm" @click="removeMeasurement(index, mIdx)">
@@ -86,9 +86,9 @@
             >
               <div class="flex-1 space-y-1">
                 <Input
-                  :value="mat.name"
+                  :model-value="mat.name"
                   placeholder="Наименование"
-                  @input="updateMaterialField(index, matIdx, 'name', $event.target.value)"
+                  @update:model-value="updateMaterialField(index, matIdx, 'name', $event)"
                 />
               </div>
               <div class="w-24 space-y-1">

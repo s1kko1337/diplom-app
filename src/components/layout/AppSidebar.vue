@@ -11,7 +11,7 @@
       </SheetHeader>
       <nav class="flex flex-col flex-1 overflow-y-auto p-2">
         <SidebarGroup
-          v-for="group in menuGroups"
+          v-for="group in visibleMenuGroups"
           :key="group.title"
           :title="group.title"
           :items="group.items"
@@ -50,7 +50,7 @@
     <!-- Navigation -->
     <nav class="flex flex-1 flex-col overflow-y-auto overflow-x-hidden p-2">
       <SidebarGroup
-        v-for="group in menuGroups"
+        v-for="group in visibleMenuGroups"
         :key="group.title"
         :title="group.title"
         :items="group.items"
@@ -99,7 +99,8 @@ import AppLogo from '@/components/AppLogo.vue'
 import ThemeToggle from '@/components/ThemeToggle.vue'
 import SidebarGroup from '@/components/layout/SidebarGroup.vue'
 import UserMenu from '@/components/layout/UserMenu.vue'
-import { menuGroups } from '@/components/layout/sidebarMenu'
+import { menuGroups, filterMenuByRole } from '@/components/layout/sidebarMenu'
+import { useAuthStore } from '@/stores/auth'
 
 defineProps({
   open: { type: Boolean, default: false },
@@ -108,6 +109,9 @@ defineProps({
 const emit = defineEmits(['update:open'])
 
 const { isMobile } = useBreakpoint()
+const authStore = useAuthStore()
+
+const visibleMenuGroups = computed(() => filterMenuByRole(menuGroups, authStore.userRole))
 
 const pinned = ref(false)
 const hovered = ref(false)

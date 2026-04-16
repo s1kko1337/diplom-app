@@ -19,8 +19,8 @@
         <label class="text-sm font-medium">Плановая дата</label>
         <Input
           type="date"
-          :value="modelValue.scheduledDate"
-          @input="updateScheduledDate($event.target.value)"
+          :model-value="modelValue.scheduledDate || ''"
+          @update:model-value="updateScheduledDate($event)"
         />
       </div>
     </div>
@@ -103,7 +103,7 @@ function updateAssignedTo(value) {
 }
 
 function updateScheduledDate(value) {
-  emit('update:modelValue', { ...props.modelValue, scheduledDate: value })
+  emit('update:modelValue', { ...props.modelValue, scheduledDate: value || null })
 }
 
 onMounted(async () => {

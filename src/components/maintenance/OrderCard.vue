@@ -35,26 +35,39 @@
         </div>
       </div>
 
-      <!-- Cancelled badge -->
-      <div v-if="order.status === 'cancelled'">
+      <!-- Cancelled badge + restore -->
+      <div v-if="order.status === 'cancelled'" class="flex items-center justify-between gap-2">
         <Badge
           variant="secondary"
           class="bg-zinc-200 text-zinc-600 dark:bg-zinc-700 dark:text-zinc-300"
         >
           Отменено
         </Badge>
+        <Button
+          v-if="canRestore"
+          variant="outline"
+          size="sm"
+          :disabled="restoring"
+          @click.stop="handleRestore"
+        >
+          <RotateCcw class="w-3.5 h-3.5 mr-1" />
+          {{ restoring ? '...' : 'Восстановить' }}
+        </Button>
       </div>
     </CardContent>
   </Card>
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { RotateCcw } from 'lucide-vue-next'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { useEquipmentStore } from '@/stores/equipment'
 import { useMaintenanceStore } from '@/stores/maintenance'
+import { usePermissions } from '@/composables/usePermissions'
 
 const props = defineProps({
   order: {
@@ -66,6 +79,10 @@ const props = defineProps({
 const router = useRouter()
 const equipmentStore = useEquipmentStore()
 const maintenanceStore = useMaintenanceStore()
+const { canCreate } = usePermissions()
+
+const restoring = ref(false)
+const canRestore = computed(() => canCreate.value)
 
 const equipment = computed(() => equipmentStore.list.find((e) => e.id === props.order.equipmentId))
 
@@ -88,6 +105,18 @@ const formattedDate = computed(() => {
 
 function navigateToDetail() {
   router.push({ name: 'maintenance-detail', params: { id: props.order.id } })
+}
+
+async function handleRestore() {
+  if (restoring.value) return
+  restoring.value = true
+  try {
+    await maintenanceStore.restoreOrder(props.order.id)
+  } catch (e) {
+    console.error(e)
+  } finally {
+    restoring.value = false
+  }
 }
 </script>
 
