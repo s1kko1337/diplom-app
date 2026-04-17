@@ -28,27 +28,26 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useAuthStore } from '@/stores/auth'
+import { usePreferencesStore } from '@/stores/preferences'
 import { ROLE_LABELS } from '@/utils/constants'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Switch } from '@/components/ui/switch'
 
-const STORAGE_KEY = 'settings_security'
-
 const authStore = useAuthStore()
+const preferences = usePreferencesStore()
 
-function loadSaved() {
-  try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}
-  } catch {
-    return {}
-  }
-}
+const twoFactor = ref(preferences.security.twoFactor)
 
-const saved = loadSaved()
-const twoFactor = ref(saved.twoFactor ?? true)
+watch(
+  () => preferences.security,
+  (val) => {
+    twoFactor.value = val.twoFactor
+  },
+  { deep: true },
+)
 
 function handleChangePassword() {
   // Заглушка — смена пароля
@@ -58,8 +57,8 @@ function handleAccessLog() {
   // Заглушка — журнал доступа
 }
 
-function save() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify({ twoFactor: twoFactor.value }))
+async function save() {
+  await preferences.save('security', { twoFactor: twoFactor.value })
 }
 
 function reset() {

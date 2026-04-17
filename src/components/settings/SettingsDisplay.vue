@@ -78,9 +78,10 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { Moon, Sun } from 'lucide-vue-next'
 import { useTheme } from '@/composables/useTheme'
+import { usePreferencesStore } from '@/stores/preferences'
 import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
 import {
@@ -91,25 +92,26 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 
-const STORAGE_KEY = 'settings_display'
-
+const preferences = usePreferencesStore()
 const { theme, applyTheme } = useTheme()
 
-function loadSaved() {
-  try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}
-  } catch {
-    return {}
-  }
-}
+const language = ref(preferences.display.language)
+const refreshRate = ref(preferences.display.refreshRate)
+const autoUpdate = ref(preferences.display.autoUpdate)
+const showTimestamps = ref(preferences.display.showTimestamps)
+const compactMode = ref(preferences.display.compactMode)
 
-const saved = loadSaved()
-
-const language = ref(saved.language || 'ru')
-const refreshRate = ref(saved.refreshRate ?? 5)
-const autoUpdate = ref(saved.autoUpdate ?? true)
-const showTimestamps = ref(saved.showTimestamps ?? false)
-const compactMode = ref(saved.compactMode ?? false)
+watch(
+  () => preferences.display,
+  (val) => {
+    language.value = val.language
+    refreshRate.value = val.refreshRate
+    autoUpdate.value = val.autoUpdate
+    showTimestamps.value = val.showTimestamps
+    compactMode.value = val.compactMode
+  },
+  { deep: true },
+)
 
 function handleDarkTheme() {
   applyTheme('dark')
@@ -119,17 +121,14 @@ function handleLightTheme() {
   applyTheme('light')
 }
 
-function save() {
-  localStorage.setItem(
-    STORAGE_KEY,
-    JSON.stringify({
-      language: language.value,
-      refreshRate: refreshRate.value,
-      autoUpdate: autoUpdate.value,
-      showTimestamps: showTimestamps.value,
-      compactMode: compactMode.value,
-    }),
-  )
+async function save() {
+  await preferences.save('display', {
+    language: language.value,
+    refreshRate: refreshRate.value,
+    autoUpdate: autoUpdate.value,
+    showTimestamps: showTimestamps.value,
+    compactMode: compactMode.value,
+  })
 }
 
 function reset() {

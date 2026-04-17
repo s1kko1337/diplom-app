@@ -1,14 +1,22 @@
-import { ref } from 'vue'
+import { computed, watchEffect } from 'vue'
+import { usePreferencesStore } from '@/stores/preferences'
 
-const saved = localStorage.getItem('theme') || 'dark'
-const theme = ref(saved)
-document.documentElement.classList.toggle('dark', saved === 'dark')
+const cached = localStorage.getItem('theme')
+if (cached) {
+  document.documentElement.classList.toggle('dark', cached === 'dark')
+}
 
 export function useTheme() {
+  const preferences = usePreferencesStore()
+  const theme = computed(() => preferences.theme)
+
+  watchEffect(() => {
+    document.documentElement.classList.toggle('dark', theme.value === 'dark')
+    localStorage.setItem('theme', theme.value)
+  })
+
   function applyTheme(value) {
-    theme.value = value
-    localStorage.setItem('theme', value)
-    document.documentElement.classList.toggle('dark', value === 'dark')
+    preferences.setTheme(value)
   }
 
   function toggleTheme() {

@@ -1,6 +1,7 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import * as authApi from '@/api/auth'
+import { usePreferencesStore } from '@/stores/preferences'
 
 const TOKEN_KEY = 'auth_token'
 
@@ -23,6 +24,8 @@ export const useAuthStore = defineStore('auth', () => {
       token.value = data.token
       user.value = data.user
       localStorage.setItem(TOKEN_KEY, data.token)
+      const preferencesStore = usePreferencesStore()
+      await preferencesStore.load()
       return true
     } catch (e) {
       error.value = e.message
@@ -43,6 +46,8 @@ export const useAuthStore = defineStore('auth', () => {
     if (!token.value) return
     try {
       user.value = await authApi.getMe()
+      const preferencesStore = usePreferencesStore()
+      await preferencesStore.load()
     } catch {
       token.value = null
       localStorage.removeItem(TOKEN_KEY)

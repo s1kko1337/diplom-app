@@ -1,56 +1,59 @@
 <template>
   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-    <div v-for="threshold in thresholds" :key="threshold.key">
-      <label class="text-xs mb-2 block text-muted-foreground">{{ threshold.label }}</label>
-      <Input v-model="threshold.value" type="number" :step="threshold.step || 1" />
+    <div v-for="meta in METADATA" :key="meta.key">
+      <label class="text-xs mb-2 block text-muted-foreground">{{ meta.label }}</label>
+      <Input v-model="values[meta.key]" type="number" :step="meta.step" />
     </div>
   </div>
 </template>
 
 <script setup>
-import { reactive } from 'vue'
+import { reactive, watch } from 'vue'
+import { usePreferencesStore } from '@/stores/preferences'
 import { Input } from '@/components/ui/input'
 
-const STORAGE_KEY = 'settings_thresholds'
-
-const DEFAULTS = [
-  { key: 'maxTemp', label: 'МАКСИМАЛЬНАЯ ТЕМПЕРАТУРА (°C)', value: 95, step: 1 },
-  { key: 'maxVibration', label: 'МАКСИМАЛЬНАЯ ВИБРАЦИЯ (мм/с)', value: 1.5, step: 0.1 },
-  { key: 'maxPower', label: 'МАКСИМАЛЬНАЯ МОЩНОСТЬ (%)', value: 95, step: 1 },
-  { key: 'toolWear', label: 'ИЗНОС ИНСТРУМЕНТА — ПРЕДУПРЕЖДЕНИЕ (%)', value: 70, step: 1 },
-  { key: 'minFuel', label: 'МИНИМАЛЬНЫЙ УРОВЕНЬ ТОПЛИВА (%)', value: 25, step: 1 },
-  { key: 'maxPressure', label: 'МАКСИМАЛЬНОЕ ДАВЛЕНИЕ (БАР)', value: 150, step: 1 },
+const METADATA = [
+  { key: 'maxTemp', label: 'МАКСИМАЛЬНАЯ ТЕМПЕРАТУРА (°C)', step: 1 },
+  { key: 'maxVibration', label: 'МАКСИМАЛЬНАЯ ВИБРАЦИЯ (мм/с)', step: 0.1 },
+  { key: 'maxPower', label: 'МАКСИМАЛЬНАЯ МОЩНОСТЬ (%)', step: 1 },
+  { key: 'toolWear', label: 'ИЗНОС ИНСТРУМЕНТА — ПРЕДУПРЕЖДЕНИЕ (%)', step: 1 },
+  { key: 'minFuel', label: 'МИНИМАЛЬНЫЙ УРОВЕНЬ ТОПЛИВА (%)', step: 1 },
+  { key: 'maxPressure', label: 'МАКСИМАЛЬНОЕ ДАВЛЕНИЕ (БАР)', step: 1 },
 ]
 
-function loadSaved() {
-  try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}
-  } catch {
-    return {}
-  }
-}
+const preferences = usePreferencesStore()
 
-const saved = loadSaved()
+const values = reactive({ ...preferences.thresholds })
 
-const thresholds = reactive(
-  DEFAULTS.map((d) => ({
-    ...d,
-    value: saved[d.key] ?? d.value,
-  })),
+watch(
+  () => preferences.thresholds,
+  (val) => {
+    for (const key of Object.keys(val)) {
+      values[key] = val[key]
+    }
+  },
+  { deep: true },
 )
 
-function save() {
+async function save() {
   const data = {}
-  for (const t of thresholds) {
-    data[t.key] = Number(t.value)
+  for (const meta of METADATA) {
+    data[meta.key] = Number(values[meta.key])
   }
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
+  await preferences.save('thresholds', data)
 }
 
 function reset() {
-  for (const t of thresholds) {
-    const def = DEFAULTS.find((d) => d.key === t.key)
-    t.value = def.value
+  const defaults = {
+    maxTemp: 95,
+    maxVibration: 1.5,
+    maxPower: 95,
+    toolWear: 70,
+    minFuel: 25,
+    maxPressure: 150,
+  }
+  for (const key of Object.keys(defaults)) {
+    values[key] = defaults[key]
   }
 }
 

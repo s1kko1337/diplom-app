@@ -40,39 +40,39 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
+import { usePreferencesStore } from '@/stores/preferences'
 import { Switch } from '@/components/ui/switch'
 import { Input } from '@/components/ui/input'
 
-const STORAGE_KEY = 'settings_notifications'
+const preferences = usePreferencesStore()
 
-function loadSaved() {
-  try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}
-  } catch {
-    return {}
-  }
-}
+const criticalAlerts = ref(preferences.notifications.criticalAlerts)
+const warnings = ref(preferences.notifications.warnings)
+const infoMessages = ref(preferences.notifications.infoMessages)
+const emailNotifications = ref(preferences.notifications.emailNotifications)
+const email = ref(preferences.notifications.email)
 
-const saved = loadSaved()
+watch(
+  () => preferences.notifications,
+  (val) => {
+    criticalAlerts.value = val.criticalAlerts
+    warnings.value = val.warnings
+    infoMessages.value = val.infoMessages
+    emailNotifications.value = val.emailNotifications
+    email.value = val.email
+  },
+  { deep: true },
+)
 
-const criticalAlerts = ref(saved.criticalAlerts ?? true)
-const warnings = ref(saved.warnings ?? true)
-const infoMessages = ref(saved.infoMessages ?? false)
-const emailNotifications = ref(saved.emailNotifications ?? true)
-const email = ref(saved.email || '')
-
-function save() {
-  localStorage.setItem(
-    STORAGE_KEY,
-    JSON.stringify({
-      criticalAlerts: criticalAlerts.value,
-      warnings: warnings.value,
-      infoMessages: infoMessages.value,
-      emailNotifications: emailNotifications.value,
-      email: email.value,
-    }),
-  )
+async function save() {
+  await preferences.save('notifications', {
+    criticalAlerts: criticalAlerts.value,
+    warnings: warnings.value,
+    infoMessages: infoMessages.value,
+    emailNotifications: emailNotifications.value,
+    email: email.value,
+  })
 }
 
 function reset() {
