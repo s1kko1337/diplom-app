@@ -1,18 +1,18 @@
-export const MOCK_USERS = [
-  { id: 'user-1', name: 'Иванов А.П.', role: 'engineer' },
-  { id: 'user-2', name: 'Петров С.В.', role: 'mechanic' },
-  { id: 'user-3', name: 'Сидоров К.М.', role: 'mechanic' },
-  { id: 'user-4', name: 'Козлов Д.А.', role: 'foreman' },
-]
+import { defineCollection, read } from './_runtime'
+import { createSeed } from './seed/users.seed'
+
+defineCollection({ name: 'users', scope: 'global', schemaVersion: 1, seed: createSeed })
 
 export function getUsers() {
-  return [...MOCK_USERS]
+  return [...read('users')]
 }
 
 export function getUsersByRole(role) {
-  return MOCK_USERS.filter((u) => u.role === role)
+  return read('users').filter((u) => u.role === role)
 }
 
 export function getUserById(id) {
-  return MOCK_USERS.find((u) => u.id === id) || null
+  return read('users').find((u) => u.id === id) || null
 }
+
+export const MOCK_USERS = read('users')

@@ -1,4 +1,7 @@
-const STORAGE_KEY = 'rudgormash_dashboards'
+import { defineCollection, read, write } from './_runtime'
+import { createSeed } from './seed/dashboards.seed'
+
+defineCollection({ name: 'dashboards', scope: 'user', schemaVersion: 1, seed: createSeed })
 
 function getDefaultConfig(equipmentId) {
   return {
@@ -57,34 +60,22 @@ function getDefaultConfig(equipmentId) {
   }
 }
 
-function loadAll() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    return raw ? JSON.parse(raw) : {}
-  } catch {
-    return {}
-  }
-}
-
-function saveAll(configs) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(configs))
-}
-
 export function getDashboardConfig(equipmentId) {
-  const all = loadAll()
+  const all = read('dashboards')
   return all[equipmentId] || getDefaultConfig(equipmentId)
 }
 
 export function saveDashboardConfig(equipmentId, config) {
-  const all = loadAll()
-  all[equipmentId] = { ...config, equipmentId }
-  saveAll(all)
-  return all[equipmentId]
+  const all = read('dashboards')
+  const next = { ...all, [equipmentId]: { ...config, equipmentId } }
+  write('dashboards', next)
+  return next[equipmentId]
 }
 
 export function resetDashboardConfig(equipmentId) {
-  const all = loadAll()
-  delete all[equipmentId]
-  saveAll(all)
+  const all = read('dashboards')
+  const next = { ...all }
+  delete next[equipmentId]
+  write('dashboards', next)
   return getDefaultConfig(equipmentId)
 }
