@@ -48,12 +48,17 @@ export const useAuthStore = defineStore('auth', () => {
     if (!token.value) return
     try {
       user.value = await authApi.getMe()
-      migrateLegacyKeys()
-      const preferencesStore = usePreferencesStore()
-      await preferencesStore.load()
     } catch {
       token.value = null
       localStorage.removeItem(TOKEN_KEY)
+      return
+    }
+    try {
+      migrateLegacyKeys()
+      const preferencesStore = usePreferencesStore()
+      await preferencesStore.load()
+    } catch (e) {
+      console.warn('[auth] Post-login hooks failed:', e)
     }
   }
 

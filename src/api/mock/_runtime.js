@@ -187,30 +187,37 @@ export function migrateLegacyKeys() {
   const userId = getCurrentUserId()
   if (!userId) return
 
-  const display = readLegacyJson('settings_display')
-  const notifications = readLegacyJson('settings_notifications')
-  const thresholds = readLegacyJson('settings_thresholds')
-  const security = readLegacyJson('settings_security')
-  const theme = localStorage.getItem('theme')
-  const legacyDashboards = readLegacyJson('rudgormash_dashboards')
+  try {
+    const display = readLegacyJson('settings_display')
+    const notifications = readLegacyJson('settings_notifications')
+    const thresholds = readLegacyJson('settings_thresholds')
+    const security = readLegacyJson('settings_security')
+    const theme = localStorage.getItem('theme')
+    const legacyDashboards = readLegacyJson('rudgormash_dashboards')
 
-  if (display || notifications || thresholds || security || theme) {
-    const current = read('preferences')
-    const merged = {
-      ...current,
-      display: { ...current.display, ...display },
-      notifications: { ...current.notifications, ...notifications },
-      thresholds: { ...current.thresholds, ...thresholds },
-      security: { ...current.security, ...security },
-      theme: theme || current.theme,
+    if (
+      collections.has('preferences') &&
+      (display || notifications || thresholds || security || theme)
+    ) {
+      const current = read('preferences')
+      const merged = {
+        ...current,
+        display: { ...current.display, ...display },
+        notifications: { ...current.notifications, ...notifications },
+        thresholds: { ...current.thresholds, ...thresholds },
+        security: { ...current.security, ...security },
+        theme: theme || current.theme,
+      }
+      write('preferences', merged)
     }
-    write('preferences', merged)
-  }
 
-  if (legacyDashboards) {
-    write('dashboards', legacyDashboards)
-  }
+    if (collections.has('dashboards') && legacyDashboards) {
+      write('dashboards', legacyDashboards)
+    }
 
-  LEGACY_KEYS.forEach((k) => localStorage.removeItem(k))
-  localStorage.setItem(MIGRATION_MARKER, '1')
+    LEGACY_KEYS.forEach((k) => localStorage.removeItem(k))
+    localStorage.setItem(MIGRATION_MARKER, '1')
+  } catch (err) {
+    console.warn('[mock-runtime] Legacy migration failed:', err)
+  }
 }

@@ -1,4 +1,5 @@
 import './assets/main.css'
+import './api/mock/_registry'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
