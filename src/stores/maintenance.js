@@ -6,6 +6,7 @@ import * as journalApi from '@/api/journal'
 import { addEntry } from '@/api/audit'
 import { useEquipmentStore } from './equipment'
 import { useAuthStore } from './auth'
+import { useReportsStore } from './reports'
 
 export const useMaintenanceStore = defineStore('maintenance', () => {
   const schedule = ref({})
@@ -184,7 +185,42 @@ export const useMaintenanceStore = defineStore('maintenance', () => {
       details: `Наряд ${id} утверждён`,
       user: reviewedBy.name,
     })
+    const reportsStore = useReportsStore()
+    const steps = result.steps || []
+    await reportsStore.create({
+      type: 'maintenance_completion',
+      status: 'published',
+      title: `Акт выполнения ${result.type} — ${result.equipmentId}`,
+      summary: `Наряд ${id} закрыт и утверждён.`,
+      createdBy: {
+        id: authStore.userId,
+        name: authStore.userName,
+        role: authStore.userRole,
+      },
+      equipmentId: result.equipmentId,
+      orderId: result.id,
+      publishedAt: new Date().toISOString(),
+      payload: {
+        checklistType: result.type,
+        stepsCompleted: steps.filter((s) => s.status === 'passed').length,
+        stepsTotal: steps.length,
+        executors: result.assignedTo ? [result.assignedTo] : [],
+        notes: result.notes || '',
+        duration: computeDuration(result),
+      },
+    })
     return result
+  }
+
+  function computeDuration(order) {
+    const start = order.startedAt || order.createdAt
+    const end = order.completedAt || order.reviewedAt || new Date().toISOString()
+    if (!start || !end) return ''
+    const ms = new Date(end).getTime() - new Date(start).getTime()
+    if (!Number.isFinite(ms) || ms < 0) return ''
+    const h = Math.floor(ms / 3600000)
+    const m = Math.floor((ms % 3600000) / 60000)
+    return `${h}ч ${m}мин`
   }
 
   async function returnOrder(id, reason) {

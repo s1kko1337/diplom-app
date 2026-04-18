@@ -7,6 +7,7 @@ import {
   Settings,
   ClipboardCheck,
   BookOpen,
+  FileText,
 } from 'lucide-vue-next'
 
 // roles: undefined → всем доступен; массив → только указанным ролям
@@ -31,6 +32,7 @@ export const menuGroups = [
     items: [
       { to: '/alerts', icon: Bell, label: 'Уведомления' },
       { to: '/analytics', icon: BarChart3, label: 'Аналитика', roles: ['engineer', 'foreman'] },
+      { to: '/reports', icon: FileText, label: 'Отчёты' },
     ],
   },
   {

@@ -101,6 +101,18 @@ const router = createRouter({
           meta: { breadcrumb: 'Техобслуживание / :id' },
           component: () => import('@/views/MaintenanceDetailView.vue'),
         },
+        {
+          path: 'reports',
+          name: 'reports',
+          meta: { breadcrumb: 'Отчёты' },
+          component: () => import('@/views/ReportsView.vue'),
+        },
+        {
+          path: 'reports/:id',
+          name: 'report-detail',
+          meta: { breadcrumb: 'Отчёты / :id' },
+          component: () => import('@/views/ReportDetailView.vue'),
+        },
       ],
     },
   ],
