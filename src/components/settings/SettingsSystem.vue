@@ -15,6 +15,30 @@
     </div>
 
     <div>
+      <label class="text-xs mb-4 block text-muted-foreground">ДЕМО-ДАННЫЕ</label>
+      <p class="text-xs text-muted-foreground mb-3">
+        Сбросить все демо-данные к начальному состоянию. Настройки, наряды, отчёты, уведомления и
+        дашборды будут удалены.
+      </p>
+      <Button variant="destructive" @click="showConfirm = true">Сбросить демо</Button>
+    </div>
+
+    <Dialog v-model:open="showConfirm">
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Подтверждение сброса</DialogTitle>
+          <DialogDescription>
+            Все демо-данные будут удалены, потребуется повторный вход. Продолжить?
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter>
+          <Button variant="outline" @click="showConfirm = false">Отмена</Button>
+          <Button variant="destructive" @click="doReset">Сбросить</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+
+    <div>
       <label class="text-xs mb-4 block text-muted-foreground">ЖУРНАЛ АУДИТА</label>
       <div v-if="loading" class="text-sm text-muted-foreground py-4">Загрузка...</div>
       <div v-else-if="auditLog.length === 0" class="text-sm text-muted-foreground py-4">
@@ -40,6 +64,16 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { getLog } from '@/api/audit'
+import { resetAll } from '@/api/mock/_runtime'
+import { Button } from '@/components/ui/button'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from '@/components/ui/dialog'
 
 const systemInfo = [
   { label: 'Версия системы', value: 'v2.4.1' },
@@ -52,6 +86,14 @@ const systemInfo = [
 
 const auditLog = ref([])
 const loading = ref(false)
+const showConfirm = ref(false)
+
+function doReset() {
+  resetAll()
+  localStorage.removeItem('auth_token')
+  localStorage.removeItem('auth_user_id')
+  window.location.href = '/login'
+}
 
 function formatDate(iso) {
   const d = new Date(iso)
