@@ -108,6 +108,18 @@ const router = createRouter({
           component: () => import('@/views/ReportsView.vue'),
         },
         {
+          path: 'reports/create',
+          name: 'report-create',
+          meta: { breadcrumb: 'Отчёты / Создание', requiresReportCreate: true },
+          component: () => import('@/views/ReportCreateView.vue'),
+        },
+        {
+          path: 'reports/:id/edit',
+          name: 'report-edit',
+          meta: { breadcrumb: 'Отчёты / :id / Редактирование', requiresReportCreate: true },
+          component: () => import('@/views/ReportCreateView.vue'),
+        },
+        {
           path: 'reports/:id',
           name: 'report-detail',
           meta: { breadcrumb: 'Отчёты / :id' },
@@ -118,7 +130,7 @@ const router = createRouter({
   ],
 })
 
-router.beforeEach((to) => {
+router.beforeEach(async (to) => {
   const authStore = useAuthStore()
 
   if (to.matched.some((r) => r.meta.requiresAuth) && !authStore.isAuthenticated) {
@@ -127,6 +139,13 @@ router.beforeEach((to) => {
 
   if (to.matched.some((r) => r.meta.guest) && authStore.isAuthenticated) {
     return { name: 'home' }
+  }
+
+  if (to.matched.some((r) => r.meta.requiresReportCreate)) {
+    const { canCreateAnyReport } = await import('@/utils/reportPermissions')
+    if (!canCreateAnyReport(authStore.userRole)) {
+      return { name: 'reports' }
+    }
   }
 })
 

@@ -7,6 +7,10 @@
         ← К списку
       </RouterLink>
       <div class="flex gap-2">
+        <Button v-if="canEdit" variant="outline" @click="goEdit">
+          <Pencil class="mr-2 size-4" />
+          Редактировать
+        </Button>
         <Button v-if="report.status === 'draft'" @click="publish">Опубликовать</Button>
         <Button variant="outline" @click="handlePrint">
           <Printer class="mr-2 size-4" />
@@ -62,8 +66,13 @@
 
         <div class="border-t border-border pt-6">
           <h2 class="mb-3 font-semibold">Содержимое</h2>
-          <pre class="overflow-auto rounded bg-muted p-4 text-xs">{{
-            formatPayload(report.payload)
+          <component
+            :is="payloadComponent"
+            v-if="payloadComponent"
+            :payload="report.payload || {}"
+          />
+          <pre v-else class="overflow-auto rounded bg-muted p-4 text-xs">{{
+            JSON.stringify(report.payload ?? {}, null, 2)
           }}</pre>
         </div>
       </CardContent>
@@ -73,17 +82,34 @@
 
 <script setup>
 import { computed, onMounted, watch } from 'vue'
-import { useRoute, RouterLink } from 'vue-router'
-import { Printer } from 'lucide-vue-next'
+import { useRoute, useRouter, RouterLink } from 'vue-router'
+import { Printer, Pencil } from 'lucide-vue-next'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { useReportsStore } from '@/stores/reports'
+import { useAuthStore } from '@/stores/auth'
+import { REPORT_TYPE_LABELS, canEditReport } from '@/utils/reportPermissions'
+import MaintenancePayload from '@/components/reports/MaintenancePayload.vue'
+import IncidentPayload from '@/components/reports/IncidentPayload.vue'
+import ShiftPayload from '@/components/reports/ShiftPayload.vue'
+import AnalyticsPayload from '@/components/reports/AnalyticsPayload.vue'
+
+const PAYLOAD_COMPONENTS = {
+  maintenance_completion: MaintenancePayload,
+  incident_report: IncidentPayload,
+  shift_report: ShiftPayload,
+  analytics_summary: AnalyticsPayload,
+}
 
 const route = useRoute()
+const router = useRouter()
 const store = useReportsStore()
+const auth = useAuthStore()
 
 const report = computed(() => store.currentReport)
+const payloadComponent = computed(() => PAYLOAD_COMPONENTS[report.value?.type] || null)
+const canEdit = computed(() => canEditReport(auth.userRole, report.value))
 
 onMounted(() => store.fetchById(route.params.id))
 
@@ -102,15 +128,12 @@ function handlePrint() {
   window.print()
 }
 
+function goEdit() {
+  router.push({ name: 'report-edit', params: { id: report.value.id } })
+}
+
 function typeLabel(t) {
-  return (
-    {
-      maintenance_completion: 'Акт выполнения ТО',
-      incident_report: 'Отчёт об инциденте',
-      shift_report: 'Отчёт смены',
-      analytics_summary: 'Аналитическая сводка',
-    }[t] || t
-  )
+  return REPORT_TYPE_LABELS[t] || t
 }
 
 function statusLabel(s) {
@@ -119,9 +142,5 @@ function statusLabel(s) {
 
 function formatDate(iso) {
   return new Date(iso).toLocaleString('ru-RU')
-}
-
-function formatPayload(payload) {
-  return JSON.stringify(payload ?? {}, null, 2)
 }
 </script>

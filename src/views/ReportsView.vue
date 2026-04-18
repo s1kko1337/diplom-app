@@ -2,6 +2,10 @@
   <div class="space-y-6">
     <div class="flex items-center justify-between">
       <h1 class="text-2xl font-bold">Отчёты</h1>
+      <Button v-if="canCreate" @click="goCreate">
+        <Plus class="mr-2 size-4" />
+        Создать отчёт
+      </Button>
     </div>
 
     <Card>
@@ -71,7 +75,8 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRouter } from 'vue-router'
+import { Plus } from 'lucide-vue-next'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -83,12 +88,22 @@ import {
   SelectItem,
 } from '@/components/ui/select'
 import { useReportsStore } from '@/stores/reports'
+import { useAuthStore } from '@/stores/auth'
+import { canCreateAnyReport } from '@/utils/reportPermissions'
 
 const ALL = '__all__'
 
+const router = useRouter()
 const store = useReportsStore()
+const auth = useAuthStore()
 const filterType = ref(ALL)
 const filterStatus = ref(ALL)
+
+const canCreate = computed(() => canCreateAnyReport(auth.userRole))
+
+function goCreate() {
+  router.push({ name: 'report-create' })
+}
 
 onMounted(() => store.fetchAll())
 
