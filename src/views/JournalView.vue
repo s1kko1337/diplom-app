@@ -2,14 +2,14 @@
   <div class="space-y-6">
     <div class="flex items-center justify-between">
       <h1 class="text-2xl font-bold">Журнал технического состояния</h1>
-      <Button variant="outline" @click="handlePrint">
+      <Button variant="outline" class="no-print" @click="handlePrint">
         <Printer class="mr-2 size-4" />
         Печать журнала
       </Button>
     </div>
 
     <!-- Filters -->
-    <Card>
+    <Card class="no-print">
       <CardContent class="flex flex-wrap items-end gap-4 p-4">
         <div class="space-y-1">
           <label class="text-xs text-muted-foreground">Оборудование</label>

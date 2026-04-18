@@ -1,0 +1,45 @@
+@media print {
+  @page {
+    margin: 1.5cm;
+  }
+
+  html,
+  body {
+    height: auto !important;
+    overflow: visible !important;
+    background: #fff !important;
+    color: #000 !important;
+  }
+
+  body * {
+    box-shadow: none !important;
+  }
+
+  aside,
+  header,
+  footer,
+  .no-print,
+  [data-no-print] {
+    display: none !important;
+  }
+
+  .h-screen {
+    height: auto !important;
+  }
+
+  main {
+    overflow: visible !important;
+    padding: 0 !important;
+  }
+
+  .overflow-hidden,
+  .overflow-y-auto,
+  .overflow-x-auto,
+  .overflow-auto {
+    overflow: visible !important;
+  }
+
+  a[href]::after {
+    content: '' !important;
+  }
+}
