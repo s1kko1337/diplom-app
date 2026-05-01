@@ -1,5 +1,10 @@
 <template>
-  <div class="flex items-center gap-2 px-3 py-1 border rounded-md" :class="containerClass">
+  <div
+    class="flex items-center gap-2 px-3 py-1 border rounded-md"
+    :class="containerClass"
+    data-testid="connection-status"
+    :data-state="connectionStore.status"
+  >
     <div class="w-2 h-2 rounded-full" :class="dotClass" />
     <span class="text-xs" :class="textClass">{{ label }}</span>
   </div>
