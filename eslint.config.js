@@ -32,6 +32,27 @@ export default defineConfig([
     },
   },
 
+  {
+    name: 'app/node-config-files',
+    files: ['playwright.config.js', 'vite.config.js', 'eslint.config.js'],
+    languageOptions: {
+      globals: {
+        ...globals.node,
+      },
+    },
+  },
+
+  {
+    name: 'app/e2e-tests',
+    files: ['tests/e2e/**/*.{js,mjs}'],
+    languageOptions: {
+      globals: {
+        ...globals.node,
+        ...globals.browser,
+      },
+    },
+  },
+
   ...pluginOxlint.buildFromOxlintConfigFile('.oxlintrc.json'),
 
   skipFormatting,
