@@ -49,6 +49,9 @@
           v-for="item in filteredEquipment"
           :key="item.id"
           class="group transition-colors hover:border-primary"
+          data-testid="equipment-card"
+          :data-equipment-id="item.id"
+          :data-status="item.status"
         >
           <CardHeader class="pb-3">
             <div class="flex items-center justify-between">

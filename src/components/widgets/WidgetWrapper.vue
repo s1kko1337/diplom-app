@@ -2,6 +2,8 @@
   <div
     class="h-full bg-surface-1 border border-border rounded-md overflow-hidden"
     :class="editing ? 'ring-1 ring-primary/30' : ''"
+    data-testid="widget-card"
+    :data-widget-type="widget.type"
   >
     <component
       :is="widgetComponent"
