@@ -48,3 +48,7 @@ CLAUDE.md
 #Temp files
 /temp
 /temp/*
+
+tests/e2e/.results/
+tests/e2e/.report/
+playwright-report/
