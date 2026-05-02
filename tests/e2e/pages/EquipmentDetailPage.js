@@ -9,7 +9,7 @@ export class EquipmentDetailPage {
   }
 
   tab(name) {
-    return this.page.getByRole('tab', { name })
+    return this.page.getByRole('tab', { name, exact: true })
   }
 
   async openTab(name) {

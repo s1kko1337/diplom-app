@@ -2,11 +2,26 @@ import { globalKey, userKey, metaKey, userMetaKey, SCHEMA_VERSION } from '../hel
 
 export async function resetMockState(page) {
   await page.addInitScript(() => {
+    if (sessionStorage.getItem('__e2e_cleaned__') === '1') {
+      // Уже очищено в этой сессии — сохранённые тестом данные не трогаем при reload.
+      if (localStorage.getItem('rgm:e2e:disable-thresholds') !== '1') {
+        localStorage.setItem('rgm:e2e:disable-thresholds', '1')
+      }
+      return
+    }
+    sessionStorage.setItem('__e2e_cleaned__', '1')
     for (const key of Object.keys(localStorage)) {
       if (key.startsWith('rgm:') || key === 'auth_token' || key === 'auth_user_id') {
         localStorage.removeItem(key)
       }
     }
+    localStorage.setItem('rgm:e2e:disable-thresholds', '1')
+  })
+}
+
+export async function enableThresholds(page) {
+  await page.addInitScript(() => {
+    localStorage.removeItem('rgm:e2e:disable-thresholds')
   })
 }
 

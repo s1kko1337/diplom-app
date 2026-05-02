@@ -11,7 +11,14 @@ export default defineConfig([
     files: ['**/*.{vue,js,mjs,jsx}'],
   },
 
-  globalIgnores(['**/dist/**', '**/dist-ssr/**', '**/coverage/**']),
+  globalIgnores([
+    '**/dist/**',
+    '**/dist-ssr/**',
+    '**/coverage/**',
+    'tests/e2e/.report/**',
+    'tests/e2e/.results/**',
+    'playwright-report/**',
+  ]),
 
   {
     languageOptions: {
