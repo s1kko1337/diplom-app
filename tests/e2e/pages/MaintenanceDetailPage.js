@@ -37,11 +37,11 @@ export class MaintenanceDetailPage {
   }
 
   get approveButton() {
-    return this.page.getByRole('button', { name: /Принять/ })
+    return this.page.getByRole('button', { name: /Утвердить/ })
   }
 
-  get rejectButton() {
-    return this.page.getByRole('button', { name: /Отклонить/ })
+  get returnButton() {
+    return this.page.getByRole('button', { name: /Вернуть на доработку/ })
   }
 
   measurementInput(label) {
