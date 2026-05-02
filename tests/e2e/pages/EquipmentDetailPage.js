@@ -5,7 +5,13 @@ export class EquipmentDetailPage {
   }
 
   async goto() {
-    await this.page.goto(`/equipment/${this.id}`)
+    await this.page.goto('/equipment')
+    await this.page
+      .locator(`[data-testid="equipment-card"][data-equipment-id="${this.id}"]`)
+      .getByRole('link')
+      .first()
+      .click()
+    await this.page.waitForURL(/\/equipment\/[^/]+$/)
   }
 
   tab(name) {
