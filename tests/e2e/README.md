@@ -1,9 +1,17 @@
 # E2E-тесты Playwright
 
 End-to-end проверки клиентской части системы мониторинга бурового оборудования
-«Рудгормаш». Покрывают функциональные требования ФТ-1…ФТ-13 и нефункциональные
-НФТ-3, НФТ-4, НФТ-5, НФТ-6, НФТ-7, НФТ-9 из `docs/requirements.md`, плюс
-интеграционные сценарии по ролям engineer / mechanic / foreman.
+«Рудгормаш». **140 тестов** покрывают:
+
+- **ФТ-1..ФТ-13** — все функциональные требования из `docs/requirements.md`
+- **НФТ-3, 4, 5, 6, 7, 9** — нефункциональные (адаптив, touch, offline, UX, кросс-браузер)
+- **P0 расширенный** — auth (login/logout/guards), equipment lifecycle (create/delete/status),
+  dashboard (11 типов виджетов, mobile), maintenance create wizard (валидация, RBAC),
+  maintenance execute (все step states, навигация, отмена), reports CRUD per role
+- **P1 расширенный** — alerts/journal фильтры, settings все табы и темы, edge cases
+  (404 IDs, breadcrumbs, corrupted JSON)
+- **P2** — a11y, breadcrumbs, print-стили, performance budgets
+- **Ролевые сценарии** — S-E1..E3 (engineer), S-M1..M2 (mechanic), S-F1..F2 (foreman)
 
 ## Запуск
 
