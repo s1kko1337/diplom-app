@@ -152,7 +152,7 @@
                 }}</TableCell>
                 <TableCell>
                   <Badge
-                    :variant="item.status === 'working' ? 'default' : 'outline'"
+                    :variant="'outline'"
                     :class="STATUS_COLORS[item.status]"
                   >
                     <span
