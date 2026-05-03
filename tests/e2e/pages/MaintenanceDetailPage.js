@@ -17,15 +17,15 @@ export class MaintenanceDetailPage {
   }
 
   get markPassedButton() {
-    return this.page.getByRole('button', { name: /Выполнено/ })
+    return this.page.getByRole('button', { name: 'Выполнено', exact: true })
   }
 
   get markFailedButton() {
-    return this.page.getByRole('button', { name: /С замечаниями/ })
+    return this.page.getByRole('button', { name: 'Не выполнено', exact: true })
   }
 
   get markSkippedButton() {
-    return this.page.getByRole('button', { name: /Пропустить/ })
+    return this.page.getByRole('button', { name: 'Пропущено', exact: true })
   }
 
   get finishButton() {
