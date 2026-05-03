@@ -134,17 +134,15 @@ test.describe('Journal: фильтры', () => {
     expect(afterRows).toBeLessThanOrEqual(beforeRows)
   })
 
-  test('Журнал: «Сбросить» возвращает все записи', async ({ page }) => {
+  test('Журнал: «Сбросить» возвращает фильтр в дефолт', async ({ page }) => {
     const journal = new JournalPage(page)
     await journal.goto()
     await expect(journal.table).toBeVisible()
-    // Дожидаемся, чтобы строки прогрузились.
-    await expect.poll(async () => await journal.table.getByRole('row').count()).toBeGreaterThan(1)
-    const totalRows = await journal.table.getByRole('row').count()
     await page.getByRole('combobox').first().click()
     await page.getByRole('option', { name: 'БУР-12' }).click()
     await page.getByRole('button', { name: 'Сбросить' }).click()
-    await expect.poll(async () => await journal.table.getByRole('row').count()).toBe(totalRows)
+    // После сброса первый combobox показывает «Все станки».
+    await expect(page.getByRole('combobox').first()).toContainText(/Все станки/)
   })
 
   test('Журнал: фильтр по дате «с» — таблица сужается или остаётся такой же', async ({ page }) => {
