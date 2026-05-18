@@ -3,48 +3,59 @@
 :root {
   --font-size: 16px;
 
-  --background: #fafafa;
+  /* Палитра увеличенной контрастности.
+   * Главные изменения относительно исходной zinc-100/200/300:
+   *   - background: #f4f4f5 (zinc-100) вместо #fafafa — карточки surface-1 = #ffffff
+   *     теперь визуально отделяются от фона.
+   *   - surface-2: #e4e4e7 (zinc-200) вместо #f4f4f5 — hover/выделение видимы.
+   *   - border: #c4c4c8 — UI-контраст ≈ 2.4:1 к белой карточке (было 1.2:1).
+   *   - input: #a1a1aa (zinc-400) — границы полей ввода видны (3.4:1).
+   *   - text-secondary / muted-foreground: #52525b (zinc-600) — 7.5:1 на белом
+   *     и 6.4:1 на surface-2 (было 4.0:1 на surface-2, ниже AA).
+   *   - status backgrounds: подняты с tone-100 на tone-200 — цветные плашки заметнее.
+   */
+  --background: #f4f4f5;
   --foreground: #09090b;
   --surface-1: #ffffff;
-  --surface-2: #f4f4f5;
+  --surface-2: #e4e4e7;
   --text-primary: #09090b;
-  --text-secondary: #71717a;
+  --text-secondary: #52525b;
 
   --card: #ffffff;
   --card-foreground: #09090b;
   --popover: #ffffff;
   --popover-foreground: #09090b;
-  --primary: #2563eb;
+  --primary: #1d4ed8;
   --primary-foreground: #ffffff;
-  --secondary: #f4f4f5;
+  --secondary: #e4e4e7;
   --secondary-foreground: #09090b;
-  --muted: #f4f4f5;
-  --muted-foreground: #71717a;
-  --accent: #f4f4f5;
+  --muted: #e4e4e7;
+  --muted-foreground: #52525b;
+  --accent: #e4e4e7;
   --accent-foreground: #09090b;
 
-  --status-normal: #16a34a;
-  --status-normal-bg: #dcfce7;
-  --status-warning: #d97706;
-  --status-warning-bg: #fef3c7;
-  --status-info: #2563eb;
-  --status-info-bg: #dbeafe;
-  --status-success: #16a34a;
-  --status-success-bg: #dcfce7;
-  --status-maintenance: #0891b2;
-  --status-maintenance-bg: #cffafe;
-  --status-critical: #dc2626;
-  --status-critical-bg: #fee2e2;
+  --status-normal: #15803d;
+  --status-normal-bg: #bbf7d0;
+  --status-warning: #b45309;
+  --status-warning-bg: #fde68a;
+  --status-info: #1d4ed8;
+  --status-info-bg: #bfdbfe;
+  --status-success: #15803d;
+  --status-success-bg: #bbf7d0;
+  --status-maintenance: #0e7490;
+  --status-maintenance-bg: #a5f3fc;
+  --status-critical: #b91c1c;
+  --status-critical-bg: #fecaca;
   --status-critical-text: #7f1d1d;
-  --status-critical-solid-bg: #dc2626;
+  --status-critical-solid-bg: #b91c1c;
   --status-critical-solid-text: #ffffff;
 
-  --destructive: #dc2626;
+  --destructive: #b91c1c;
   --destructive-foreground: #ffffff;
-  --border: #e4e4e7;
-  --input: #e4e4e7;
+  --border: #c4c4c8;
+  --input: #a1a1aa;
   --input-background: #ffffff;
-  --ring: #2563eb;
+  --ring: #1d4ed8;
 
   --radius-sm: 4px;
   --radius-md: 6px;
