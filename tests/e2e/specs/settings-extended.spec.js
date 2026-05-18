@@ -11,20 +11,27 @@ test.describe('Settings: расширенные сценарии по табам
     await page.goto('/settings')
     await expect(page.getByRole('tab', { name: 'Отображение' })).toBeVisible()
     await page.getByRole('button', { name: /ТЁМНАЯ/ }).click()
-    const isDark = await page.evaluate(() =>
-      document.documentElement.classList.contains('dark'),
-    )
-    expect(isDark).toBe(true)
+    await expect
+      .poll(async () =>
+        await page.evaluate(() => document.documentElement.classList.contains('dark')),
+      )
+      .toBe(true)
   })
 
   test('таб «Отображение»: переключение светлой темы убирает класс .dark', async ({ page }) => {
     await page.goto('/settings')
     await page.getByRole('button', { name: /ТЁМНАЯ/ }).click()
+    await expect
+      .poll(async () =>
+        await page.evaluate(() => document.documentElement.classList.contains('dark')),
+      )
+      .toBe(true)
     await page.getByRole('button', { name: /СВЕТЛАЯ/ }).click()
-    const isDark = await page.evaluate(() =>
-      document.documentElement.classList.contains('dark'),
-    )
-    expect(isDark).toBe(false)
+    await expect
+      .poll(async () =>
+        await page.evaluate(() => document.documentElement.classList.contains('dark')),
+      )
+      .toBe(false)
   })
 
   test('таб «Уведомления» открывается и содержит переключатели', async ({ page }) => {

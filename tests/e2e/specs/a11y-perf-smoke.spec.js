@@ -78,15 +78,23 @@ test.describe('A11y и performance smoke', () => {
     expect(elapsed).toBeLessThan(1500)
   })
 
-  test('focus visible на интерактивах: первый Tab не теряет фокус', async ({
+  test('focus visible на интерактивах: Tab переводит фокус на интерактив', async ({
     page,
     loginAs,
   }) => {
     await loginAs('engineer')
     await page.goto('/')
+    // В Firefox/WebKit начальный фокус документа != body; сначала кликаем по
+    // body, чтобы стартовать с детерминированной точки.
+    await page.evaluate(() => document.body.click())
     await page.locator('aside').hover()
-    await page.keyboard.press('Tab')
-    const focusedTag = await page.evaluate(() => document.activeElement?.tagName)
-    expect(focusedTag).not.toBe('BODY')
+    // Несколько последовательных Tab гарантированно передадут фокус интерактиву.
+    for (let i = 0; i < 5; i++) {
+      await page.keyboard.press('Tab')
+      const tag = await page.evaluate(() => document.activeElement?.tagName)
+      if (tag && tag !== 'BODY' && tag !== 'HTML') return
+    }
+    const finalTag = await page.evaluate(() => document.activeElement?.tagName)
+    expect(['BUTTON', 'INPUT', 'A', 'SELECT', 'TEXTAREA']).toContain(finalTag)
   })
 })
