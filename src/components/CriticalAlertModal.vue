@@ -4,6 +4,7 @@
     <SheetContent
       side="bottom"
       class="max-h-[90vh] overflow-y-auto bg-status-critical-solid-bg text-status-critical-solid-text border-status-critical-solid-text/30 animate-pulse rounded-t-lg"
+      data-testid="critical-alert-modal"
     >
       <SheetHeader>
         <SheetTitle class="text-2xl text-status-critical-solid-text">
@@ -48,6 +49,7 @@
   <Dialog v-else :open="show" @update:open="handleOpenChange">
     <DialogContent
       class="max-w-2xl bg-status-critical-solid-bg text-status-critical-solid-text border-status-critical-solid-text/30 animate-pulse rounded-lg"
+      data-testid="critical-alert-modal"
     >
       <DialogHeader>
         <DialogTitle class="text-3xl text-status-critical-solid-text">

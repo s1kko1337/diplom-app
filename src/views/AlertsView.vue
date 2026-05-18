@@ -47,7 +47,13 @@
 
           <div class="space-y-3">
             <Transition v-for="alert in group.alerts" :key="alert.id" name="fade" appear>
-              <Card :class="['transition-all duration-150 border', alertCardClasses(alert)]">
+              <Card
+                :class="['transition-all duration-150 border', alertCardClasses(alert)]"
+                data-testid="alert-card"
+                :data-alert-id="alert.id"
+                :data-alert-type="alert.type"
+                :data-alert-acknowledged="alert.acknowledged ? '1' : '0'"
+              >
                 <CardContent class="p-4">
                   <div class="flex items-start justify-between gap-4">
                     <div class="flex items-start gap-3 flex-1 min-w-0">

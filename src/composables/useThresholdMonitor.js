@@ -8,6 +8,7 @@ export function useThresholdMonitor() {
   const sensorsStore = useSensorsStore()
 
   function checkThresholds(equipmentId) {
+    if (localStorage.getItem('rgm:e2e:disable-thresholds') === '1') return
     const defs = sensorsStore.getSensorDefs(equipmentId)
     const liveData = sensorsStore.liveData[equipmentId]
     if (!defs.length || !liveData) return
