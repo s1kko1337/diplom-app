@@ -6,17 +6,16 @@ test.describe('Equipment lifecycle (create / disconnect / reconnect / delete)', 
     await loginAs('engineer')
   })
 
-  test('диалог создания станка: валидация ID и заполнение формы', async ({ page }) => {
+  test('диалог создания станка: ID назначается автоматически', async ({ page }) => {
     const list = new EquipmentListPage(page)
     await list.goto()
     await page.getByRole('button', { name: /Подключить станок/ }).click()
     const dialog = page.getByRole('dialog')
     await expect(dialog).toBeVisible()
     await expect(dialog.getByText('Подключить новый станок')).toBeVisible()
-    // Без ID submit отправляется но HTML5 required не пропустит — проверяем визуально:
-    await dialog.getByRole('button', { name: /^Подключить$/ }).click()
-    // Диалог остаётся открытым (ID был пуст).
-    await expect(dialog).toBeVisible()
+    // ID генерируется автоматически (вида «БУР-NN»), модель по умолчанию — СБШ-250МНА.
+    await expect(dialog.getByPlaceholder('БУР-99')).toHaveValue(/^БУР-\d+$/)
+    await expect(dialog.getByPlaceholder('СБШ-250МНА')).toHaveValue('СБШ-250МНА')
   })
 
   test('создание нового станка добавляет карточку в список', async ({ page }) => {

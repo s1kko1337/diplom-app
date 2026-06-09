@@ -4,7 +4,7 @@
     aria-label="Переключить тему"
     @click="toggleTheme"
   >
-    <Sun v-if="theme === 'dark'" class="w-5 h-5" />
+    <Sun v-if="isDark" class="w-5 h-5" />
     <Moon v-else class="w-5 h-5" />
   </button>
 </template>
@@ -13,5 +13,5 @@
 import { Sun, Moon } from 'lucide-vue-next'
 import { useTheme } from '@/composables/useTheme'
 
-const { theme, toggleTheme } = useTheme()
+const { isDark, toggleTheme } = useTheme()
 </script>

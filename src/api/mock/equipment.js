@@ -1,7 +1,16 @@
 import { defineCollection, read, patch, append, remove } from './_runtime'
-import { createSeed } from './seed/equipment.seed'
+import { createSeed, createSensors, createSbsh250Specs } from './seed/equipment.seed'
+import { nextEquipmentId } from '@/utils/equipmentId'
 
-defineCollection({ name: 'equipment', scope: 'global', schemaVersion: 1, seed: createSeed })
+// schemaVersion: 2 — пересев парка после перевода всех станков на СБШ-250МНА
+// (старые сиды с DML-1200 / СБШ-320 в localStorage будут заменены).
+defineCollection({ name: 'equipment', scope: 'global', schemaVersion: 2, seed: createSeed })
+
+const DEFAULT_MODEL = 'СБШ-250МНА'
+
+export function generateEquipmentId() {
+  return nextEquipmentId(read('equipment').map((e) => e.id))
+}
 
 export function getEquipmentList() {
   return read('equipment').map(({ sensors: _s, specs: _sp, serviceHistory: _sh, ...rest }) => rest)
@@ -12,25 +21,34 @@ export function getEquipmentById(id) {
 }
 
 export function createEquipmentEntry(data) {
-  if (!data.id) throw new Error('ID обязателен')
-  if (getEquipmentById(data.id)) throw new Error(`Оборудование ${data.id} уже существует`)
+  // ID назначается автоматически, если не передан явно.
+  const id = data.id || generateEquipmentId()
+  if (getEquipmentById(id)) throw new Error(`Оборудование ${id} уже существует`)
+  const model = data.model || DEFAULT_MODEL
+  const year = Number(data.year) || new Date().getFullYear()
+  const serial = data.serial || `SN-${year}-${id.replace(/\D/g, '') || '000'}`
+  const isSbsh250 = model === DEFAULT_MODEL
   const entry = {
-    id: data.id,
-    model: data.model || '—',
-    fullModel: data.fullModel || data.model || '—',
-    serial: data.serial || `SN-${Date.now()}`,
-    year: Number(data.year) || new Date().getFullYear(),
+    id,
+    model,
+    fullModel: data.fullModel || (isSbsh250 ? `Буровой станок ${DEFAULT_MODEL}` : model),
+    serial,
+    year,
     status: data.status || 'idle',
     statusLabel: 'ПРОСТОЙ',
     operatingHours: Number(data.operatingHours) || 0,
     lastMaintenance: null,
     subsystemHealth: { hydraulic: 100, electrical: 100, mechanical: 100, compressor: 100 },
-    sensors: [],
-    specs: [
-      { label: 'Модель', value: data.model || '—' },
-      { label: 'Серийный номер', value: data.serial || '—' },
-      { label: 'Год выпуска', value: String(data.year || new Date().getFullYear()) },
-    ],
+    // Новый станок сразу получает полный набор датчиков, чтобы быть доступным
+    // для мониторинга и кастомизируемых дашбордов.
+    sensors: createSensors(),
+    specs: isSbsh250
+      ? createSbsh250Specs(serial, year)
+      : [
+          { label: 'Модель', value: model },
+          { label: 'Серийный номер', value: serial },
+          { label: 'Год выпуска', value: String(year) },
+        ],
     serviceHistory: [],
   }
   append('equipment', entry)

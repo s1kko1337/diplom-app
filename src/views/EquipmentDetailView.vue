@@ -16,12 +16,21 @@
           <TabsTrigger value="maintenance">ТО</TabsTrigger>
           <TabsTrigger value="parts">Детали</TabsTrigger>
           <TabsTrigger value="history">История</TabsTrigger>
+          <TabsTrigger value="dashboard">Дашборд</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="overview" class="space-y-6">
-          <EquipmentMetrics :equipment-id="equipmentId" />
-          <EquipmentStatusBars :equipment-id="equipmentId" />
-          <EquipmentCharts :equipment-id="equipmentId" />
+        <TabsContent value="overview">
+          <CustomizableSections page-key="equipment-overview" :sections="overviewSections">
+            <template #metrics>
+              <EquipmentMetrics :equipment-id="equipmentId" />
+            </template>
+            <template #status>
+              <EquipmentStatusBars :equipment-id="equipmentId" />
+            </template>
+            <template #charts>
+              <EquipmentCharts :equipment-id="equipmentId" />
+            </template>
+          </CustomizableSections>
         </TabsContent>
 
         <TabsContent value="sensors">
@@ -39,6 +48,14 @@
         <TabsContent value="history" class="space-y-6">
           <SensorHistoryExplorer :equipment-id="equipmentId" :sensors="current.sensors || []" />
           <EquipmentSpecs :equipment="current" />
+        </TabsContent>
+
+        <TabsContent value="dashboard">
+          <DashboardCanvas
+            :config-key="equipmentId"
+            :data-equipment-id="equipmentId"
+            :manage-polling="false"
+          />
         </TabsContent>
       </Tabs>
     </template>
@@ -65,6 +82,14 @@ import EquipmentParts from '@/components/equipment/EquipmentParts.vue'
 import SensorHistoryExplorer from '@/components/equipment/SensorHistoryExplorer.vue'
 import EquipmentSensors from '@/components/equipment/EquipmentSensors.vue'
 import MaintenanceTab from '@/components/equipment/MaintenanceTab.vue'
+import DashboardCanvas from '@/components/dashboard/DashboardCanvas.vue'
+import CustomizableSections from '@/components/customize/CustomizableSections.vue'
+
+const overviewSections = [
+  { id: 'metrics', label: 'Ключевые метрики' },
+  { id: 'status', label: 'Состояние систем' },
+  { id: 'charts', label: 'Графики' },
+]
 
 const route = useRoute()
 const equipmentStore = useEquipmentStore()

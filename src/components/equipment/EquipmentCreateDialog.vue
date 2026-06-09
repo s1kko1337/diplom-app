@@ -11,7 +11,21 @@
       <form class="space-y-4" @submit.prevent="handleSubmit">
         <div class="space-y-2">
           <label class="text-xs">ID станка *</label>
-          <Input v-model="form.id" placeholder="БУР-99" required />
+          <div class="flex items-center gap-2">
+            <Input v-model="form.id" placeholder="БУР-99" required />
+            <Button
+              type="button"
+              variant="outline"
+              size="icon"
+              title="Сгенерировать заново"
+              @click="regenerateId"
+            >
+              <RotateCcw class="w-4 h-4" />
+            </Button>
+          </div>
+          <p class="text-xs text-muted-foreground">
+            Назначен автоматически. При необходимости можно изменить.
+          </p>
         </div>
 
         <div class="grid grid-cols-2 gap-4">
@@ -51,6 +65,7 @@
 
 <script setup>
 import { ref, watch } from 'vue'
+import { RotateCcw } from 'lucide-vue-next'
 import {
   Dialog,
   DialogContent,
@@ -62,6 +77,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { useEquipmentStore } from '@/stores/equipment'
+import { nextEquipmentId } from '@/utils/equipmentId'
 
 const props = defineProps({
   open: { type: Boolean, default: false },
@@ -70,22 +86,32 @@ const emit = defineEmits(['close', 'created'])
 
 const equipmentStore = useEquipmentStore()
 const currentYear = new Date().getFullYear()
+const DEFAULT_MODEL = 'СБШ-250МНА'
 
-const form = ref({
-  id: '',
-  model: '',
-  serial: '',
-  year: currentYear,
-  operatingHours: 0,
-})
+function buildInitialForm() {
+  const id = nextEquipmentId(equipmentStore.list.map((e) => e.id))
+  return {
+    id,
+    model: DEFAULT_MODEL,
+    serial: `SN-${currentYear}-${id.replace(/\D/g, '')}`,
+    year: currentYear,
+    operatingHours: 0,
+  }
+}
+
+const form = ref(buildInitialForm())
 const loading = ref(false)
 const error = ref('')
+
+function regenerateId() {
+  form.value.id = nextEquipmentId(equipmentStore.list.map((e) => e.id))
+}
 
 watch(
   () => props.open,
   (v) => {
     if (v) {
-      form.value = { id: '', model: '', serial: '', year: currentYear, operatingHours: 0 }
+      form.value = buildInitialForm()
       error.value = ''
     }
   },

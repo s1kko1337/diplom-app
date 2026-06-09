@@ -14,28 +14,50 @@
 
       <!-- Engineer: full operations view -->
       <template v-if="role === 'engineer' || !role">
-        <HomeEquipmentGrid :equipment="equipmentStore.list" />
-        <HomeMaintenanceSummary />
-        <div class="grid gap-6 lg:grid-cols-2 min-h-[50vh]">
-          <HomeUpcomingMaintenance class="h-full" />
-          <HomeAlertsPanel class="h-full" />
-        </div>
+        <CustomizableSections page-key="home-engineer" :sections="engineerSections">
+          <template #dashboard>
+            <HomeDashboardQuickAccess />
+          </template>
+          <template #equipment>
+            <HomeEquipmentGrid :equipment="equipmentStore.list" />
+          </template>
+          <template #summary>
+            <HomeMaintenanceSummary />
+          </template>
+          <template #operations>
+            <div class="grid gap-6 lg:grid-cols-2 min-h-[50vh]">
+              <HomeUpcomingMaintenance class="h-full" />
+              <HomeAlertsPanel class="h-full" />
+            </div>
+          </template>
+        </CustomizableSections>
       </template>
 
       <!-- Foreman: review queue focused -->
       <template v-else-if="role === 'foreman'">
-        <HomeEquipmentGrid :equipment="equipmentStore.list" />
-        <HomeMaintenanceSummary />
-        <div class="grid gap-6 lg:grid-cols-2 min-h-[50vh]">
-          <HomeOrdersCard
-            class="h-full"
-            mode="review"
-            title="На приёмке"
-            subtitle="Наряды, ожидающие проверки мастером"
-            empty-text="Нет нарядов на приёмке"
-          />
-          <HomeAlertsPanel class="h-full" />
-        </div>
+        <CustomizableSections page-key="home-foreman" :sections="foremanSections">
+          <template #dashboard>
+            <HomeDashboardQuickAccess />
+          </template>
+          <template #equipment>
+            <HomeEquipmentGrid :equipment="equipmentStore.list" />
+          </template>
+          <template #summary>
+            <HomeMaintenanceSummary />
+          </template>
+          <template #operations>
+            <div class="grid gap-6 lg:grid-cols-2 min-h-[50vh]">
+              <HomeOrdersCard
+                class="h-full"
+                mode="review"
+                title="На приёмке"
+                subtitle="Наряды, ожидающие проверки мастером"
+                empty-text="Нет нарядов на приёмке"
+              />
+              <HomeAlertsPanel class="h-full" />
+            </div>
+          </template>
+        </CustomizableSections>
       </template>
 
       <!-- Mechanic: only assigned orders + alerts -->
@@ -69,6 +91,8 @@ import HomeUpcomingMaintenance from '@/components/home/HomeUpcomingMaintenance.v
 import HomeEquipmentGrid from '@/components/home/HomeEquipmentGrid.vue'
 import HomeAlertsPanel from '@/components/home/HomeAlertsPanel.vue'
 import HomeOrdersCard from '@/components/home/HomeOrdersCard.vue'
+import HomeDashboardQuickAccess from '@/components/home/HomeDashboardQuickAccess.vue'
+import CustomizableSections from '@/components/customize/CustomizableSections.vue'
 
 const equipmentStore = useEquipmentStore()
 const maintenanceStore = useMaintenanceStore()
@@ -76,6 +100,20 @@ const authStore = useAuthStore()
 
 const role = computed(() => authStore.userRole)
 const roleLabel = computed(() => ROLE_LABELS[role.value] || '')
+
+const engineerSections = [
+  { id: 'dashboard', label: 'Мой дашборд (быстрый доступ)' },
+  { id: 'equipment', label: 'Парк оборудования' },
+  { id: 'summary', label: 'Сводка по ТО' },
+  { id: 'operations', label: 'Предстоящее ТО и уведомления' },
+]
+
+const foremanSections = [
+  { id: 'dashboard', label: 'Мой дашборд (быстрый доступ)' },
+  { id: 'equipment', label: 'Парк оборудования' },
+  { id: 'summary', label: 'Сводка по ТО' },
+  { id: 'operations', label: 'Приёмка и уведомления' },
+]
 
 onMounted(async () => {
   const tasks = []

@@ -9,7 +9,9 @@
       <DropdownMenuLabel class="font-normal">
         <div class="flex flex-col gap-1">
           <p class="text-sm font-medium">{{ authStore.userName }}</p>
-          <p class="text-xs text-muted-foreground">{{ authStore.userRole || 'Оператор' }}</p>
+          <p class="text-xs text-muted-foreground">
+            {{ ROLE_LABELS[authStore.userRole] || authStore.userRole || 'Оператор' }}
+          </p>
         </div>
       </DropdownMenuLabel>
       <DropdownMenuSeparator />
@@ -30,6 +32,7 @@
 import { User, UserCog, LogOut } from 'lucide-vue-next'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { ROLE_LABELS } from '@/utils/constants'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,

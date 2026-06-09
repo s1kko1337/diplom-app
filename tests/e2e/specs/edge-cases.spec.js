@@ -79,7 +79,7 @@ test.describe('Edge cases: невалидные ID, demo-reset, navigation', () 
     await page.goto('/equipment')
     // Сидируем corrupt JSON.
     await page.evaluate(() => {
-      localStorage.setItem('rgm:v1:equipment', '{invalid json}')
+      localStorage.setItem('rgm:v2:equipment', '{invalid json}')
     })
     await page.reload()
     // Mock-runtime в read() ловит ошибку и пере-сидирует.

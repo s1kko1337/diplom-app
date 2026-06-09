@@ -36,6 +36,12 @@ const router = createRouter({
           component: () => import('@/views/DashboardView.vue'),
         },
         {
+          path: 'dashboard/personal',
+          name: 'personal-dashboard',
+          meta: { breadcrumb: 'Мой дашборд' },
+          component: () => import('@/views/PersonalDashboardView.vue'),
+        },
+        {
           path: 'equipment',
           name: 'equipment',
           meta: { breadcrumb: 'Оборудование' },
@@ -52,6 +58,12 @@ const router = createRouter({
           name: 'equipment-dashboard',
           meta: { breadcrumb: 'Оборудование / :id / Дашборд' },
           component: () => import('@/views/EquipmentDashboardView.vue'),
+        },
+        {
+          path: 'equipment/:id/checklist/print',
+          name: 'equipment-checklist-print',
+          meta: { breadcrumb: 'Оборудование / :id / Чек-лист' },
+          component: () => import('@/views/ChecklistPrintView.vue'),
         },
         {
           path: 'alerts',

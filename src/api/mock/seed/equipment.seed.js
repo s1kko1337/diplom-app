@@ -1,4 +1,4 @@
-function createSensors(overrides = {}) {
+export function createSensors(overrides = {}) {
   const base = {
     'temp-engine': {
       id: 'temp-engine',
@@ -131,12 +131,29 @@ function createSensors(overrides = {}) {
   return Object.values(base)
 }
 
+// Парк состоит исключительно из буровых станков СБШ-250МНА —
+// единый набор паспортных характеристик для всех машин.
+export function createSbsh250Specs(serialValue, year) {
+  return [
+    { label: 'Модель', value: 'СБШ-250МНА' },
+    { label: 'Серийный номер', value: serialValue },
+    { label: 'Год выпуска', value: String(year) },
+    { label: 'Макс. глубина бурения', value: '250 м' },
+    { label: 'Диаметр бурения', value: '76-250 мм' },
+    { label: 'Мощность двигателя', value: '132 кВт' },
+    { label: 'Макс. крутящий момент', value: '400 Нм' },
+  ]
+}
+
+const MODEL = 'СБШ-250МНА'
+const FULL_MODEL = 'Буровой станок СБШ-250МНА'
+
 export function createSeed() {
   return [
     {
       id: 'БУР-12',
-      model: 'СБШ-250МНА',
-      fullModel: 'Буровой станок СБШ-250МНА',
+      model: MODEL,
+      fullModel: FULL_MODEL,
       serial: 'E-2024-012',
       year: 2023,
       status: 'working',
@@ -158,15 +175,7 @@ export function createSeed() {
         'oil-temp': { currentValue: 58 },
         'engine-load': { currentValue: 87 },
       }),
-      specs: [
-        { label: 'Модель', value: 'СБШ-250МНА' },
-        { label: 'Серийный номер', value: 'SN-2024-0812' },
-        { label: 'Год выпуска', value: '2023' },
-        { label: 'Макс. глубина бурения', value: '250 м' },
-        { label: 'Диаметр бурения', value: '76-250 мм' },
-        { label: 'Мощность двигателя', value: '132 кВт' },
-        { label: 'Макс. крутящий момент', value: '400 Нм' },
-      ],
+      specs: createSbsh250Specs('SN-2024-0812', 2023),
       serviceHistory: [
         { date: '2026-02-10', type: 'Плановое ТО', status: 'Завершено' },
         { date: '2026-01-28', type: 'Замена долота', status: 'Завершено' },
@@ -176,8 +185,8 @@ export function createSeed() {
     },
     {
       id: 'БУР-08',
-      model: 'СБШ-250МНА',
-      fullModel: 'Буровой станок СБШ-250МНА',
+      model: MODEL,
+      fullModel: FULL_MODEL,
       serial: 'E-2024-008',
       year: 2023,
       status: 'working',
@@ -199,15 +208,7 @@ export function createSeed() {
         'oil-temp': { currentValue: 54 },
         'engine-load': { currentValue: 82 },
       }),
-      specs: [
-        { label: 'Модель', value: 'СБШ-250МНА' },
-        { label: 'Серийный номер', value: 'SN-2024-0808' },
-        { label: 'Год выпуска', value: '2023' },
-        { label: 'Макс. глубина бурения', value: '250 м' },
-        { label: 'Диаметр бурения', value: '76-250 мм' },
-        { label: 'Мощность двигателя', value: '132 кВт' },
-        { label: 'Макс. крутящий момент', value: '400 Нм' },
-      ],
+      specs: createSbsh250Specs('SN-2024-0808', 2023),
       serviceHistory: [
         { date: '2026-02-05', type: 'Диагностика', status: 'Завершено' },
         { date: '2026-01-20', type: 'Плановое ТО', status: 'Завершено' },
@@ -216,8 +217,8 @@ export function createSeed() {
     },
     {
       id: 'БУР-15',
-      model: 'DML-1200',
-      fullModel: 'Буровой станок DML-1200',
+      model: MODEL,
+      fullModel: FULL_MODEL,
       serial: 'E-2024-015',
       year: 2022,
       status: 'idle',
@@ -239,15 +240,7 @@ export function createSeed() {
         'oil-temp': { currentValue: 32 },
         'engine-load': { currentValue: 0 },
       }),
-      specs: [
-        { label: 'Модель', value: 'DML-1200' },
-        { label: 'Серийный номер', value: 'SN-2024-1215' },
-        { label: 'Год выпуска', value: '2022' },
-        { label: 'Макс. глубина бурения', value: '300 м' },
-        { label: 'Диаметр бурения', value: '150-311 мм' },
-        { label: 'Мощность двигателя', value: '200 кВт' },
-        { label: 'Макс. крутящий момент', value: '600 Нм' },
-      ],
+      specs: createSbsh250Specs('SN-2024-1215', 2022),
       serviceHistory: [
         { date: '2026-02-14', type: 'Внеплановый ремонт', status: 'Ожидание запчастей' },
         { date: '2026-01-30', type: 'Плановое ТО', status: 'Завершено' },
@@ -255,8 +248,8 @@ export function createSeed() {
     },
     {
       id: 'БУР-03',
-      model: 'СБШ-320',
-      fullModel: 'Буровой станок СБШ-320',
+      model: MODEL,
+      fullModel: FULL_MODEL,
       serial: 'E-2024-003',
       year: 2024,
       status: 'malfunction',
@@ -278,15 +271,7 @@ export function createSeed() {
         'oil-temp': { currentValue: 76 },
         'engine-load': { currentValue: 98 },
       }),
-      specs: [
-        { label: 'Модель', value: 'СБШ-320' },
-        { label: 'Серийный номер', value: 'SN-2024-0303' },
-        { label: 'Год выпуска', value: '2024' },
-        { label: 'Макс. глубина бурения', value: '320 м' },
-        { label: 'Диаметр бурения', value: '200-320 мм' },
-        { label: 'Мощность двигателя', value: '180 кВт' },
-        { label: 'Макс. крутящий момент', value: '500 Нм' },
-      ],
+      specs: createSbsh250Specs('SN-2024-0303', 2024),
       serviceHistory: [
         { date: '2026-02-16', type: 'Аварийная остановка', status: 'В процессе' },
         { date: '2026-02-01', type: 'Плановое ТО', status: 'Завершено' },
@@ -295,8 +280,8 @@ export function createSeed() {
     },
     {
       id: 'БУР-21',
-      model: 'DML-1200',
-      fullModel: 'Буровой станок DML-1200',
+      model: MODEL,
+      fullModel: FULL_MODEL,
       serial: 'E-2024-021',
       year: 2024,
       status: 'working',
@@ -318,15 +303,7 @@ export function createSeed() {
         'oil-temp': { currentValue: 51 },
         'engine-load': { currentValue: 79 },
       }),
-      specs: [
-        { label: 'Модель', value: 'DML-1200' },
-        { label: 'Серийный номер', value: 'SN-2024-1221' },
-        { label: 'Год выпуска', value: '2024' },
-        { label: 'Макс. глубина бурения', value: '300 м' },
-        { label: 'Диаметр бурения', value: '150-311 мм' },
-        { label: 'Мощность двигателя', value: '200 кВт' },
-        { label: 'Макс. крутящий момент', value: '600 Нм' },
-      ],
+      specs: createSbsh250Specs('SN-2024-1221', 2024),
       serviceHistory: [
         { date: '2026-02-12', type: 'Плановое ТО', status: 'Завершено' },
         { date: '2026-01-25', type: 'Диагностика', status: 'Завершено' },
@@ -334,8 +311,8 @@ export function createSeed() {
     },
     {
       id: 'БУР-17',
-      model: 'СБШ-250МНА',
-      fullModel: 'Буровой станок СБШ-250МНА',
+      model: MODEL,
+      fullModel: FULL_MODEL,
       serial: 'E-2024-017',
       year: 2023,
       status: 'working',
@@ -357,15 +334,7 @@ export function createSeed() {
         'oil-temp': { currentValue: 55 },
         'engine-load': { currentValue: 84 },
       }),
-      specs: [
-        { label: 'Модель', value: 'СБШ-250МНА' },
-        { label: 'Серийный номер', value: 'SN-2024-0817' },
-        { label: 'Год выпуска', value: '2023' },
-        { label: 'Макс. глубина бурения', value: '250 м' },
-        { label: 'Диаметр бурения', value: '76-250 мм' },
-        { label: 'Мощность двигателя', value: '132 кВт' },
-        { label: 'Макс. крутящий момент', value: '400 Нм' },
-      ],
+      specs: createSbsh250Specs('SN-2024-0817', 2023),
       serviceHistory: [
         { date: '2026-02-08', type: 'Замена фильтров', status: 'Завершено' },
         { date: '2026-01-18', type: 'Плановое ТО', status: 'Завершено' },
@@ -373,8 +342,8 @@ export function createSeed() {
     },
     {
       id: 'БУР-05',
-      model: 'DML-1200',
-      fullModel: 'Буровой станок DML-1200',
+      model: MODEL,
+      fullModel: FULL_MODEL,
       serial: 'E-2024-005',
       year: 2022,
       status: 'offline',
@@ -396,15 +365,7 @@ export function createSeed() {
         'oil-temp': { currentValue: 28 },
         'engine-load': { currentValue: 0 },
       }),
-      specs: [
-        { label: 'Модель', value: 'DML-1200' },
-        { label: 'Серийный номер', value: 'SN-2024-1205' },
-        { label: 'Год выпуска', value: '2022' },
-        { label: 'Макс. глубина бурения', value: '300 м' },
-        { label: 'Диаметр бурения', value: '150-311 мм' },
-        { label: 'Мощность двигателя', value: '200 кВт' },
-        { label: 'Макс. крутящий момент', value: '600 Нм' },
-      ],
+      specs: createSbsh250Specs('SN-2024-1205', 2022),
       serviceHistory: [
         { date: '2026-02-15', type: 'Капитальный ремонт', status: 'В процессе' },
         { date: '2026-01-22', type: 'Диагностика', status: 'Завершено' },
@@ -412,8 +373,8 @@ export function createSeed() {
     },
     {
       id: 'БУР-19',
-      model: 'СБШ-320',
-      fullModel: 'Буровой станок СБШ-320',
+      model: MODEL,
+      fullModel: FULL_MODEL,
       serial: 'E-2024-019',
       year: 2024,
       status: 'working',
@@ -435,15 +396,7 @@ export function createSeed() {
         'oil-temp': { currentValue: 62 },
         'engine-load': { currentValue: 91 },
       }),
-      specs: [
-        { label: 'Модель', value: 'СБШ-320' },
-        { label: 'Серийный номер', value: 'SN-2024-0319' },
-        { label: 'Год выпуска', value: '2024' },
-        { label: 'Макс. глубина бурения', value: '320 м' },
-        { label: 'Диаметр бурения', value: '200-320 мм' },
-        { label: 'Мощность двигателя', value: '180 кВт' },
-        { label: 'Макс. крутящий момент', value: '500 Нм' },
-      ],
+      specs: createSbsh250Specs('SN-2024-0319', 2024),
       serviceHistory: [
         { date: '2026-02-11', type: 'Плановое ТО', status: 'Завершено' },
         { date: '2026-01-27', type: 'Замена долота', status: 'Завершено' },

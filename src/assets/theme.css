@@ -54,6 +54,11 @@
   --font-weight-medium: 500;
   --font-weight-normal: 400;
 
+  /* Управление типографикой заголовков (переопределяется темами) */
+  --heading-weight: 600;
+  --heading-transform: none;
+  --heading-spacing: 0.03em;
+
   --chart-1: #2563eb;
   --chart-2: #7c3aed;
   --chart-3: #0891b2;
@@ -110,6 +115,180 @@
   --chart-3: #06b6d4;
   --chart-4: #f59e0b;
   --chart-5: #ec4899;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   МОНОХРОМ — классический ч/б стиль (восстановленный исходный дизайн):
+   острые углы, заглавные жирные заголовки, оттенки серого вместо цвета.
+   ────────────────────────────────────────────────────────────────────────── */
+[data-theme='mono'] {
+  --background: #fafafa;
+  --foreground: #0a0a0a;
+  --surface-1: #ffffff;
+  --surface-2: #f0f0f0;
+  --text-primary: #0a0a0a;
+  --text-secondary: #2c2c2c;
+
+  --card: #ffffff;
+  --card-foreground: #0a0a0a;
+  --popover: #ffffff;
+  --popover-foreground: #0a0a0a;
+  --primary: #0a0a0a;
+  --primary-foreground: #ffffff;
+  --secondary: #f0f0f0;
+  --secondary-foreground: #0a0a0a;
+  --muted: #e0e0e0;
+  --muted-foreground: #2c2c2c;
+  --accent: #f5f5f5;
+  --accent-foreground: #0a0a0a;
+
+  --status-normal: #0a0a0a;
+  --status-normal-bg: #e0e0e0;
+  --status-warning: #404040;
+  --status-warning-bg: #d4d4d4;
+  --status-info: #2c2c2c;
+  --status-info-bg: #e0e0e0;
+  --status-success: #0a0a0a;
+  --status-success-bg: #e0e0e0;
+  --status-maintenance: #525252;
+  --status-maintenance-bg: #e0e0e0;
+  --status-critical: #0a0a0a;
+  --status-critical-bg: #d4d4d4;
+  --status-critical-text: #0a0a0a;
+  --status-critical-solid-bg: #0a0a0a;
+  --status-critical-solid-text: #ffffff;
+
+  --destructive: #0a0a0a;
+  --destructive-foreground: #ffffff;
+  --border: #c4c4c4;
+  --input: #d4d4d4;
+  --input-background: #f0f0f0;
+  --ring: #2c2c2c;
+
+  /* Острые углы — фирменная черта исходного брутализма */
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+
+  /* Заглавные жирные заголовки */
+  --heading-weight: 800;
+  --heading-transform: uppercase;
+
+  --chart-1: #0a0a0a;
+  --chart-2: #2c2c2c;
+  --chart-3: #404040;
+  --chart-4: #606060;
+  --chart-5: #808080;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   КОНТРАСТНАЯ — повышенная контрастность для слабовидящих:
+   чистый чёрный фон, белый текст, белые границы, жёлтое кольцо фокуса.
+   ────────────────────────────────────────────────────────────────────────── */
+[data-theme='contrast'] {
+  --background: #000000;
+  --foreground: #ffffff;
+  --surface-1: #000000;
+  --surface-2: #1a1a1a;
+  --text-primary: #ffffff;
+  --text-secondary: #f4f4f5;
+
+  --card: #000000;
+  --card-foreground: #ffffff;
+  --popover: #000000;
+  --popover-foreground: #ffffff;
+  --primary: #ffeb3b;
+  --primary-foreground: #000000;
+  --secondary: #1a1a1a;
+  --secondary-foreground: #ffffff;
+  --muted: #1a1a1a;
+  --muted-foreground: #e4e4e7;
+  --accent: #1a1a1a;
+  --accent-foreground: #ffffff;
+
+  --status-normal: #69f0ae;
+  --status-normal-bg: #003d1f;
+  --status-warning: #ffd740;
+  --status-warning-bg: #3d2f00;
+  --status-info: #40c4ff;
+  --status-info-bg: #002b3d;
+  --status-success: #69f0ae;
+  --status-success-bg: #003d1f;
+  --status-maintenance: #18ffff;
+  --status-maintenance-bg: #003d3d;
+  --status-critical: #ff8a80;
+  --status-critical-bg: #3d0000;
+  --status-critical-text: #ffffff;
+  --status-critical-solid-bg: #ff1744;
+  --status-critical-solid-text: #000000;
+
+  --destructive: #ff5252;
+  --destructive-foreground: #000000;
+  --border: #ffffff;
+  --input: #ffffff;
+  --input-background: #000000;
+  --ring: #ffeb3b;
+
+  --chart-1: #40c4ff;
+  --chart-2: #b388ff;
+  --chart-3: #18ffff;
+  --chart-4: #ffd740;
+  --chart-5: #ff80ab;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   ГРАФИТОВАЯ — мягкая серо-белая палитра. Нейтральный графитовый акцент
+   вместо цветного, спокойный контраст, приглушённые статусные цвета.
+   ────────────────────────────────────────────────────────────────────────── */
+[data-theme='graphite'] {
+  --background: #f1f5f9;
+  --foreground: #0f172a;
+  --surface-1: #ffffff;
+  --surface-2: #e2e8f0;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+
+  --card: #ffffff;
+  --card-foreground: #0f172a;
+  --popover: #ffffff;
+  --popover-foreground: #0f172a;
+  --primary: #334155;
+  --primary-foreground: #ffffff;
+  --secondary: #e2e8f0;
+  --secondary-foreground: #0f172a;
+  --muted: #e2e8f0;
+  --muted-foreground: #475569;
+  --accent: #cbd5e1;
+  --accent-foreground: #0f172a;
+
+  --status-normal: #15803d;
+  --status-normal-bg: #dcfce7;
+  --status-warning: #b45309;
+  --status-warning-bg: #fef3c7;
+  --status-info: #334155;
+  --status-info-bg: #e2e8f0;
+  --status-success: #15803d;
+  --status-success-bg: #dcfce7;
+  --status-maintenance: #0e7490;
+  --status-maintenance-bg: #cffafe;
+  --status-critical: #b91c1c;
+  --status-critical-bg: #fee2e2;
+  --status-critical-text: #7f1d1d;
+  --status-critical-solid-bg: #b91c1c;
+  --status-critical-solid-text: #ffffff;
+
+  --destructive: #b91c1c;
+  --destructive-foreground: #ffffff;
+  --border: #cbd5e1;
+  --input: #94a3b8;
+  --input-background: #ffffff;
+  --ring: #334155;
+
+  --chart-1: #334155;
+  --chart-2: #64748b;
+  --chart-3: #0e7490;
+  --chart-4: #b45309;
+  --chart-5: #94a3b8;
 }
 
 @theme inline {
@@ -186,8 +365,9 @@
   h3,
   h4 {
     font-family: 'Inter', sans-serif;
-    font-weight: 600;
-    letter-spacing: 0.03em;
+    font-weight: var(--heading-weight);
+    letter-spacing: var(--heading-spacing);
+    text-transform: var(--heading-transform);
   }
 
   h1 {

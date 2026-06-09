@@ -3,22 +3,18 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div>
         <label class="text-xs mb-2 block text-muted-foreground">ТЕМА ИНТЕРФЕЙСА</label>
-        <div class="flex gap-2">
+        <div class="grid grid-cols-2 gap-2">
           <Button
-            :variant="theme === 'dark' ? 'default' : 'outline'"
-            class="flex-1"
-            @click="handleDarkTheme"
+            v-for="t in themes"
+            :key="t.value"
+            :variant="theme === t.value ? 'default' : 'outline'"
+            :title="t.description"
+            :aria-pressed="theme === t.value"
+            class="justify-start"
+            @click="applyTheme(t.value)"
           >
-            <Moon class="w-4 h-4" />
-            ТЁМНАЯ
-          </Button>
-          <Button
-            :variant="theme === 'light' ? 'default' : 'outline'"
-            class="flex-1"
-            @click="handleLightTheme"
-          >
-            <Sun class="w-4 h-4" />
-            СВЕТЛАЯ
+            <component :is="t.icon" class="w-4 h-4" />
+            {{ t.label }}
           </Button>
         </div>
       </div>
@@ -79,7 +75,6 @@
 
 <script setup>
 import { ref, watch } from 'vue'
-import { Moon, Sun } from 'lucide-vue-next'
 import { useTheme } from '@/composables/useTheme'
 import { usePreferencesStore } from '@/stores/preferences'
 import { Button } from '@/components/ui/button'
@@ -93,7 +88,7 @@ import {
 } from '@/components/ui/select'
 
 const preferences = usePreferencesStore()
-const { theme, applyTheme } = useTheme()
+const { theme, themes, applyTheme } = useTheme()
 
 const language = ref(preferences.display.language)
 const refreshRate = ref(preferences.display.refreshRate)
@@ -112,14 +107,6 @@ watch(
   },
   { deep: true },
 )
-
-function handleDarkTheme() {
-  applyTheme('dark')
-}
-
-function handleLightTheme() {
-  applyTheme('light')
-}
 
 async function save() {
   await preferences.save('display', {
