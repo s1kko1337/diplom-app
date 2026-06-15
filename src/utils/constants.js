@@ -19,6 +19,32 @@ export const STATUS_DOT_COLORS = {
   offline: 'bg-muted-foreground',
 }
 
+// Состояние датчика/показателя (норма / внимание / критично).
+// Единый визуальный язык с STATUS_* — цветной маркер + цветная подпись.
+export const INDICATOR_STATUS_LABELS = {
+  normal: 'Норма',
+  warning: 'Внимание',
+  critical: 'Критично',
+}
+
+export const INDICATOR_STATUS_COLORS = {
+  normal: 'text-status-success',
+  warning: 'text-status-warning',
+  critical: 'text-status-critical',
+}
+
+export const INDICATOR_STATUS_DOT_COLORS = {
+  normal: 'bg-status-success',
+  warning: 'bg-status-warning',
+  critical: 'bg-status-critical',
+}
+
+export const INDICATOR_STATUS_BAR_COLORS = {
+  normal: 'bg-status-success',
+  warning: 'bg-status-warning',
+  critical: 'bg-status-critical',
+}
+
 export const MAINTENANCE_SCHEDULE = {
   ЕО: { hours: null, label: 'Ежесменное', workers: 1, duration: 1, laborCost: 1 },
   'ТО-1': { hours: 250, label: 'ТО-1', workers: 2, duration: 4, laborCost: 8 },

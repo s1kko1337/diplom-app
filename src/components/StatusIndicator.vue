@@ -1,8 +1,11 @@
 <template>
   <div class="bg-surface-1 border border-border rounded-md p-4">
     <div class="flex items-center justify-between mb-3">
-      <label class="text-xs">{{ label }}</label>
-      <div class="metric-value text-sm">{{ value }} {{ unit }}</div>
+      <div class="flex items-center gap-2 min-w-0">
+        <span class="inline-block h-2 w-2 rounded-full shrink-0" :class="dotClass" />
+        <label class="text-xs truncate">{{ label }}</label>
+      </div>
+      <div class="metric-value text-sm shrink-0">{{ value }} {{ unit }}</div>
     </div>
 
     <div class="relative h-2 bg-surface-2 border border-border rounded-full">
@@ -13,14 +16,21 @@
       />
     </div>
 
-    <div class="mt-2 text-xs opacity-50 metric-value">
-      {{ percentage.toFixed(1) }}% / MAX {{ max }}
+    <div class="mt-2 flex items-center justify-between text-xs">
+      <span class="font-medium" :class="textClass">{{ statusLabel }}</span>
+      <span class="opacity-50 metric-value">{{ percentage.toFixed(1) }}% / MAX {{ max }}</span>
     </div>
   </div>
 </template>
 
 <script setup>
 import { computed } from 'vue'
+import {
+  INDICATOR_STATUS_LABELS,
+  INDICATOR_STATUS_COLORS,
+  INDICATOR_STATUS_DOT_COLORS,
+  INDICATOR_STATUS_BAR_COLORS,
+} from '@/utils/constants'
 
 const props = defineProps({
   label: { type: String, required: true },
@@ -32,12 +42,16 @@ const props = defineProps({
 
 const percentage = computed(() => (props.value / props.max) * 100)
 
-const barClass = computed(() => {
-  const map = {
-    normal: 'bg-primary',
-    warning: 'bg-primary opacity-80',
-    critical: 'bg-status-critical',
-  }
-  return map[props.status] || map.normal
-})
+const statusLabel = computed(
+  () => INDICATOR_STATUS_LABELS[props.status] || INDICATOR_STATUS_LABELS.normal,
+)
+const dotClass = computed(
+  () => INDICATOR_STATUS_DOT_COLORS[props.status] || INDICATOR_STATUS_DOT_COLORS.normal,
+)
+const textClass = computed(
+  () => INDICATOR_STATUS_COLORS[props.status] || INDICATOR_STATUS_COLORS.normal,
+)
+const barClass = computed(
+  () => INDICATOR_STATUS_BAR_COLORS[props.status] || INDICATOR_STATUS_BAR_COLORS.normal,
+)
 </script>

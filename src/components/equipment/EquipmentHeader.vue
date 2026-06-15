@@ -16,12 +16,14 @@
     </div>
 
     <div class="flex items-center gap-3 sm:gap-4 flex-wrap">
-      <Badge :variant="isWorking ? 'default' : 'secondary'" class="gap-2 px-4 py-2">
-        <div
+      <Badge variant="outline" class="gap-2 px-4 py-2">
+        <span
           class="w-2 h-2 rounded-full"
-          :class="isWorking ? 'bg-primary-foreground animate-pulse' : 'bg-muted-foreground'"
+          :class="[STATUS_DOT_COLORS[equipment.status], isWorking ? 'animate-pulse' : '']"
         />
-        <span class="text-xs">{{ equipment.statusLabel }}</span>
+        <span class="text-xs" :class="STATUS_COLORS[equipment.status]">
+          {{ equipment.statusLabel || STATUS_LABELS[equipment.status] }}
+        </span>
       </Badge>
 
       <div class="metric-value text-sm opacity-70 hidden sm:block">
@@ -48,6 +50,7 @@ import { computed } from 'vue'
 import { ArrowLeft, LayoutDashboard, Pause, Play } from 'lucide-vue-next'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { STATUS_LABELS, STATUS_COLORS, STATUS_DOT_COLORS } from '@/utils/constants'
 
 const props = defineProps({
   equipment: { type: Object, required: true },

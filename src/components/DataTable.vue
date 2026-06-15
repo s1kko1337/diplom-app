@@ -41,16 +41,14 @@
             {{ row.temperature }}
           </TableCell>
           <TableCell class="text-sm">
-            <span
-              class="px-2 py-1 text-xs border rounded-md"
-              :class="{
-                'border-primary': row.status === 'РАБОТА',
-                'border-border opacity-50': row.status === 'ПРОСТОЙ',
-                'bg-status-critical-bg text-status-critical-text border-status-critical/40':
-                  row.status === 'АВАРИЯ',
-              }"
-            >
-              {{ row.status }}
+            <span class="inline-flex items-center gap-2">
+              <span
+                class="inline-block h-2 w-2 rounded-full shrink-0"
+                :class="STATUS_DOT_COLORS[row.status]"
+              />
+              <span class="text-sm" :class="STATUS_COLORS[row.status]">
+                {{ STATUS_LABELS[row.status] || row.status }}
+              </span>
             </span>
           </TableCell>
         </TableRow>
@@ -69,6 +67,7 @@ import {
   TableHead,
   TableCell,
 } from '@/components/ui/table'
+import { STATUS_LABELS, STATUS_COLORS, STATUS_DOT_COLORS } from '@/utils/constants'
 
 defineProps({
   data: { type: Array, required: true },

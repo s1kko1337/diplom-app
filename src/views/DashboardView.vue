@@ -343,7 +343,7 @@ const tableData = computed(() =>
       depth: read('depth', 0),
       speed: read('speed', 0),
       temperature: read('temp-engine', 0),
-      status: STATUS_LABELS[eq.status] || eq.status,
+      status: eq.status,
     }
   }),
 )
