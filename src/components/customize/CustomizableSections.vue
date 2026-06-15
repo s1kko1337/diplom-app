@@ -1,17 +1,7 @@
 <template>
   <div class="space-y-4">
-    <!-- Toolbar -->
-    <div class="flex items-center justify-end gap-2">
-      <Button
-        v-if="editing"
-        variant="ghost"
-        size="sm"
-        class="text-xs text-muted-foreground"
-        @click="handleReset"
-      >
-        <RotateCcw class="w-3.5 h-3.5" />
-        Сбросить
-      </Button>
+    <!-- Toolbar (скрывается, если кнопкой «Настроить» управляет родитель) -->
+    <div v-if="!hideToolbar" class="flex items-center justify-end gap-2">
       <Button
         :variant="editing ? 'default' : 'outline'"
         size="sm"
@@ -25,8 +15,19 @@
     <!-- Edit panel: reorder / show-hide -->
     <Card v-if="editing" class="border-dashed">
       <CardContent class="p-3 space-y-1">
-        <div class="text-xs text-muted-foreground mb-2">
-          Перетащите кнопками порядок и скройте ненужные блоки
+        <div class="flex items-center justify-between gap-2 mb-2">
+          <div class="text-xs text-muted-foreground">
+            Перетащите кнопками порядок и скройте ненужные блоки
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            class="text-xs text-muted-foreground shrink-0"
+            @click="handleReset"
+          >
+            <RotateCcw class="w-3.5 h-3.5" />
+            Сбросить
+          </Button>
         </div>
         <div
           v-for="(section, idx) in orderedSections"
@@ -79,7 +80,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { computed } from 'vue'
 import {
   SlidersHorizontal,
   Check,
@@ -97,10 +98,15 @@ const props = defineProps({
   pageKey: { type: String, required: true },
   // [{ id, label }] в порядке по умолчанию
   sections: { type: Array, required: true },
+  // Скрыть встроенную кнопку «Настроить» — когда режимом управляет родитель.
+  hideToolbar: { type: Boolean, default: false },
 })
 
+// Режим редактирования: локальный по умолчанию, либо контролируемый родителем
+// через v-model:editing.
+const editing = defineModel('editing', { type: Boolean, default: false })
+
 const layoutPrefs = useLayoutPrefsStore()
-const editing = ref(false)
 
 const pagePrefs = computed(() => layoutPrefs.getPage(props.pageKey))
 

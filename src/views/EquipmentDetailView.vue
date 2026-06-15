@@ -9,18 +9,34 @@
         @toggle-polling="handleTogglePolling"
       />
 
-      <Tabs default-value="overview">
-        <TabsList>
-          <TabsTrigger value="overview">Обзор</TabsTrigger>
-          <TabsTrigger value="sensors">Датчики</TabsTrigger>
-          <TabsTrigger value="maintenance">ТО</TabsTrigger>
-          <TabsTrigger value="parts">Детали</TabsTrigger>
-          <TabsTrigger value="history">История</TabsTrigger>
-          <TabsTrigger value="dashboard">Дашборд</TabsTrigger>
-        </TabsList>
+      <Tabs v-model="activeTab">
+        <div class="flex items-center justify-between gap-3 flex-wrap">
+          <TabsList>
+            <TabsTrigger value="overview">Обзор</TabsTrigger>
+            <TabsTrigger value="sensors">Датчики</TabsTrigger>
+            <TabsTrigger value="maintenance">ТО</TabsTrigger>
+            <TabsTrigger value="parts">Детали</TabsTrigger>
+            <TabsTrigger value="history">История</TabsTrigger>
+            <TabsTrigger value="dashboard">Дашборд</TabsTrigger>
+          </TabsList>
+          <Button
+            v-if="isCustomizableTab"
+            :variant="customizing ? 'default' : 'outline'"
+            size="sm"
+            @click="customizing = !customizing"
+          >
+            <component :is="customizing ? Check : SlidersHorizontal" class="w-4 h-4" />
+            {{ customizing ? 'Готово' : 'Настроить' }}
+          </Button>
+        </div>
 
         <TabsContent value="overview">
-          <CustomizableSections page-key="equipment-overview" :sections="overviewSections">
+          <CustomizableSections
+            page-key="equipment-overview"
+            :sections="overviewSections"
+            v-model:editing="customizing"
+            hide-toolbar
+          >
             <template #metrics>
               <EquipmentMetrics :equipment-id="equipmentId" />
             </template>
@@ -55,6 +71,8 @@
             :config-key="equipmentId"
             :data-equipment-id="equipmentId"
             :manage-polling="false"
+            v-model:editing="customizing"
+            hide-toggle
           />
         </TabsContent>
       </Tabs>
@@ -67,8 +85,10 @@
 </template>
 
 <script setup>
-import { computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
+import { SlidersHorizontal, Check } from 'lucide-vue-next'
+import { Button } from '@/components/ui/button'
 import { useEquipmentStore } from '@/stores/equipment'
 import { useSensorsStore } from '@/stores/sensors'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
@@ -97,6 +117,19 @@ const sensorsStore = useSensorsStore()
 
 const equipmentId = computed(() => route.params.id)
 const current = computed(() => equipmentStore.getDetail(equipmentId.value))
+
+// Активная вкладка и единая кнопка «Настроить» в строке вкладок.
+// Кастомизируются только «Обзор» (секции) и «Дашборд» (виджеты).
+const activeTab = ref('overview')
+const customizing = ref(false)
+const isCustomizableTab = computed(
+  () => activeTab.value === 'overview' || activeTab.value === 'dashboard',
+)
+
+// При смене вкладки выходим из режима редактирования, чтобы он не «переносился».
+watch(activeTab, () => {
+  customizing.value = false
+})
 
 onMounted(async () => {
   await equipmentStore.fetchById(equipmentId.value)

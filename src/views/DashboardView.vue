@@ -3,7 +3,7 @@
     <LoadingSpinner v-if="equipmentStore.loading && !equipmentStore.list.length" />
 
     <template v-else>
-      <!-- Выбор мониторимого станка -->
+      <!-- Выбор мониторимого станка + кнопка настройки шапки в один ряд -->
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div class="flex items-center gap-2">
           <label class="text-xs text-muted-foreground">СТАНОК:</label>
@@ -18,10 +18,23 @@
             </SelectContent>
           </Select>
         </div>
+        <Button
+          :variant="headerEditing ? 'default' : 'outline'"
+          size="sm"
+          @click="headerEditing = !headerEditing"
+        >
+          <component :is="headerEditing ? Check : SlidersHorizontal" class="w-4 h-4" />
+          {{ headerEditing ? 'Готово' : 'Настроить' }}
+        </Button>
       </div>
 
       <!-- Кастомизируемая шапка: порядок и видимость блоков настраиваются -->
-      <CustomizableSections page-key="dashboard-header" :sections="headerSections">
+      <CustomizableSections
+        page-key="dashboard-header"
+        :sections="headerSections"
+        v-model:editing="headerEditing"
+        hide-toolbar
+      >
         <template #atrisk>
           <DashboardAtRiskPanel />
         </template>
@@ -153,7 +166,7 @@
 
 <script setup>
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
-import { SlidersHorizontal } from 'lucide-vue-next'
+import { SlidersHorizontal, Check } from 'lucide-vue-next'
 import { useEquipmentStore } from '@/stores/equipment'
 import { useSensorsStore } from '@/stores/sensors'
 import { STATUS_LABELS, STATUS_COLORS, STATUS_DOT_COLORS } from '@/utils/constants'
@@ -191,6 +204,9 @@ const headerSections = [
   { id: 'charts', label: 'Графики' },
   { id: 'indicators', label: 'Индикаторы нагрузки' },
 ]
+
+// Режим настройки шапки (управляет встроенным CustomizableSections).
+const headerEditing = ref(false)
 
 // ── Выбор мониторимого станка ──────────────────────────────────────────────
 const MACHINE_KEY = 'rudgormash:dashboard-machine'

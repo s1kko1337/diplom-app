@@ -39,10 +39,6 @@ jobs:
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
-        with:
-          # Автоматически включает GitHub Pages в репозитории (источник — Actions),
-          # если он ещё не настроен вручную в Settings → Pages.
-          enablement: true
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

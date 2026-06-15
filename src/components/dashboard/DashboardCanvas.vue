@@ -1,9 +1,9 @@
 <template>
   <div class="space-y-4">
     <!-- Edit toolbar -->
-    <div class="flex items-center justify-end gap-2 flex-wrap">
+    <div v-if="editing || !hideToggle" class="flex items-center justify-end gap-2 flex-wrap">
       <Button
-        v-if="dashboardsStore.editing"
+        v-if="editing"
         variant="outline"
         size="sm"
         class="min-h-11 sm:min-h-0"
@@ -13,7 +13,7 @@
         Виджет
       </Button>
       <Button
-        v-if="dashboardsStore.editing"
+        v-if="editing"
         variant="outline"
         size="sm"
         class="min-h-11 sm:min-h-0"
@@ -23,13 +23,14 @@
         Сброс
       </Button>
       <Button
-        :variant="dashboardsStore.editing ? 'default' : 'outline'"
+        v-if="!hideToggle"
+        :variant="editing ? 'default' : 'outline'"
         size="sm"
         class="min-h-11 sm:min-h-0"
-        @click="toggleEdit"
+        @click="handleToggle"
       >
-        <component :is="dashboardsStore.editing ? Save : Pencil" class="w-4 h-4" />
-        {{ dashboardsStore.editing ? 'Сохранить' : 'Настроить' }}
+        <component :is="editing ? Save : Pencil" class="w-4 h-4" />
+        {{ editing ? 'Сохранить' : 'Настроить' }}
       </Button>
     </div>
 
@@ -41,8 +42,8 @@
       :col-num="isMobile ? 1 : 12"
       :row-height="isMobile ? 80 : 60"
       :margin="isMobile ? [8, 8] : [12, 12]"
-      :is-draggable="!isMobile && dashboardsStore.editing"
-      :is-resizable="!isMobile && dashboardsStore.editing"
+      :is-draggable="!isMobile && editing"
+      :is-resizable="!isMobile && editing"
       @layout-updated="handleLayoutUpdate"
     >
       <GridItem
@@ -58,7 +59,7 @@
         <WidgetWrapper
           :widget="getWidget(item.i)"
           :equipment-id="dataEquipmentId"
-          :editing="dashboardsStore.editing"
+          :editing="editing"
           @remove="handleRemoveWidget(item.i)"
         />
       </GridItem>
@@ -100,7 +101,14 @@ const props = defineProps({
   dataEquipmentId: { type: String, required: true },
   // Управлять ли опросом датчиков самостоятельно (false — если опрашивает родитель).
   managePolling: { type: Boolean, default: true },
+  // Скрыть встроенную кнопку «Настроить» — когда режимом управляет родитель.
+  hideToggle: { type: Boolean, default: false },
 })
+
+// Режим редактирования: локальный (по экземпляру) либо контролируемый родителем
+// через v-model:editing. Раньше флаг был глобальным в store и «протекал» между
+// разными дашбордами (вкладка / отдельная страница / личный).
+const editing = defineModel('editing', { type: Boolean, default: false })
 
 const { isMobile } = useBreakpoint()
 const dashboardsStore = useDashboardsStore()
@@ -158,8 +166,28 @@ onUnmounted(() => {
   if (props.managePolling) {
     sensorsStore.stopPolling()
   }
-  if (dashboardsStore.editing) {
-    dashboardsStore.editing = false
+  // Сохраняем несохранённые правки при уходе со страницы/вкладки.
+  if (editing.value) {
+    dashboardsStore.saveConfig(props.configKey)
+    editing.value = false
+  }
+})
+
+// Встроенная кнопка: дожидаемся сохранения ДО выхода из режима, чтобы
+// последующий reload гарантированно увидел сохранённую раскладку.
+async function handleToggle() {
+  if (editing.value) {
+    await dashboardsStore.saveConfig(props.configKey)
+  }
+  editing.value = !editing.value
+}
+
+// Сохраняем конфигурацию при выходе из режима редактирования (true → false),
+// когда флаг переключает родитель (v-model:editing) — например кнопкой
+// «Готово» в строке вкладок на странице оборудования.
+watch(editing, async (val, prev) => {
+  if (prev && !val) {
+    await dashboardsStore.saveConfig(props.configKey)
   }
 })
 
@@ -172,20 +200,13 @@ function handleLayoutUpdate(newLayout) {
   dashboardsStore.updateLayout(props.configKey, newLayout)
 }
 
-async function toggleEdit() {
-  if (dashboardsStore.editing) {
-    await dashboardsStore.saveConfig(props.configKey)
-  }
-  dashboardsStore.toggleEditing()
-}
-
 async function handleReset() {
   await dashboardsStore.resetConfig(props.configKey)
   syncLayoutFromStore()
 }
 
 function handleStartAdding() {
-  dashboardsStore.toggleEditing()
+  editing.value = true
   showAddWidget.value = true
 }
 
