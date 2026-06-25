@@ -111,6 +111,100 @@ export const ROLE_LABELS = {
 
 export const MEASUREMENT_UNITS = ['мм', '%', 'Ом', 'МОм', 'В', 'А', 'кг', 'л', '°C', 'мм²', 'бар']
 
+// Регламентированные смазочные и эксплуатационные материалы.
+// Источник: «Регламент технического обслуживания и ремонта бурового станка
+// СБШ-250МНА-32» (ООО «ГМК-Рудгормаш», Воронеж, 2025) — таблицы 1, 2, 13.1–13.3
+// и ведомости расхода материалов на ТО.
+export const MATERIAL_CATEGORY_LABELS = {
+  grease: 'Пластичные смазки',
+  transmission_oil: 'Трансмиссионные масла',
+  hydraulic_oil: 'Гидравлические масла',
+  filter: 'Фильтроэлементы',
+}
+
+export const REGULATED_MATERIALS = {
+  // Пластичные смазки (шприцевание подшипников, шлицев, резьб, канатов)
+  grease: [
+    'Циатим 221 ГОСТ 9433-80',
+    'Литол 24-МЛи-4/12-3 ГОСТ 21150-2017',
+    'Торсиол-55 ГОСТ 20458-89',
+    'Смазка графитная ГОСТ 3333-80',
+  ],
+  // Трансмиссионные масла (редукторы хода и вращателя)
+  transmission_oil: [
+    'ТСп-10 ГОСТ 23652-79',
+    'Тап-15В ГОСТ 23652-79',
+    'Масло К-17 ГОСТ 10877-76',
+  ],
+  // Гидравлические масла (таблица 2 регламента)
+  hydraulic_oil: [
+    'МГЕ-46В ТУ 38.001347',
+    'И-Г-С-32 ГОСТ 17479.4-87',
+    'И-30А ГОСТ 20799-88',
+    'ВМГЗ ТУ 38.101479-2000',
+    'МГ-22-А ТУ 38.1011232',
+    'МГ-22-Б ТУ 38.1011258',
+  ],
+  // Фильтроэлементы гидросистемы
+  filter: [
+    'Фильтроэлемент Реготмас 630-1-06',
+    'Фильтроэлемент Реготмас 631-1-06',
+    'Фильтроэлемент Инпроком-430',
+    'Фильтроэлемент Инпроком-430 (10 мкм)',
+  ],
+}
+
+// Полный перечень наименований материалов для подсказок при создании чек-листа.
+export const REGULATED_MATERIAL_NAMES = Object.values(REGULATED_MATERIALS).flat()
+
+// Определяет категорию материала по его наименованию (для фильтрации
+// выпадающего списка марок). Явная категория в объекте материала имеет приоритет.
+export function inferMaterialCategory(name = '') {
+  const n = String(name).toLowerCase()
+  if (n.includes('фильтр')) return 'filter'
+  if (n.includes('гидравл')) return 'hydraulic_oil'
+  if (n.includes('трансмисс') || n.includes('редуктор') || n.includes('вращател'))
+    return 'transmission_oil'
+  return 'grease'
+}
+
+// Возвращает варианты марок для конкретного материала, сгруппированные по категории.
+// Если категория известна — только её группа; иначе все группы.
+// Текущее (нерегламентное) значение марки добавляется отдельной группой,
+// чтобы оно не терялось в выпадающем списке.
+export function getMaterialBrandGroups(material) {
+  const category = material?.category || inferMaterialCategory(material?.name)
+  const known = REGULATED_MATERIALS[category]
+  const groups = known
+    ? [{ key: category, label: MATERIAL_CATEGORY_LABELS[category], items: known }]
+    : Object.entries(REGULATED_MATERIALS).map(([key, items]) => ({
+        key,
+        label: MATERIAL_CATEGORY_LABELS[key],
+        items,
+      }))
+
+  const brand = material?.brand
+  if (brand && !groups.some((g) => g.items.includes(brand))) {
+    return [{ key: 'current', label: 'Текущее значение', items: [brand] }, ...groups]
+  }
+  return groups
+}
+
+// Сгруппированный список наименований материалов для выпадающего списка при
+// создании чек-листа. Текущее (произвольное) наименование сохраняется отдельной
+// группой, чтобы не потеряться.
+export function getMaterialNameGroups(name) {
+  const groups = Object.entries(REGULATED_MATERIALS).map(([key, items]) => ({
+    key,
+    label: MATERIAL_CATEGORY_LABELS[key],
+    items,
+  }))
+  if (name && !REGULATED_MATERIAL_NAMES.includes(name)) {
+    return [{ key: 'current', label: 'Текущее значение', items: [name] }, ...groups]
+  }
+  return groups
+}
+
 export const DOCUMENT_TYPES = {
   eo_checklist: 'Чек-лист ЕО',
   act_to1: 'Акт ТО-1',

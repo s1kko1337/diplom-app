@@ -85,11 +85,22 @@
               class="flex items-end gap-2 rounded border border-border p-2"
             >
               <div class="flex-1 space-y-1">
-                <Input
+                <Select
                   :model-value="mat.name"
-                  placeholder="Наименование"
-                  @update:model-value="updateMaterialField(index, matIdx, 'name', $event)"
-                />
+                  @update:model-value="onMaterialNameSelect(index, matIdx, $event)"
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Наименование (по регламенту)" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup v-for="group in getMaterialNameGroups(mat.name)" :key="group.key">
+                      <SelectLabel>{{ group.label }}</SelectLabel>
+                      <SelectItem v-for="name in group.items" :key="name" :value="name">
+                        {{ name }}
+                      </SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
               </div>
               <div class="w-24 space-y-1">
                 <Select
@@ -150,10 +161,16 @@ import {
   SelectTrigger,
   SelectValue,
   SelectContent,
+  SelectGroup,
+  SelectLabel,
   SelectItem,
 } from '@/components/ui/select'
 import { getChecklistTemplate } from '@/api/maintenance'
-import { MEASUREMENT_UNITS } from '@/utils/constants'
+import {
+  MEASUREMENT_UNITS,
+  getMaterialNameGroups,
+  inferMaterialCategory,
+} from '@/utils/constants'
 
 const props = defineProps({
   type: {
@@ -288,6 +305,19 @@ function updateMaterialField(stepIndex, matIndex, field, value) {
     if (i !== stepIndex) return item
     const materials = item.materials.map((m, mi) =>
       mi === matIndex ? { ...m, [field]: value } : m,
+    )
+    return { ...item, materials }
+  })
+  emit('update:modelValue', updated)
+}
+
+// При выборе наименования из регламента проставляем и категорию материала,
+// чтобы при проведении ТО список марок фильтровался по нужной группе.
+function onMaterialNameSelect(stepIndex, matIndex, value) {
+  const updated = props.modelValue.map((item, i) => {
+    if (i !== stepIndex) return item
+    const materials = item.materials.map((m, mi) =>
+      mi === matIndex ? { ...m, name: value, category: inferMaterialCategory(value) } : m,
     )
     return { ...item, materials }
   })

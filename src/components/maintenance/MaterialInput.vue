@@ -27,19 +27,37 @@
       </div>
       <div class="flex items-center gap-2">
         <label class="text-sm text-muted-foreground shrink-0">Марка:</label>
-        <Input
-          :model-value="material.brand || ''"
-          class="w-48"
-          placeholder="Марка / производитель"
-          @input="handleBrandInput"
-        />
+        <Select :model-value="material.brand || ''" @update:model-value="handleBrandSelect">
+          <SelectTrigger class="w-64">
+            <SelectValue placeholder="Выберите марку (по регламенту)" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup v-for="group in brandGroups" :key="group.key">
+              <SelectLabel>{{ group.label }}</SelectLabel>
+              <SelectItem v-for="brand in group.items" :key="brand" :value="brand">
+                {{ brand }}
+              </SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
+import { computed } from 'vue'
 import { Input } from '@/components/ui/input'
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectGroup,
+  SelectLabel,
+  SelectItem,
+} from '@/components/ui/select'
+import { getMaterialBrandGroups } from '@/utils/constants'
 
 const props = defineProps({
   material: {
@@ -54,15 +72,16 @@ const props = defineProps({
 
 const emit = defineEmits(['update:material'])
 
+const brandGroups = computed(() => getMaterialBrandGroups(props.material))
+
 function handleVolumeInput(event) {
   const raw = event.target.value
   const volume = raw === '' ? null : parseFloat(raw)
   emit('update:material', { ...props.material, volume })
 }
 
-function handleBrandInput(event) {
-  const brand = event.target.value || null
-  emit('update:material', { ...props.material, brand })
+function handleBrandSelect(value) {
+  emit('update:material', { ...props.material, brand: value || null })
 }
 </script>
 
